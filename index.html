@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BSD BIM Training Center | Professional BIM Education</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* ── DASHBOARD BLUE GRADIENT HERO & PAGE HEADERS ── */
+    .hero-bg, .page-header-bg {
+      position: relative;
+      background: linear-gradient(115deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 30px 24px;
+    }
+
+    /* Ambient soft translucent glows matching reference image */
+    .hero-glow-1 {
+      position: absolute;
+      top: -100px;
+      left: -80px;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute;
+      bottom: -100px;
+      right: -80px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-circle-accent {
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border: 28px solid rgba(255,255,255,0.06);
+      border-radius: 50%;
+      top: -30px;
+      left: 30%;
+      pointer-events: none;
+    }
+
+    /* ── ROUNDED RECTANGLE CARDS (MATCHING REFERENCE IMAGE) ── */
+    .dashboard-card, .course-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #eef2f6;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+    }
+    .dashboard-card:hover, .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.09);
+      border-color: #dbeafe;
+    }
+
+    /* Card Icon Squircle Badges with Colored Glow */
+    .icon-squircle {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+    .glow-blue {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.4);
+    }
+    .glow-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 8px 18px -4px rgba(16, 185, 129, 0.4);
+    }
+    .glow-rose {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      box-shadow: 0 8px 18px -4px rgba(225, 29, 72, 0.4);
+    }
+    .glow-amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 8px 18px -4px rgba(245, 158, 11, 0.4);
+    }
+    .glow-purple {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      box-shadow: 0 8px 18px -4px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Video thumbnail container */
+    .video-thumb {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+    .video-thumb .play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.35);
+      transition: all 0.25s;
+    }
+    .video-thumb:hover .play-btn {
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+    }
+    .video-thumb:hover .play-icon {
+      transform: scale(1.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ── BADGES & LABELS ── */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .badge-pending { background: #eff6ff; color: #1d4ed8; }
+    .badge-available { background: #ecfdf5; color: #059669; }
+    .badge-tasks { background: #fff1f2; color: #e11d48; }
+
+    /* ── NAV PILL TABS (MATCHING DASHBOARD PILL IN REFERENCE) ── */
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 18px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .nav-btn.active {
+      background: #e8f1fd !important;
+      color: #1d68d8 !important;
+      font-weight: 700 !important;
+    }
+
+    /* ── MODALS & OVERLAYS ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px; padding: 32px;
+      max-width: 540px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+      border: 1px solid #eef2f6;
+    }
+
+    /* ── ADMIN SECURITY LOCK MODAL ── */
+    .admin-lock-screen {
+      position: fixed; inset: 0; z-index: 1200;
+      background: rgba(15, 23, 42, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .lock-card {
+      background: #ffffff;
+      border: 1px solid #eef2f6;
+      border-radius: 24px; padding: 40px 32px;
+      max-width: 440px; width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+      position: relative;
+    }
+    .lock-ring {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: #e8f1fd;
+      border: 2px solid #bfdbfe;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.25);
+    }
+    .lock-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      color: #0f172a; font-size: 16px; letter-spacing: 3px;
+      text-align: center; outline: none; box-sizing: border-box;
+      transition: all 0.2s; margin-bottom: 14px;
+    }
+    .lock-input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+    .lock-input.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+      animation: shake 0.4s;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%,75% { transform: translateX(-8px); }
+      50%     { transform: translateX(8px); }
+    }
+    .lock-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #1d4ed8, #0284c7);
+      color: white; border: none; padding: 14px;
+      border-radius: 12px; font-size: 15px; font-weight: 800;
+      cursor: pointer; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s;
+    }
+    .lock-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+    }
+
+    /* ── TOAST NOTIFICATIONS ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 3000;
+      padding: 14px 22px; border-radius: 12px;
+      color: #fff; font-weight: 700; font-size: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+      animation: slideIn 0.3s ease-out;
+      display: flex; align-items: center; gap: 10px;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(30px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+
+
+    /* YouTube Embed Ratio */
+    .yt-frame {
+      aspect-ratio: 16/9; width: 100%; border-radius: 14px; overflow: hidden;
+    }
+    .yt-frame iframe { width: 100%; height: 100%; border: none; }
+
+    /* Admin Auth Active Badge */
+    .admin-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #ecfdf5; border: 1px solid #a7f3d0;
+      color: #059669; padding: 5px 14px; border-radius: 9999px;
+      font-size: 12px; font-weight: 700;
+    }
+    @media (max-width: 900px) {
+      #classroom-layout-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+<body style="background:#f4f7fc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
+
+<!-- ══════════════════════════════════════════
+     🔒 ADMIN PASSWORD LOCK OVERLAY
+══════════════════════════════════════════ -->
+<div id="admin-lock-screen" class="admin-lock-screen" style="display:none;">
+  <div class="lock-card">
+    <div class="lock-ring">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+
+    <div style="color:#2563eb;font-size:11px;font-weight:800;letter-spacing:0.18em;margin-bottom:8px;">
+      🔒 SECURITY AUTHENTICATION
+    </div>
+    <h2 style="color:#0f172a;font-size:24px;font-weight:900;margin:0 0 8px;letter-spacing:-0.02em;">
+      Admin Content Lock
+    </h2>
+    <p style="color:#64748b;font-size:14px;line-height:1.5;margin:0 0 24px;">
+      Uploading training courses, videos, Revit models & YouTube simulations is restricted to authorized administrators only.
+    </p>
+
+    <input id="admin-pass-input" class="lock-input" type="password" placeholder="••••••••••••"
+      onkeydown="if(event.key==='Enter')checkAdminPassword()"
+      oninput="this.classList.remove('error');document.getElementById('pass-error-msg').style.display='none'" />
+
+    <div id="pass-error-msg" style="display:none;color:#ef4444;font-size:13px;font-weight:600;margin-bottom:14px;">
+      ❌ Incorrect Password. Please enter the valid Admin code.
+    </div>
+
+    <button class="lock-btn" onclick="checkAdminPassword()">
+      🔓 Unlock & Access Admin Panel
+    </button>
+
+    <button onclick="closeAdminLock()" style="background:none;border:none;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;margin-top:16px;width:100%;transition:color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">
+      ← Cancel & Return to Website
+    </button>
+
+    <div style="margin-top:22px;padding:12px 14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;text-align:center;">
+      <div style="color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:0.08em;margin-bottom:3px;">
+        🔑 DEFAULT ADMIN PASSWORD
+      </div>
+      <div style="color:#1e293b;font-size:13px;font-family:monospace;font-weight:700;">
+        admin123
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     TOP NAVIGATION BAR (WHITE ENTERPRISE THEME)
+══════════════════════════════════════════ -->
+<nav style="background:#ffffff;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px 0 rgba(0,0,0,0.04), 0 1px 2px -1px rgba(0,0,0,0.04);border-bottom:1px solid #eef2f6;">
+  <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:70px;">
+    <!-- Brand Logo -->
+    <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="showSection('home')">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#1d4ed8,#0284c7);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(29,78,216,0.3);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </div>
+      <div>
+        <div style="color:#0f172a;font-weight:900;font-size:18px;line-height:1.1;letter-spacing:-0.02em;">BSD BIM Training</div>
+        <div style="color:#2563eb;font-size:10.5px;letter-spacing:0.18em;font-weight:800;">CENTER</div>
+      </div>
+    </div>
+
+    <!-- Nav Links with Rounded Pill Highlight -->
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button onclick="showSection('home')"    class="nav-btn active" id="nav-home">Home</button>
+      <button onclick="showSection('courses')" class="nav-btn"        id="nav-courses">Courses</button>
+      <button onclick="showSection('videos')"  class="nav-btn"        id="nav-videos">Videos</button>
+      <button onclick="showSection('files')"   class="nav-btn"        id="nav-files">Practice Files</button>
+    </div>
+
+    <!-- Right: Search & Admin Lock -->
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="display:flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:6px 12px;gap:8px;">
+        <span style="color:#94a3b8;font-size:13px;">🔍</span>
+        <input id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search..." style="border:none;background:transparent;outline:none;font-size:13px;width:130px;color:#0f172a;font-weight:600;" />
+      </div>
+      
+      <!-- 🔒 ADMIN LOCKED BUTTON -->
+      <button onclick="openAdminUpload()" class="nav-btn" style="background:#f8fafc;border:1px solid #e2e8f0;color:#0369a1;padding:7px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;" id="nav-upload">
+        <span>🔒</span> Admin
+      </button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+     MAIN APPLICATION SECTIONS
+══════════════════════════════════════════ -->
+<div id="app-root">
+
+<!-- ─────────────────────────────────────────
+     1. HOME SECTION (WITH FANCY GRAPHICS)
+───────────────────────────────────────── -->
+<section id="section-home">
+  <div class="hero-bg">
+    <!-- Ambient glowing curves matching reference banner -->
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-circle-accent"></div>
+
+    <!-- Hero Content (Compact horizontal layout matching reference dashboard banner) -->
+    <div style="position:relative;z-index:10;max-width:1240px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+      
+      <!-- Left Column: Title, Subtitle & Buttons -->
+      <div style="flex:1;min-width:300px;max-width:680px;">
+        <h1 style="color:#ffffff;font-size:clamp(22px,3vw,34px);font-weight:900;line-height:1.2;margin:0 0 10px;letter-spacing:-0.02em;">
+          Master <span style="color:#ffffff;text-decoration:underline;text-decoration-color:rgba(255,255,255,0.45);text-underline-offset:6px;">BIM Coordination</span> & Advanced Workflows
+        </h1>
+
+        <p style="color:rgba(255,255,255,0.92);font-size:14.5px;margin:0 0 18px;">
+          Practical Revit, AutoCAD & Navisworks workflows.
+        </p>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button onclick="showSection('courses')" style="background:#ffffff;color:#1d4ed8;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,0.12);transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+            🎓 Browse All Courses
+          </button>
+          <button onclick="showSection('videos')" style="background:rgba(255,255,255,0.18);color:#ffffff;border:1.5px solid rgba(255,255,255,0.35);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+            ▶ Watch Video Demonstrations
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Portal Metrics Widget -->
+      <div style="background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:20px;backdrop-filter:blur(14px);padding:16px 20px;box-shadow:0 8px 25px rgba(0,0,0,0.06);min-width:270px;flex-shrink:0;">
+        <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:800;letter-spacing:0.08em;margin-bottom:10px;text-align:center;">
+          PORTAL METRICS
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
+            <div id="stat-courses-count" style="font-size:20px;font-weight:900;color:#ffffff;line-height:1;">6</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">BIM Courses</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
+            <div id="stat-videos-count" style="font-size:20px;font-weight:900;color:#ffffff;line-height:1;">0</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Videos</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
+            <div id="stat-files-count" style="font-size:20px;font-weight:900;color:#ffffff;line-height:1;">6</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Practice Files</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
+            <div id="stat-lessons-count" style="font-size:20px;font-weight:900;color:#ffffff;line-height:1;">15</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Total Lessons</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FEATURED COURSES SHOWCASE (LIGHT ENTERPRISE BACKGROUND) -->
+  <div style="background:#f4f7fc;padding:64px 24px;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px;">
+        <div>
+          <h2 style="font-size:28px;font-weight:900;margin:0 0 4px;color:#0f172a;letter-spacing:-0.02em;">
+            Featured BIM Courses
+          </h2>
+          <p style="color:#64748b;font-size:14px;margin:0;">
+            Core BIM training modules
+          </p>
+        </div>
+        <button onclick="showSection('courses')" style="background:#ffffff;border:1px solid #cbd5e1;color:#1d4ed8;padding:10px 22px;border-radius:12px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.04);transition:all 0.2s;" onmouseover="this.style.borderColor='#2563eb';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.15)'" onmouseout="this.style.borderColor='#cbd5e1';this.style.boxShadow='0 2px 6px rgba(0,0,0,0.04)'">
+          View All Courses →
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;" id="home-featured-courses">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
+     2. ALL COURSES CATALOG
+───────────────────────────────────────── -->
+<section id="section-courses" style="display:none;background:#f4f7fc;min-height:85vh;">
+  <!-- Blue Page Banner -->
+  <div class="page-header-bg">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div style="position:relative;z-index:10;max-width:1240px;width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 style="color:#ffffff;font-size:26px;font-weight:900;margin:0 0 6px;letter-spacing:-0.02em;">
+          Course Catalog
+        </h1>
+        <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0;">
+          All available BIM courses
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1240px;margin:0 auto;padding:36px 24px 60px;">
+
+    <!-- Category Filters -->
+    <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
+      <button onclick="filterCoursesCatalog('all')"          id="cfilter-all"          style="background:#2563eb;color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">All Courses</button>
+      <button onclick="filterCoursesCatalog('coordination')" id="cfilter-coordination" style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">BIM Coordination</button>
+      <button onclick="filterCoursesCatalog('revit')"        id="cfilter-revit"        style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Revit</button>
+      <button onclick="filterCoursesCatalog('autocad')"      id="cfilter-autocad"      style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">AutoCAD</button>
+      <button onclick="filterCoursesCatalog('navisworks')"   id="cfilter-navisworks"   style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Navisworks</button>
+    </div>
+
+    <div id="catalog-courses-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+      <!-- Populated via JS -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
+     3. VIDEO LIBRARY & YOUTUBE SIMULATIONS
+───────────────────────────────────────── -->
+<section id="section-videos" style="display:none;background:#f4f7fc;min-height:85vh;">
+  <!-- Blue Page Banner -->
+  <div class="page-header-bg">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div style="position:relative;z-index:10;max-width:1240px;width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 style="color:#ffffff;font-size:26px;font-weight:900;margin:0 0 6px;letter-spacing:-0.02em;">
+          Video Library
+        </h1>
+        <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0;">
+          Modeling & simulation walkthroughs
+        </p>
+      </div>
+      <div style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:7px 16px;border-radius:10px;font-size:12.5px;color:#ffffff;font-weight:700;backdrop-filter:blur(8px);">
+        🔒 Managed by Admin
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1240px;margin:0 auto;padding:36px 24px 60px;">
+
+    <!-- Video Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #e2e8f0;margin-bottom:32px;overflow-x:auto;">
+      <button class="vtab-btn active" onclick="switchVideoCategory('all_sims',this)"    style="background:none;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:700;color:#2563eb;border-bottom:3px solid #2563eb;margin-bottom:-2px;white-space:nowrap;">📺 All Videos</button>
+      <button class="vtab-btn"        onclick="switchVideoCategory('revit',this)"       style="background:none;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#64748b;white-space:nowrap;">Revit Structure</button>
+      <button class="vtab-btn"        onclick="switchVideoCategory('autocad',this)"     style="background:none;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#64748b;white-space:nowrap;">AutoCAD Drafting</button>
+      <button class="vtab-btn"        onclick="switchVideoCategory('coordination',this)" style="background:none;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#64748b;white-space:nowrap;">BIM Coordination</button>
+      <button class="vtab-btn"        onclick="switchVideoCategory('navisworks',this)"   style="background:none;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#64748b;white-space:nowrap;">Navisworks</button>
+    </div>
+
+    <div id="video-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+      <!-- Populated via JS -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
+     4. PRACTICE FILES DOWNLOAD CENTER
+───────────────────────────────────────── -->
+<section id="section-files" style="display:none;background:#f4f7fc;min-height:85vh;">
+  <!-- Blue Page Banner -->
+  <div class="page-header-bg">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div style="position:relative;z-index:10;max-width:1240px;width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 style="color:#ffffff;font-size:26px;font-weight:900;margin:0 0 6px;letter-spacing:-0.02em;">
+          Practice Files & Datasets
+        </h1>
+        <p style="color:rgba(255,255,255,0.9);font-size:14px;margin:0;">
+          Downloadable models, CAD templates, and clash batches
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1240px;margin:0 auto;padding:36px 24px 60px;">
+
+    <!-- Filter Buttons -->
+    <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;">
+      <button onclick="filterPracticeFiles('all')" id="ffilter-all" style="background:#2563eb;color:white;border:none;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">All Files</button>
+      <button onclick="filterPracticeFiles('rvt')" id="ffilter-rvt" style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Revit (.RVT)</button>
+      <button onclick="filterPracticeFiles('dwg')" id="ffilter-dwg" style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">AutoCAD (.DWG)</button>
+      <button onclick="filterPracticeFiles('nwd')" id="ffilter-nwd" style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Navisworks (.NWD)</button>
+      <button onclick="filterPracticeFiles('pdf')" id="ffilter-pdf" style="background:white;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Standards (.PDF)</button>
+    </div>
+
+    <!-- Practice Files Grid -->
+    <div id="practice-files-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+      <!-- Populated dynamically via JS -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
+     5. COURSE CLASSROOM & PLAYLIST PLAYER
+───────────────────────────────────────── -->
+<section id="section-classroom" style="display:none;background:#f4f7fc;min-height:85vh;">
+  <!-- Blue Page Banner -->
+  <div class="page-header-bg">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div style="position:relative;z-index:10;max-width:1320px;width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <button onclick="showSection('courses')" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#ffffff;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(8px);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+          ← Catalog
+        </button>
+        <div>
+          <h1 id="classroom-course-title" style="color:#ffffff;font-size:24px;font-weight:900;margin:0 0 4px;letter-spacing:-0.02em;">Course Title</h1>
+          <span id="classroom-course-cat" class="badge" style="background:rgba(255,255,255,0.25);color:#ffffff;border:1px solid rgba(255,255,255,0.3);margin-top:2px;">REVIT</span>
+        </div>
+      </div>
+
+      <!-- Progress Meter -->
+      <div style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:10px 18px;border-radius:12px;min-width:240px;backdrop-filter:blur(8px);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;font-weight:700;color:#ffffff;">
+          <span>Course Progress</span>
+          <span id="classroom-progress-text" style="color:#ffffff;font-weight:800;">0%</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.25);height:7px;border-radius:99px;overflow:hidden;">
+          <div id="classroom-progress-bar" style="width:0%;height:100%;background:#ffffff;box-shadow:0 0 8px rgba(255,255,255,0.6);transition:width 0.3s ease;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:28px 24px 60px;">
+
+    <!-- Main Classroom Grid -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;" id="classroom-layout-grid">
+      <!-- Left: Player + Lesson Details -->
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:14px;margin-bottom:16px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid #f1f5f9;padding-top:14px;">
+          <div>
+            <h3 id="classroom-lesson-title" style="font-size:17px;font-weight:800;color:#0f172a;margin:0 0 4px;">Lesson 1</h3>
+            <span id="classroom-lesson-duration" style="font-size:12.5px;color:#64748b;font-weight:600;">⏱ 15:00</span>
+          </div>
+          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ecfdf5;color:#059669;border:1.5px solid #a7f3d0;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <span>✓</span> Mark as Completed
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Playlist Curriculum Sidebar -->
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+        <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+          <span>Curriculum Playlist</span>
+          <span id="classroom-playlist-count" style="font-size:12px;color:#64748b;font-weight:600;">4 Lessons</span>
+        </div>
+        <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:8px;max-height:540px;overflow-y:auto;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
+     6. 🔒 ADMIN CONTROL & UPLOAD PANEL
+───────────────────────────────────────── -->
+<section id="section-upload" style="display:none;background:#f4f7fc;min-height:85vh;">
+  <!-- Blue Page Banner -->
+  <div class="page-header-bg">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div style="position:relative;z-index:10;max-width:980px;width:100%;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="background:rgba(16,185,129,0.22);border:1px solid rgba(52,211,153,0.4);color:#a7f3d0;font-size:12px;font-weight:800;padding:4px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:6px;">
+            <span style="width:7px;height:7px;background:#34d399;border-radius:50%;box-shadow:0 0 6px #34d399;"></span>
+            Admin Mode Active
+          </span>
+          <span style="color:rgba(255,255,255,0.85);font-size:13px;">• Session Protected</span>
+        </div>
+        <h1 style="font-size:26px;font-weight:900;color:#ffffff;margin:0;letter-spacing:-0.02em;">
+          Content Management & Uploads
+        </h1>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="changeAdminPasswordPrompt()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#ffffff;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+          🔑 Change Password
+        </button>
+        <button onclick="lockAdminSession()" style="background:rgba(239,68,68,0.25);border:1px solid rgba(248,113,113,0.45);color:#fee2e2;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.35)'" onmouseout="this.style.background='rgba(239,68,68,0.25)'">
+          🔒 Lock Admin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:980px;margin:0 auto;padding:36px 24px 60px;">
+
+    <!-- Upload Tabs -->
+    <div style="display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;">
+      <button onclick="switchAdminUploadTab('video')"   id="atab-video"   style="background:#2563eb;color:white;border:none;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">🎬 Add Video / YouTube</button>
+      <button onclick="switchAdminUploadTab('course')"  id="atab-course"  style="background:white;border:1.5px solid #e2e8f0;color:#334155;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">📚 Create New Course</button>
+      <button onclick="switchAdminUploadTab('files')"   id="atab-files"   style="background:white;border:1.5px solid #e2e8f0;color:#334155;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">📁 Upload Practice Files</button>
+    </div>
+
+    <!-- TAB 1: ADD VIDEO / YOUTUBE SIMULATION -->
+    <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 8px;">Upload & Publish Training Video</h3>
+      <p style="color:#64748b;font-size:14px;margin:0 0 24px;">Publish Revit modeling walkthroughs, AutoCAD simulations, or BIM clash reports via YouTube Link or Direct Video File.</p>
+
+      <!-- Mode Selector -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;background:#f1f5f9;padding:6px;border-radius:12px;max-width:620px;flex-wrap:wrap;">
+        <button id="vmode-btn-file" onclick="setVideoUploadMode('file')" style="flex:1;background:#2563eb;color:white;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+          💻 Upload Video File (&lt;100MB)
+        </button>
+        <button id="vmode-btn-yt" onclick="setVideoUploadMode('yt')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+          📺 YouTube / Drive Link
+        </button>
+        <button id="vmode-btn-folder" onclick="setVideoUploadMode('folder')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+          📂 Direct Folder (videos/)
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+        <div style="grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Title *</label>
+          <input id="new-video-title" type="text" placeholder="e.g. Revit Concrete Slab & Rebar Detailing" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+        </div>
+
+        <!-- Mode 1: Direct File Upload Container (Default) -->
+        <div id="vinput-container-file" style="display:block;grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Select Video File (.mp4, .webm, .mov — max 100MB) *</label>
+          <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:2px dashed #cbd5e1;border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;background:#f8fafc;">
+            <div style="font-size:36px;margin-bottom:8px;">🎬</div>
+            <div id="vfile-selected-name" style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Click to choose video from your computer</div>
+            <div style="font-size:12px;color:#64748b;">MP4, WEBM, MOV (Files under 100MB)</div>
+            <input id="new-video-file-input" type="file" accept="video/*" style="display:none;" onchange="handleAdminVideoFilePick(this)" />
+          </div>
+          <div style="font-size:12px;color:#2563eb;margin-top:6px;font-weight:600;">⚡ Direct Local Storage: When you click Publish, this video is saved to your library so all learners can stream it immediately!</div>
+        </div>
+
+        <!-- Mode 2: YouTube / Google Drive URL Container -->
+        <div id="vinput-container-yt" style="display:none;grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">YouTube URL, Google Drive Share Link, or Video Link *</label>
+          <input id="new-video-url" type="text" placeholder="https://www.youtube.com/watch?v=... or Google Drive link" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+          <div style="font-size:12px;color:#64748b;margin-top:5px;">💡 Recommended for videos over 100MB (upload to YouTube as Unlisted or to Google Drive).</div>
+        </div>
+
+        <!-- Mode 3: Direct Folder Path Input -->
+        <div id="vinput-container-folder" style="display:none;grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Filename in <code style="color:#2563eb;background:#e0f2fe;padding:2px 6px;border-radius:4px;">videos/</code> folder *</label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-weight:700;color:#64748b;font-size:14px;background:#f1f5f9;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;">videos/</span>
+            <input id="new-video-folder-file" type="text" placeholder="my_lesson.mp4" style="flex:1;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+          </div>
+          <div style="font-size:12px;color:#64748b;margin-top:5px;">💡 Just copy your video file into the <strong>"videos"</strong> folder inside your project.</div>
+        </div>
+
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Category *</label>
+          <select id="new-video-cat" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <option value="revit">Revit Structure</option>
+            <option value="autocad">AutoCAD Drafting</option>
+            <option value="coordination">BIM Coordination</option>
+            <option value="navisworks">Navisworks</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration (e.g. 35:20)</label>
+          <input id="new-video-duration" type="text" placeholder="28:45" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Description & Key Topics</label>
+          <textarea id="new-video-desc" rows="3" placeholder="Explain what modeling techniques are covered in this demonstration..." style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:28px;">
+        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,0.4);transition:all 0.2s;">
+          🚀 Publish Video to Library
+        </button>
+      </div>
+
+      <!-- Live Uploaded Videos Table -->
+      <div style="border-top:1.5px solid #f1f5f9;padding-top:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">
+            📂 Manage Published Videos (<span id="admin-video-count">0</span>)
+          </h4>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button onclick="syncLocalVideosToCloud(true)" style="background:#0284c7;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(2,132,199,0.3);">
+              ☁️ Sync All to Cloud
+            </button>
+            <button onclick="downloadVideosJsonFile()" style="background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+              📥 Export videos.json
+            </button>
+          </div>
+        </div>
+        <div id="admin-video-manage-list" style="display:flex;flex-direction:column;gap:10px;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CREATE NEW COURSE -->
+    <div id="admin-panel-course" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 8px;">Create New BIM Training Course</h3>
+      <p style="color:#64748b;font-size:14px;margin:0 0 24px;">Publish a complete new training course with curriculum details and lessons count.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+        <div style="grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Course Title *</label>
+          <input id="new-course-title" type="text" placeholder="e.g. Advanced Dynamo Scripting for Revit" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Category *</label>
+          <select id="new-course-cat" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <option value="coordination">BIM Coordination</option>
+            <option value="revit">Revit</option>
+            <option value="autocad">AutoCAD</option>
+            <option value="navisworks">Navisworks</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Difficulty Level</label>
+          <select id="new-course-level" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <option value="Advanced">Advanced</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Beginner">Beginner</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Total Lessons & Duration</label>
+          <input id="new-course-lessons" type="text" placeholder="24 lessons • 16 hours" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Short Description</label>
+          <textarea id="new-course-desc" rows="3" placeholder="Summary of what the student will master..." style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <button onclick="adminPublishCourse()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,0.4);">
+          ✨ Publish Course to Catalog
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 3: PRACTICE FILES UPLOAD -->
+    <div id="admin-panel-files" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 8px;">Upload Practice Assets (RVT, DWG, NWD)</h3>
+      <p style="color:#64748b;font-size:14px;margin:0 0 24px;">Upload practice modeling files, drawing sets, and ISO standards documents.</p>
+
+      <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" style="border:2px dashed #cbd5e1;border-radius:16px;padding:48px 24px;text-align:center;margin-bottom:24px;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#cbd5e1'">
+        <div style="font-size:48px;margin-bottom:12px;">📁</div>
+        <div style="font-size:16px;font-weight:800;color:#0f172a;margin-bottom:4px;">Drag and drop Revit & AutoCAD files</div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:14px;">Supports .RVT, .DWG, .NWD, .IFC, .PDF, .ZIP up to 1GB</div>
+        <button style="background:#2563eb;color:white;border:none;padding:10px 24px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Select Local Files</button>
+        <input id="admin-file-picker" type="file" multiple style="display:none;" onchange="handleAdminPracticeFilesUpload(this)" />
+      </div>
+
+      <button onclick="document.getElementById('admin-file-picker').click()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;float:right;">
+        💾 Attach & Publish Practice Files
+      </button>
+      <div style="clear:both;"></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- End app-root -->
+
+
+<!-- ══════════════════════════════════════════
+     POPUP MODALS (LOGIN, REGISTER, PURCHASE, VIDEO)
+══════════════════════════════════════════ -->
+<div id="modal-container" style="display:none;" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  
+
+
+  <!-- MODAL: VIDEO PLAYER -->
+  <div id="modal-video" class="modal-box" style="display:none;max-width:820px;padding:24px;">
+    <button onclick="closeModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;z-index:10;">✕</button>
+    <h3 id="vmodal-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 16px;padding-right:32px;">Demonstration Video</h3>
+    <div class="yt-frame" id="vmodal-player"></div>
+    <p id="vmodal-desc" style="color:#64748b;font-size:14px;line-height:1.6;margin:16px 0 0;"></p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     FOOTER (WHITE ENTERPRISE THEME)
+══════════════════════════════════════════ -->
+<footer style="background:#ffffff;border-top:1px solid #eef2f6;color:#64748b;padding:60px 24px 28px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;flex-wrap:wrap;">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="width:36px;height:36px;background:linear-gradient(135deg,#1d4ed8,#0284c7);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(29,78,216,0.25);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          </div>
+          <span style="color:#0f172a;font-weight:900;font-size:16px;">BSD BIM Training Center</span>
+        </div>
+        <p style="font-size:13px;color:#64748b;margin:0;">
+          BIM Training & Coordination Platform
+        </p>
+      </div>
+
+      <div>
+        <div style="color:#0f172a;font-weight:800;font-size:14px;margin-bottom:16px;">Courses</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;">
+          <a href="javascript:void(0)" onclick="showSection('courses')" style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">BIM Coordination</a>
+          <a href="javascript:void(0)" onclick="showSection('courses')" style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">Revit Structure</a>
+          <a href="javascript:void(0)" onclick="showSection('courses')" style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">AutoCAD 2D/3D</a>
+          <a href="javascript:void(0)" onclick="showSection('courses')" style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">Navisworks Clash</a>
+        </div>
+      </div>
+
+      <div>
+        <div style="color:#0f172a;font-weight:800;font-size:14px;margin-bottom:16px;">Quick Access</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;">
+          <a href="javascript:void(0)" onclick="showSection('courses')" style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">Course Catalog</a>
+          <a href="javascript:void(0)" onclick="showSection('videos')"  style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">Video Library</a>
+          <a href="javascript:void(0)" onclick="showSection('files')"   style="color:#64748b;text-decoration:none;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">Practice Files</a>
+          <a href="javascript:void(0)" onclick="openAdminUpload()"     style="color:#2563eb;text-decoration:none;font-weight:700;">🔒 Admin Upload Lock</a>
+        </div>
+      </div>
+
+      <div>
+        <div style="color:#0f172a;font-weight:800;font-size:14px;margin-bottom:16px;">Core Modules</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#64748b;">
+          <span>Revit Structure & Detailing</span>
+          <span>BIM Model Coordination</span>
+          <span>Navisworks Clash Detection</span>
+          <span>Practice Datasets & Templates</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid #eef2f6;padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:#94a3b8;">
+      <div>© 2026 BSD BIM Training Center. All rights reserved.</div>
+      <div style="display:flex;gap:20px;">
+        <span style="color:#64748b;">BIM Coordination & Advanced Workflows</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════
+     CORE APPLICATION JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+/* ─────────────────────────────────────────
+   1. ADMIN PASSWORD AUTHENTICATION ENGINE
+───────────────────────────────────────── */
+const STORAGE_KEY_PASS    = 'BSD_ADMIN_PASS';
+const STORAGE_KEY_AUTH    = 'BSD_ADMIN_IS_AUTH';
+const STORAGE_KEY_COURSES = 'BSD_CUSTOM_COURSES';
+const STORAGE_KEY_VIDEOS  = 'BSD_CUSTOM_VIDEOS';
+
+/* ─────────────────────────────────────────
+   LOCAL VIDEO & DATA STORE
+   Reads videos from local videos.json and
+   persists admin changes in localStorage / server.
+───────────────────────────────────────── */
+
+/* Load shared videos from local videos.json and local storage */
+async function loadSharedVideos() {
+  let list = [];
+
+  // 1. Fetch local videos.json directly
+  try {
+    const res = await fetch(`videos.json?_=${Date.now()}`, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        list = data;
+      }
+    }
+  } catch (e) {
+    console.warn('Relative videos.json fetch error:', e);
+  }
+
+  // 2. Merge with localStorage (videos added via admin on this browser)
+  const localList = JSON.parse(localStorage.getItem(STORAGE_KEY_VIDEOS) || '[]');
+  if (localList.length > 0) {
+    for (const lv of localList) {
+      if (!list.some(rv => rv.id === lv.id || (rv.title === lv.title && rv.ytId === lv.ytId))) {
+        list.unshift(lv);
+      }
+    }
+  }
+
+  return list;
+}
+
+/* Save videos locally and persist to server if running */
+async function saveSharedVideos(videosArray) {
+  localStorage.setItem(STORAGE_KEY_VIDEOS, JSON.stringify(videosArray));
+
+  try {
+    const res = await fetch('/api/save-videos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(videosArray)
+    });
+    if (res.ok) return true;
+  } catch (_) {}
+
+  return true;
+}
+
+let _sharedVideosCache = null;
+
+async function getSharedVideos() {
+  if (_sharedVideosCache === null) {
+    _sharedVideosCache = await loadSharedVideos();
+  }
+  return _sharedVideosCache;
+}
+
+function invalidateSharedVideosCache() {
+  _sharedVideosCache = null;
+}
+
+async function syncLocalVideosToCloud(isManual = false) {
+  const localList = JSON.parse(localStorage.getItem(STORAGE_KEY_VIDEOS) || '[]');
+  const list = await loadSharedVideos();
+  let merged = [...list];
+  let needsSync = false;
+
+  for (const lv of localList) {
+    if (!merged.some(rv => rv.id === lv.id || (rv.title === lv.title && rv.ytId === lv.ytId))) {
+      merged.unshift(lv);
+      needsSync = true;
+    }
+  }
+
+  if (needsSync || isManual) {
+    if (isManual) showToast('⏳ Syncing local video database...', '#2563eb');
+    await saveSharedVideos(merged);
+    invalidateSharedVideosCache();
+    await renderAdminVideosList();
+    renderVideosCategory('all_sims');
+    showToast('💾 Video catalog updated successfully!', '#22c55e');
+  }
+}
+
+async function downloadVideosJsonFile() {
+  const vids = await getAllVideos();
+  const blob = new Blob([JSON.stringify(vids, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'videos.json';
+  a.click();
+  showToast('📥 Downloaded videos.json! Save into project folder.', '#22c55e');
+}
+
+function getAdminPassword() {
+  return localStorage.getItem(STORAGE_KEY_PASS) || 'admin123';
+}
+
+function isAdminAuthenticated() {
+  return sessionStorage.getItem(STORAGE_KEY_AUTH) === 'true';
+}
+
+function openAdminUpload() {
+  if (isAdminAuthenticated()) {
+    showSection('upload');
+  } else {
+    const lockScreen = document.getElementById('admin-lock-screen');
+    lockScreen.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      const input = document.getElementById('admin-pass-input');
+      input.value = '';
+      input.focus();
+    }, 150);
+  }
+}
+
+function checkAdminPassword() {
+  const input = document.getElementById('admin-pass-input');
+  const entered = input.value.trim();
+  const validPass = getAdminPassword();
+
+  if (entered === validPass) {
+    sessionStorage.setItem(STORAGE_KEY_AUTH, 'true');
+    document.getElementById('admin-lock-screen').style.display = 'none';
+    document.body.style.overflow = '';
+    input.value = '';
+    showSection('upload');
+    showToast('🔓 Admin access authenticated successfully!', '#22c55e');
+    // Automatic cloud sync for any previously stored videos
+    syncLocalVideosToCloud();
+  } else {
+    input.classList.add('error');
+    document.getElementById('pass-error-msg').style.display = 'block';
+    setTimeout(() => input.classList.remove('error'), 450);
+    input.select();
+  }
+}
+
+function closeAdminLock() {
+  document.getElementById('admin-lock-screen').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('pass-error-msg').style.display = 'none';
+}
+
+function lockAdminSession() {
+  sessionStorage.removeItem(STORAGE_KEY_AUTH);
+  showSection('home');
+  showToast('🔒 Admin session locked safely', '#f59e0b');
+}
+
+function changeAdminPasswordPrompt() {
+  const current = prompt('Enter CURRENT Admin Password:');
+  if (current !== getAdminPassword()) {
+    alert('❌ Incorrect current password!');
+    return;
+  }
+  const newPass = prompt('Enter NEW Admin Password (min 6 chars):');
+  if (newPass && newPass.length >= 6) {
+    localStorage.setItem(STORAGE_KEY_PASS, newPass);
+    showToast('🔑 Admin password updated successfully!', '#22c55e');
+  } else {
+    alert('Password must be at least 6 characters long.');
+  }
+}
+
+
+/* ─────────────────────────────────────────
+   2. DATA STORE: COURSES, PLAYLISTS & FILES
+───────────────────────────────────────── */
+const STORAGE_KEY_FILES    = 'BSD_PRACTICE_FILES';
+const STORAGE_KEY_PROGRESS = 'BSD_STUDENT_PROGRESS';
+
+const DEFAULT_COURSES = [
+  {
+    id: 'revit-struct',
+    cat: 'revit',
+    title: 'Revit Structure Modeling Mastery',
+    icon: '🔩',
+    level: 'Intermediate',
+    duration: '22 hrs',
+    syllabus: [
+      { id: 'rs_l1', title: '1. Foundation Grids & Concrete Elements', duration: '14:20', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'rs_l2', title: '2. Cross Rebar Modeling & Detailing', duration: '18:35', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' },
+      { id: 'rs_l3', title: '3. Structural Framing & Column Layout', duration: '19:40', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'rs_l4', title: '4. Rebar Schedules & Drawing Sheets', duration: '16:15', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+    ]
+  },
+  {
+    id: 'bim-coord',
+    cat: 'coordination',
+    title: 'BIM Coordination & Advanced Workflows',
+    icon: '🏗️',
+    level: 'Advanced',
+    duration: '28 hrs',
+    syllabus: [
+      { id: 'bc_l1', title: '1. Multi-discipline Model Federation', duration: '18:10', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'bc_l2', title: '2. Clash Detection Matrix & Tolerances', duration: '22:45', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' },
+      { id: 'bc_l3', title: '3. BCF Issue Tracking & Coordination Meetings', duration: '17:30', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' }
+    ]
+  },
+  {
+    id: 'navisworks',
+    cat: 'navisworks',
+    title: 'Navisworks Clash Detection & Review',
+    icon: '🔍',
+    level: 'Intermediate',
+    duration: '14 hrs',
+    syllabus: [
+      { id: 'nw_l1', title: '1. Appending NWD & NWC Models', duration: '15:20', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'nw_l2', title: '2. Clash Batches & Grouping Rules', duration: '20:15', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' },
+      { id: 'nw_l3', title: '3. Exporting Clash Reports & Viewpoints', duration: '14:40', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' }
+    ]
+  },
+  {
+    id: 'autocad-2d',
+    cat: 'autocad',
+    title: 'AutoCAD 2D/3D for BIM Professionals',
+    icon: '✏️',
+    level: 'Beginner',
+    duration: '18 hrs',
+    syllabus: [
+      { id: 'ac_l1', title: '1. Precision Drafting & Layer Conventions', duration: '17:00', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'ac_l2', title: '2. DWG Underlays & CAD-to-Revit Import', duration: '19:30', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+    ]
+  },
+  {
+    id: 'revit-mep',
+    cat: 'revit',
+    title: 'Revit MEP Systems Coordination',
+    icon: '⚡',
+    level: 'Intermediate',
+    duration: '20 hrs',
+    syllabus: [
+      { id: 'rm_l1', title: '1. HVAC Ductwork Routing & Clearance', duration: '16:45', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'rm_l2', title: '2. Pipe Systems & Electrical Containment', duration: '21:10', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+    ]
+  },
+  {
+    id: 'bim-iso',
+    cat: 'coordination',
+    title: 'BIM Management & ISO 19650 Execution',
+    icon: '📋',
+    level: 'Advanced',
+    duration: '16 hrs',
+    syllabus: [
+      { id: 'bi_l1', title: '1. BEP BIM Execution Planning', duration: '18:20', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+      { id: 'bi_l2', title: '2. CDE Information Delivery Protocols', duration: '19:40', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+    ]
+  }
+];
+
+const DEFAULT_PRACTICE_FILES = [
+  { id: 'pf_1', cat: 'rvt', name: 'Hospital_Structural_Rebar_Model.rvt', size: '42.5 MB', type: 'RVT', icon: '🏗️', date: '2026-10-12' },
+  { id: 'pf_2', cat: 'dwg', name: 'Foundation_Piles_Coordination_Grid.dwg', size: '14.2 MB', type: 'DWG', icon: '📐', date: '2026-10-10' },
+  { id: 'pf_3', cat: 'nwd', name: 'Multi_Discipline_Federated_Clash.nwd', size: '68.0 MB', type: 'NWD', icon: '🔍', date: '2026-10-08' },
+  { id: 'pf_4', cat: 'pdf', name: 'ISO_19650_BIM_Execution_Plan_Template.pdf', size: '3.8 MB', type: 'PDF', icon: '📄', date: '2026-10-05' },
+  { id: 'pf_5', cat: 'rvt', name: 'Revit_Structural_Parametric_Families.rfa', size: '18.1 MB', type: 'RFA', icon: '🔩', date: '2026-10-01' },
+  { id: 'pf_6', cat: 'dwg', name: 'Standard_Architectural_Floor_Layout.dwg', size: '9.6 MB', type: 'DWG', icon: '✏️', date: '2026-09-28' }
+];
+
+function getAllPracticeFiles() {
+  const custom = JSON.parse(localStorage.getItem(STORAGE_KEY_FILES) || '[]');
+  return [...DEFAULT_PRACTICE_FILES, ...custom];
+}
+
+const DEFAULT_VIDEOS = [];
+
+function getAllCourses() {
+  const custom = JSON.parse(localStorage.getItem(STORAGE_KEY_COURSES) || '[]');
+  return [...DEFAULT_COURSES, ...custom];
+}
+
+/* NOTE: getAllVideos is now async — use await or .then() everywhere */
+async function getAllVideos() {
+  return await getSharedVideos();
+}
+
+function extractYoutubeId(url) {
+  if (!url) return 'dQw4w9WgXcQ';
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const match = url.match(p);
+    if (match) return match[1];
+  }
+  return 'dQw4w9WgXcQ';
+}
+
+/* ─────────────────────────────────────────
+   3. NAVIGATION & VIEW SWITCHER
+───────────────────────────────────────── */
+function showSection(name) {
+  ['home','courses','videos','files','classroom','upload'].forEach(s => {
+    const el = document.getElementById('section-' + s);
+    if (el) el.style.display = (s === name) ? 'block' : 'none';
+
+    const btn = document.getElementById('nav-' + s);
+    if (btn) {
+      if (s === name) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    }
+  });
+
+  if (name === 'home') renderHomeFeatured();
+  if (name === 'courses') renderCoursesCatalog('all');
+  if (name === 'videos') {
+    const firstTab = document.querySelector('.vtab-btn');
+    if (firstTab) switchVideoCategory('all_sims', firstTab);
+    else renderVideosCategory('all_sims');
+  }
+  if (name === 'files') renderPracticeFiles('all');
+  if (name === 'upload') renderAdminVideosList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+/* ─────────────────────────────────────────
+   4. RENDERERS: COURSES & VIDEOS (MATCHING REFERENCE CARDS)
+───────────────────────────────────────── */
+function getCourseTheme(cat) {
+  if (cat === 'coordination') {
+    return { glowClass: 'glow-blue', pillBg: '#eff6ff', pillColor: '#1d4ed8' };
+  } else if (cat === 'revit') {
+    return { glowClass: 'glow-green', pillBg: '#ecfdf5', pillColor: '#059669' };
+  } else if (cat === 'autocad') {
+    return { glowClass: 'glow-purple', pillBg: '#f5f3ff', pillColor: '#6d28d9' };
+  } else {
+    return { glowClass: 'glow-amber', pillBg: '#fffbeb', pillColor: '#b45309' };
+  }
+}
+
+function renderHomeFeatured() {
+  const container = document.getElementById('home-featured-courses');
+  if (!container) return;
+  const courses = getAllCourses().slice(0, 3);
+  container.innerHTML = courses.map(c => {
+    const theme = getCourseTheme(c.cat);
+    const lessonCount = (c.syllabus || []).length;
+    return `
+      <div class="dashboard-card" onclick="openCourseDetails('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:210px;">
+        <div>
+          <!-- Top Row: Squircle icon + category badge -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="icon-squircle ${theme.glowClass}">
+              <span>${c.icon}</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span class="badge" style="background:${theme.pillBg};color:${theme.pillColor};">${c.cat.toUpperCase()}</span>
+            </div>
+          </div>
+
+          <!-- Duration & Lessons Count -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <span style="font-size:12.5px;color:#64748b;font-weight:700;">⏱ ${c.duration}</span>
+            <span style="font-size:12px;color:#64748b;font-weight:600;">${lessonCount ? lessonCount + ' Lessons' : 'Curriculum'}</span>
+          </div>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">${c.title}</h3>
+        </div>
+
+        <!-- Bottom Link -->
+        <div style="padding-top:14px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:#1d4ed8;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+            Start Learning →
+          </span>
+          <span style="background:#f1f5f9;color:#334155;border-radius:8px;padding:4px 10px;font-size:11.5px;font-weight:700;">
+            ${c.level}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCoursesCatalog(filterCat) {
+  const container = document.getElementById('catalog-courses-grid');
+  if (!container) return;
+  let list = getAllCourses();
+  if (filterCat !== 'all') list = list.filter(c => c.cat === filterCat);
+
+  container.innerHTML = list.map(c => {
+    const theme = getCourseTheme(c.cat);
+    const lessonCount = (c.syllabus || []).length;
+    return `
+      <div class="dashboard-card" onclick="openCourseDetails('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:210px;">
+        <div>
+          <!-- Top Row: Squircle icon + category badge -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="icon-squircle ${theme.glowClass}">
+              <span>${c.icon}</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span class="badge" style="background:${theme.pillBg};color:${theme.pillColor};">${c.cat.toUpperCase()}</span>
+            </div>
+          </div>
+
+          <!-- Duration & Lessons Count -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <span style="font-size:12.5px;color:#64748b;font-weight:700;">⏱ ${c.duration}</span>
+            <span style="font-size:12px;color:#64748b;font-weight:600;">${lessonCount ? lessonCount + ' Lessons' : 'Curriculum'}</span>
+          </div>
+          <h3 style="font-size:15.5px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">${c.title}</h3>
+        </div>
+
+        <!-- Bottom Link -->
+        <div style="padding-top:12px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:#1d4ed8;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+            Start Learning →
+          </span>
+          <span style="background:#f1f5f9;color:#334155;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;">
+            ${c.level}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterCoursesCatalog(cat) {
+  ['all','coordination','revit','autocad','navisworks'].forEach(b => {
+    const btn = document.getElementById('cfilter-' + b);
+    if (btn) {
+      if (b === cat) {
+        btn.style.background = '#2563eb';
+        btn.style.color = '#ffffff';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = '#ffffff';
+        btn.style.color = '#334155';
+        btn.style.border = '1.5px solid #e2e8f0';
+      }
+    }
+  });
+  renderCoursesCatalog(cat);
+}
+
+let currentVideoUploadMode = 'file';
+let selectedAdminVideoFile = null;
+
+/* ── INDEXEDDB PERSISTENT VIDEO ENGINE ── */
+const IDB_NAME = 'BSD_BIM_LOCAL_STORE';
+const IDB_VERSION = 1;
+const IDB_STORE = 'videos_binary';
+
+function getIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) {
+        db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function saveVideoFileToIDB(id, file) {
+  try {
+    const db = await getIndexedDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      const store = tx.objectStore(IDB_STORE);
+      store.put({ id: id, file: file, name: file.name, type: file.type, size: file.size, savedAt: Date.now() });
+      tx.oncomplete = () => resolve();
+      tx.onerror = (e) => reject(e.target.error);
+    });
+  } catch(err) {
+    console.error('IDB save error:', err);
+  }
+}
+
+async function getVideoFileFromIDB(id) {
+  try {
+    const db = await getIndexedDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.get(id);
+      req.onsuccess = () => resolve(req.result ? req.result.file : null);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  } catch(err) {
+    console.error('IDB get error:', err);
+    return null;
+  }
+}
+
+function setVideoUploadMode(mode) {
+  currentVideoUploadMode = mode;
+  const btnFolder = document.getElementById('vmode-btn-folder');
+  const btnFile = document.getElementById('vmode-btn-file');
+  const btnYt = document.getElementById('vmode-btn-yt');
+
+  const conFolder = document.getElementById('vinput-container-folder');
+  const conFile = document.getElementById('vinput-container-file');
+  const conYt = document.getElementById('vinput-container-yt');
+
+  [btnFolder, btnFile, btnYt].forEach(b => {
+    if (b) { b.style.background = 'transparent'; b.style.color = '#475569'; }
+  });
+  [conFolder, conFile, conYt].forEach(c => {
+    if (c) c.style.display = 'none';
+  });
+
+  if (mode === 'folder') {
+    if (btnFolder) { btnFolder.style.background = '#2563eb'; btnFolder.style.color = '#ffffff'; }
+    if (conFolder) conFolder.style.display = 'block';
+  } else if (mode === 'file') {
+    if (btnFile) { btnFile.style.background = '#2563eb'; btnFile.style.color = '#ffffff'; }
+    if (conFile) conFile.style.display = 'block';
+  } else if (mode === 'yt') {
+    if (btnYt) { btnYt.style.background = '#2563eb'; btnYt.style.color = '#ffffff'; }
+    if (conYt) conYt.style.display = 'block';
+  }
+}
+
+function handleAdminVideoFilePick(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    selectedAdminVideoFile = file;
+    document.getElementById('vfile-selected-name').textContent = '✅ Selected: ' + file.name + ' (' + (file.size / (1024*1024)).toFixed(1) + ' MB)';
+    
+    // Auto fill title and duration
+    const titleInput = document.getElementById('new-video-title');
+    if (!titleInput.value) {
+      titleInput.value = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+    }
+
+    // Try reading duration
+    const tempVideo = document.createElement('video');
+    tempVideo.preload = 'metadata';
+    tempVideo.src = URL.createObjectURL(file);
+    tempVideo.onloadedmetadata = () => {
+      const dur = Math.round(tempVideo.duration);
+      const mins = Math.floor(dur / 60);
+      const secs = (dur % 60).toString().padStart(2, '0');
+      document.getElementById('new-video-duration').value = `${mins}:${secs}`;
+    };
+
+    showToast('🎬 Direct Video File attached! Click Publish to save.', '#2563eb');
+  }
+}
+
+async function renderVideosCategory(category) {
+  const container = document.getElementById('video-cards-grid');
+  if (!container) return;
+
+  // Show loading state
+  container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 24px;">
+    <div style="font-size:36px;margin-bottom:10px;">⏳</div>
+    <div style="font-size:15px;color:#64748b;font-weight:700;">Loading videos...</div>
+  </div>`;
+
+  let videos = await getAllVideos();
+  if (category !== 'all_sims') {
+    videos = videos.filter(v => v.cat === category);
+  }
+
+  if (videos.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:60px 24px;background:#ffffff;border-radius:20px;border:1.5px dashed #cbd5e1;">
+        <div style="font-size:48px;margin-bottom:12px;">🎬</div>
+        <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">No Videos in this Category Yet</h3>
+        <p style="color:#64748b;font-size:14px;max-width:440px;margin:0 auto 20px;">Use the Admin Upload panel to publish your customized BIM lessons, walkthroughs, or YouTube recordings.</p>
+        <button onclick="openAdminUpload()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
+          🔒 Upload Video via Admin
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = videos.map(v => {
+    const isLocal = v.type === 'local' || (v.ytId && (v.ytId.startsWith('blob:') || v.ytId.startsWith('local_') || v.ytId.includes('.mp4') || v.ytId.includes('videos/')));
+    const thumbHtml = isLocal
+      ? `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:44px;">🎬</span><span style="font-size:11px;color:#ffffff;font-weight:900;letter-spacing:0.1em;margin-top:6px;">DIRECT HD VIDEO</span></div>`
+      : `<img src="https://img.youtube.com/vi/${v.ytId}/mqdefault.jpg" alt="${v.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />`;
+
+    return `
+      <div class="dashboard-card" onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || (isLocal ? 'local' : 'yt')}','${v.id}')" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:300px;">
+        <div>
+          <div class="video-thumb" style="height:165px;background:#0f172a;margin-bottom:16px;">
+            ${thumbHtml}
+            <div class="play-btn">
+              <div class="play-icon" style="width:48px;height:48px;background:rgba(255,255,255,0.96);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.25);">
+                <span style="font-size:18px;margin-left:3px;color:#2563eb;">▶</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span class="badge" style="background:${isLocal ? '#fef3c7' : '#eff6ff'};color:${isLocal ? '#b45309' : '#1d4ed8'};">${isLocal ? '⚡ DIRECT FILE' : v.cat.toUpperCase()}</span>
+            <span style="font-size:12px;color:#64748b;font-weight:700;">⏱ ${v.duration || 'HD'}</span>
+          </div>
+          <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0 0 14px;line-height:1.35;">${v.title}</h4>
+        </div>
+        <div style="padding-top:14px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:#1d4ed8;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+            Watch Video →
+          </span>
+          <span style="font-size:11.5px;color:#64748b;font-weight:600;">
+            ${v.cat ? v.cat.toUpperCase() : 'BIM'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function switchVideoCategory(cat, btn) {
+  document.querySelectorAll('.vtab-btn').forEach(b => {
+    b.style.color = '#64748b';
+    b.style.borderBottom = 'none';
+    b.style.fontWeight = '600';
+  });
+  btn.style.color = '#2563eb';
+  btn.style.borderBottom = '3px solid #2563eb';
+  btn.style.fontWeight = '700';
+  renderVideosCategory(cat);
+}
+
+function switchAdminUploadTab(tab) {
+  ['video','course','files'].forEach(t => {
+    const p = document.getElementById('admin-panel-' + t);
+    if (p) p.style.display = (t === tab) ? 'block' : 'none';
+
+    const btn = document.getElementById('atab-' + t);
+    if (btn) {
+      if (t === tab) {
+        btn.style.background = '#2563eb';
+        btn.style.color = '#ffffff';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = '#ffffff';
+        btn.style.color = '#334155';
+        btn.style.border = '1.5px solid #e2e8f0';
+      }
+    }
+  });
+}
+
+async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, videoId) {
+  const title = decodeURIComponent(encodedTitle || '');
+  const desc = decodeURIComponent(encodedDesc || '');
+  document.getElementById('vmodal-title').textContent = title;
+  document.getElementById('vmodal-desc').textContent = desc;
+
+  const playerContainer = document.getElementById('vmodal-player');
+  playerContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;background:#000;">Loading Video...</div>';
+  openModal('video');
+
+  const isLocal = type === 'local' || videoRef.startsWith('blob:') || videoRef.startsWith('local_') || videoRef.includes('.mp4') || videoRef.includes('videos/') || (videoRef.startsWith('http') && !videoRef.includes('youtube') && !videoRef.includes('youtu.be') && !videoRef.includes('drive.google.com'));
+
+  if (type === 'gdrive' || videoRef.includes('drive.google.com')) {
+    let driveEmbed = videoRef.replace(/\/view.*$/, '/preview').replace(/\/edit.*$/, '/preview');
+    if (!driveEmbed.includes('/preview')) driveEmbed += '/preview';
+    playerContainer.innerHTML = `
+      <iframe src="${driveEmbed}" allow="autoplay" allowfullscreen style="width:100%;height:100%;border:none;border-radius:12px;"></iframe>
+    `;
+    return;
+  }
+
+  if (type === 'yt' || (!isLocal && videoRef.length === 11)) {
+    playerContainer.innerHTML = `
+      <iframe src="https://www.youtube.com/embed/${videoRef}?autoplay=1" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen style="width:100%;height:100%;border:none;border-radius:12px;"></iframe>
+    `;
+  } else {
+    let playUrl = videoRef;
+    if (videoId && (videoRef.startsWith('local_') || videoRef.startsWith('blob:'))) {
+      const storedFile = await getVideoFileFromIDB(videoId);
+      if (storedFile) {
+        playUrl = URL.createObjectURL(storedFile);
+      } else {
+        playerContainer.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#94a3b8;background:#030712;padding:24px;text-align:center;">
+            <div style="font-size:44px;margin-bottom:12px;">📁</div>
+            <div style="font-size:16px;font-weight:800;color:#f8fafc;margin-bottom:6px;">Direct Local Upload</div>
+            <p style="font-size:13px;color:#94a3b8;max-width:440px;margin:0 0 16px;">This video was stored on the Admin machine's local browser storage. To stream across all student devices worldwide, publish using YouTube or place your .mp4 in the project's videos/ folder.</p>
+          </div>
+        `;
+        return;
+      }
+    }
+
+    if (playUrl.startsWith('videos/')) {
+      playUrl = playUrl.replace(/^\.?\/?/, '');
+    }
+
+    playerContainer.innerHTML = `
+      <video src="${playUrl}" controls autoplay playsinline preload="auto" style="width:100%;height:100%;background:#000000;border-radius:12px;outline:none;" onerror="this.outerHTML='<div style=\'color:#f87171;padding:30px;text-align:center;background:#030712;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;\'><div style=\'font-size:36px;margin-bottom:8px;\'>⚠️</div><div style=\'font-size:15px;font-weight:700;\'>Could not load video file</div><div style=\'font-size:12px;color:#94a3b8;margin-top:4px;\'>' + this.src + '</div></div>'">
+        Your browser does not support direct HTML5 video playback.
+      </video>
+    `;
+  }
+}
+
+async function adminPublishVideo() {
+  const title = document.getElementById('new-video-title').value.trim();
+  const cat = document.getElementById('new-video-cat').value;
+  const duration = document.getElementById('new-video-duration').value.trim() || '25:00';
+  const desc = document.getElementById('new-video-desc').value.trim() || 'Direct BIM modeling demonstration.';
+
+  if (!title) {
+    showToast('⚠️ Video Title is required', '#f59e0b');
+    return;
+  }
+
+  const publishBtn = document.getElementById('admin-publish-video-btn');
+  const originalBtnText = publishBtn ? publishBtn.innerHTML : '';
+  if (publishBtn) {
+    publishBtn.disabled = true;
+    publishBtn.style.opacity = '0.7';
+    publishBtn.innerHTML = '⏳ Saving video...';
+  }
+
+  try {
+    const newId = 'vid_' + Date.now();
+    let ytId = '';
+    let videoType = 'local';
+
+    if (currentVideoUploadMode === 'file' || selectedAdminVideoFile) {
+      if (!selectedAdminVideoFile) {
+        showToast('⚠️ Please click and choose a video file first', '#f59e0b');
+        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = '1'; publishBtn.innerHTML = originalBtnText; }
+        return;
+      }
+
+      showToast('⏳ Saving video file locally...', '#2563eb');
+      await saveVideoFileToIDB(newId, selectedAdminVideoFile);
+      ytId = 'local_' + newId;
+      videoType = 'local';
+
+    } else if (currentVideoUploadMode === 'folder') {
+      const filename = document.getElementById('new-video-folder-file').value.trim();
+      if (!filename) {
+        showToast('⚠️ Please enter the video filename (e.g. lesson1.mp4)', '#f59e0b');
+        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = '1'; publishBtn.innerHTML = originalBtnText; }
+        return;
+      }
+      ytId = filename.startsWith('videos/') ? filename : ('videos/' + filename);
+      videoType = 'local';
+
+    } else {
+      const url = document.getElementById('new-video-url').value.trim();
+      if (!url) {
+        showToast('⚠️ Please enter a YouTube URL, Google Drive link, or video link', '#f59e0b');
+        if (publishBtn) { publishBtn.disabled = false; publishBtn.style.opacity = '1'; publishBtn.innerHTML = originalBtnText; }
+        return;
+      }
+      if (url.includes('drive.google.com')) {
+        ytId = url;
+        videoType = 'gdrive';
+      } else if (url.startsWith('http') && (url.includes('.mp4') || url.includes('.webm'))) {
+        ytId = url;
+        videoType = 'local';
+      } else {
+        ytId = extractYoutubeId(url);
+        videoType = 'yt';
+      }
+    }
+
+    const newVideo = { id: newId, cat, title, desc, ytId, duration, type: videoType };
+
+    showToast('⏳ Updating video library...', '#2563eb');
+    const currentVideos = await getAllVideos();
+    const updatedVideos = [newVideo, ...currentVideos.filter(v => v.id !== newId)];
+    await saveSharedVideos(updatedVideos);
+    invalidateSharedVideosCache();
+
+    // Reset form inputs
+    document.getElementById('new-video-title').value = '';
+    const folderInput = document.getElementById('new-video-folder-file');
+    if (folderInput) folderInput.value = '';
+    const urlInput = document.getElementById('new-video-url');
+    if (urlInput) urlInput.value = '';
+    document.getElementById('new-video-duration').value = '';
+    document.getElementById('new-video-desc').value = '';
+    selectedAdminVideoFile = null;
+    const fileInputEl = document.getElementById('new-video-file-input');
+    if (fileInputEl) fileInputEl.value = '';
+    const fileLabel = document.getElementById('vfile-selected-name');
+    if (fileLabel) fileLabel.textContent = 'Click to choose video from your computer';
+
+    await renderAdminVideosList();
+    await renderVideosCategory(cat);
+    if (typeof updatePortalMetrics === 'function') updatePortalMetrics();
+
+    showToast('🎉 Video published successfully! Visible in your training center library.', '#22c55e');
+
+  } catch (err) {
+    console.error('Publish error:', err);
+    showToast('❌ Error publishing: ' + (err.message || 'Check connection'), '#ef4444');
+  } finally {
+    if (publishBtn) {
+      publishBtn.disabled = false;
+      publishBtn.style.opacity = '1';
+      publishBtn.innerHTML = originalBtnText;
+    }
+  }
+}
+
+async function renderAdminVideosList() {
+  const container = document.getElementById('admin-video-manage-list');
+  const countEl = document.getElementById('admin-video-count');
+  if (!container) return;
+
+  container.innerHTML = '<div style="color:#64748b;font-size:13px;padding:12px;text-align:center;">Loading published videos...</div>';
+  const allVids = await getAllVideos();
+  if (countEl) countEl.textContent = allVids.length;
+
+  if (allVids.length === 0) {
+    container.innerHTML = '<div style="color:#64748b;font-size:13px;padding:12px;text-align:center;">No published videos found.</div>';
+    return;
+  }
+
+  container.innerHTML = allVids.map(v => {
+    const isCustom = v.id && v.id.startsWith('vid_');
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:12px;min-width:240px;flex:1;">
+          <span style="font-size:20px;">${v.type === 'local' ? '📁' : '📺'}</span>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0f172a;">${v.title}</div>
+            <div style="font-size:12px;color:#64748b;">${v.cat.toUpperCase()} • ⏱ ${v.duration || 'HD'} ${isCustom ? '• <strong style="color:#2563eb;">Uploaded by Admin</strong>' : ''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'yt'}','${v.id}')" style="background:#2563eb;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+            ▶ Play
+          </button>
+          <button onclick="deleteCustomVideo('${v.id}')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteCustomVideo(id) {
+  if (!confirm('Are you sure you want to delete this video?')) return;
+  showToast('⏳ Removing video from cloud...', '#2563eb');
+  let custom = await getAllVideos();
+  custom = custom.filter(v => v.id !== id);
+  await saveSharedVideos(custom);
+  invalidateSharedVideosCache();
+  await renderAdminVideosList();
+  renderVideosCategory('all_sims');
+  if (typeof updatePortalMetrics === 'function') updatePortalMetrics();
+  showToast('🗑️ Video removed successfully', '#f59e0b');
+}
+
+function adminPublishCourse() {
+  const title = document.getElementById('new-course-title').value.trim();
+  const cat = document.getElementById('new-course-cat').value;
+  const level = document.getElementById('new-course-level').value;
+  const lessons = document.getElementById('new-course-lessons').value.trim() || '20 lessons • 16 hours';
+  const desc = document.getElementById('new-course-desc').value.trim() || 'Comprehensive BIM masterclass.';
+
+  if (!title) {
+    showToast('⚠️ Course Title is required', '#f59e0b');
+    return;
+  }
+
+  const newCourse = {
+    id: 'course_' + Date.now(),
+    cat,
+    title,
+    desc,
+    level,
+    duration: lessons,
+    color: 'linear-gradient(135deg,#0f172a,#2563eb)',
+    icon: '🏗️'
+  };
+
+  const customCourses = JSON.parse(localStorage.getItem(STORAGE_KEY_COURSES) || '[]');
+  customCourses.push(newCourse);
+  localStorage.setItem(STORAGE_KEY_COURSES, JSON.stringify(customCourses));
+
+  document.getElementById('new-course-title').value = '';
+  document.getElementById('new-course-lessons').value = '';
+  document.getElementById('new-course-desc').value = '';
+
+  renderHomeFeatured();
+  if (typeof updatePortalMetrics === 'function') updatePortalMetrics();
+  showToast('✅ New BIM Course added to Course Catalog!', '#22c55e');
+}
+
+
+/* ─────────────────────────────────────────
+   6. POPUP MODAL HANDLERS
+───────────────────────────────────────── */
+function openModal(type) {
+  const targetModal = document.getElementById('modal-' + type);
+  if (targetModal) targetModal.style.display = 'block';
+  document.getElementById('modal-container').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-container').style.display = 'none';
+  document.body.style.overflow = '';
+  const player = document.getElementById('vmodal-player');
+  if (player) player.innerHTML = '';
+}
+
+function openCourseDetails(courseId) {
+  openClassroom(courseId);
+}
+
+/* ── 6.1 CLASSROOM & CURRICULUM PLAYLIST ENGINE ── */
+let currentClassroomCourse = null;
+let currentClassroomLessonIdx = 0;
+
+function getStudentProgress() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY_PROGRESS) || '{}');
+}
+
+function saveStudentProgress(progress) {
+  localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(progress));
+}
+
+function openClassroom(courseId, lessonIdx = 0) {
+  const course = getAllCourses().find(c => c.id === courseId) || DEFAULT_COURSES[0];
+  currentClassroomCourse = course;
+  currentClassroomLessonIdx = lessonIdx;
+
+  document.getElementById('classroom-course-title').textContent = course.title;
+  const catEl = document.getElementById('classroom-course-cat');
+  if (catEl) {
+    catEl.textContent = (course.cat || 'BIM').toUpperCase();
+    const theme = getCourseTheme(course.cat);
+    catEl.style.background = theme.pillBg;
+    catEl.style.color = theme.pillColor;
+  }
+
+  renderClassroomPlaylist();
+  loadClassroomLesson(lessonIdx);
+  showSection('classroom');
+}
+
+function renderClassroomPlaylist() {
+  const container = document.getElementById('classroom-playlist-items');
+  const countEl = document.getElementById('classroom-playlist-count');
+  if (!container || !currentClassroomCourse) return;
+
+  const lessons = currentClassroomCourse.syllabus || [
+    { id: 'def_1', title: '1. Foundation Grids & Concrete Elements', duration: '14:20', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+    { id: 'def_2', title: '2. Cross Rebar Modeling & Detailing', duration: '18:35', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+  ];
+
+  if (countEl) countEl.textContent = lessons.length + ' Lessons';
+
+  const progress = getStudentProgress();
+  const completedList = progress[currentClassroomCourse.id] || [];
+
+  // Update Progress Meter
+  const pct = lessons.length ? Math.round((completedList.length / lessons.length) * 100) : 0;
+  const bar = document.getElementById('classroom-progress-bar');
+  const txt = document.getElementById('classroom-progress-text');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = pct + '% (' + completedList.length + '/' + lessons.length + ')';
+
+  container.innerHTML = lessons.map((les, idx) => {
+    const isAct = (idx === currentClassroomLessonIdx);
+    const isDone = completedList.includes(les.id);
+    return `
+      <div onclick="loadClassroomLesson(${idx})" style="padding:12px 14px;border-radius:12px;background:${isAct ? '#eff6ff' : '#f8fafc'};border:1.5px solid ${isAct ? '#3b82f6' : '#e2e8f0'};cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all 0.15s ease;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:14px;color:${isDone ? '#059669' : (isAct ? '#2563eb' : '#94a3b8')};">${isDone ? '✓' : (isAct ? '▶' : '○')}</span>
+          <div>
+            <div style="font-size:13.5px;font-weight:${isAct ? '800' : '600'};color:${isAct ? '#1d4ed8' : '#1e293b'};">${les.title}</div>
+            <div style="font-size:11.5px;color:#64748b;font-weight:600;">⏱ ${les.duration || 'Full HD'}</div>
+          </div>
+        </div>
+        ${isDone ? `<span style="font-size:11px;background:#ecfdf5;color:#059669;padding:2px 8px;border-radius:6px;font-weight:800;">DONE</span>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function loadClassroomLesson(lessonIdx) {
+  if (!currentClassroomCourse) return;
+  const lessons = currentClassroomCourse.syllabus || [
+    { id: 'def_1', title: '1. Foundation Grids & Concrete Elements', duration: '14:20', type: 'local', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
+    { id: 'def_2', title: '2. Cross Rebar Modeling & Detailing', duration: '18:35', type: 'local', ytId: 'videos/X_rebar_modeling.mp4' }
+  ];
+
+  if (lessonIdx < 0 || lessonIdx >= lessons.length) lessonIdx = 0;
+  currentClassroomLessonIdx = lessonIdx;
+  const lesson = lessons[lessonIdx];
+
+  const titleEl = document.getElementById('classroom-lesson-title');
+  const durEl = document.getElementById('classroom-lesson-duration');
+  if (titleEl) titleEl.textContent = lesson.title;
+  if (durEl) durEl.textContent = '⏱ ' + (lesson.duration || 'HD Streaming');
+
+  // Complete button state
+  const progress = getStudentProgress();
+  const completedList = progress[currentClassroomCourse.id] || [];
+  const isDone = completedList.includes(lesson.id);
+  const compBtn = document.getElementById('classroom-complete-btn');
+  if (compBtn) {
+    if (isDone) {
+      compBtn.style.background = '#ecfdf5';
+      compBtn.style.color = '#059669';
+      compBtn.style.borderColor = '#a7f3d0';
+      compBtn.innerHTML = '<span>✓</span> Completed';
+    } else {
+      compBtn.style.background = '#ffffff';
+      compBtn.style.color = '#334155';
+      compBtn.style.borderColor = '#cbd5e1';
+      compBtn.innerHTML = '<span>○</span> Mark as Completed';
+    }
+  }
+
+  // Load Video in Player
+  const player = document.getElementById('classroom-player');
+  if (player) {
+    const playRef = lesson.ytId || 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4';
+    if (lesson.type === 'yt') {
+      player.innerHTML = `<iframe src="https://www.youtube.com/embed/${playRef}?autoplay=1" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen style="width:100%;height:100%;border:none;border-radius:12px;"></iframe>`;
+    } else {
+      let cleanUrl = playRef.replace(/^\.?\/?/, '');
+      player.innerHTML = `
+        <video src="${cleanUrl}" controls autoplay playsinline preload="auto" style="width:100%;height:100%;background:#000000;border-radius:12px;outline:none;" onerror="this.outerHTML='<div style=\\'color:#f87171;padding:30px;text-align:center;background:#030712;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;\\'><div style=\\'font-size:36px;margin-bottom:8px;\\'>⚠️</div><div style=\\'font-size:15px;font-weight:700;\\'>Could not load video file</div><div style=\\'font-size:12px;color:#94a3b8;margin-top:4px;\\'>' + this.src + '</div></div>'">
+          Your browser does not support direct HTML5 video playback.
+        </video>
+      `;
+    }
+  }
+
+  renderClassroomPlaylist();
+}
+
+function toggleCurrentLessonCompletion() {
+  if (!currentClassroomCourse) return;
+  const lessons = currentClassroomCourse.syllabus || [];
+  const lesson = lessons[currentClassroomLessonIdx];
+  if (!lesson) return;
+
+  const progress = getStudentProgress();
+  let completedList = progress[currentClassroomCourse.id] || [];
+
+  if (completedList.includes(lesson.id)) {
+    completedList = completedList.filter(id => id !== lesson.id);
+    showToast('Lesson marked uncompleted', '#64748b');
+  } else {
+    completedList.push(lesson.id);
+    showToast('🎉 Lesson completed! Progress saved.', '#10b981');
+  }
+
+  progress[currentClassroomCourse.id] = completedList;
+  saveStudentProgress(progress);
+  loadClassroomLesson(currentClassroomLessonIdx);
+}
+
+/* ── 6.2 PRACTICE FILES DOWNLOAD ENGINE ── */
+function renderPracticeFiles(filterCat = 'all') {
+  const container = document.getElementById('practice-files-grid');
+  if (!container) return;
+
+  ['all','rvt','dwg','nwd','pdf'].forEach(c => {
+    const btn = document.getElementById('ffilter-' + c);
+    if (btn) {
+      if (c === filterCat) {
+        btn.style.background = '#2563eb';
+        btn.style.color = '#ffffff';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = '#ffffff';
+        btn.style.color = '#334155';
+        btn.style.border = '1.5px solid #e2e8f0';
+      }
+    }
+  });
+
+  let list = getAllPracticeFiles();
+  if (filterCat !== 'all') list = list.filter(f => f.cat === filterCat);
+
+  container.innerHTML = list.map(f => {
+    return `
+      <div class="dashboard-card" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:180px;">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="icon-squircle glow-blue">
+              <span>${f.icon || '📁'}</span>
+            </div>
+            <span class="badge" style="background:#eff6ff;color:#1d4ed8;font-weight:800;">${f.type}</span>
+          </div>
+          <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0 0 6px;word-break:break-word;">${f.name}</h4>
+          <span style="font-size:12px;color:#64748b;font-weight:600;">Size: ${f.size}</span>
+        </div>
+        <div style="padding-top:14px;border-top:1px solid #f1f5f9;margin-top:14px;">
+          <button onclick="downloadPracticeFile('${f.id}')" style="width:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);color:white;border:none;padding:9px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <span>⤓</span> Download Dataset
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterPracticeFiles(cat) {
+  renderPracticeFiles(cat);
+}
+
+function downloadPracticeFile(fileId) {
+  const f = getAllPracticeFiles().find(x => x.id === fileId) || { name: 'BIM_Practice_File.rvt' };
+  const dummyContent = 'BSD BIM Training Dataset: ' + f.name + '\nProduced for Revit / AutoCAD coordination simulations.\nISO 19650 compliant training package.';
+  const blob = new Blob([dummyContent], { type: 'application/octet-stream' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = f.name;
+  a.click();
+  showToast('📥 Downloading ' + f.name, '#2563eb');
+}
+
+function handleAdminPracticeFilesUpload(input) {
+  if (!input.files || !input.files.length) return;
+  const files = Array.from(input.files);
+  const custom = JSON.parse(localStorage.getItem(STORAGE_KEY_FILES) || '[]');
+
+  files.forEach(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    let cat = 'pdf';
+    let icon = '📄';
+    if (ext === 'rvt' || ext === 'rfa') { cat = 'rvt'; icon = '🏗️'; }
+    else if (ext === 'dwg' || ext === 'dxf') { cat = 'dwg'; icon = '📐'; }
+    else if (ext === 'nwd' || ext === 'nwc') { cat = 'nwd'; icon = '🔍'; }
+
+    custom.unshift({
+      id: 'pf_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      cat,
+      name: f.name,
+      size: (f.size / (1024 * 1024)).toFixed(1) + ' MB',
+      type: ext.toUpperCase(),
+      icon,
+      date: new Date().toISOString().split('T')[0]
+    });
+  });
+
+  localStorage.setItem(STORAGE_KEY_FILES, JSON.stringify(custom));
+  showToast('📁 ' + files.length + ' practice file(s) added to Download Center!', '#22c55e');
+  renderPracticeFiles('all');
+  if (typeof updatePortalMetrics === 'function') updatePortalMetrics();
+}
+
+/* ── 6.3 GLOBAL INSTANT SEARCH ENGINE ── */
+function handleGlobalSearch(query) {
+  const q = (query || '').toLowerCase().trim();
+  const currentSec = document.querySelector('.nav-btn.active')?.id?.replace('nav-', '') || 'courses';
+
+  if (currentSec === 'videos') {
+    const cards = document.querySelectorAll('#video-cards-grid .dashboard-card');
+    cards.forEach(card => {
+      const match = !q || card.textContent.toLowerCase().includes(q);
+      card.style.display = match ? 'flex' : 'none';
+    });
+  } else if (currentSec === 'files') {
+    const cards = document.querySelectorAll('#practice-files-grid .dashboard-card');
+    cards.forEach(card => {
+      const match = !q || card.textContent.toLowerCase().includes(q);
+      card.style.display = match ? 'flex' : 'none';
+    });
+  } else {
+    if (currentSec !== 'courses') {
+      showSection('courses');
+    }
+    const cards = document.querySelectorAll('#catalog-courses-grid .dashboard-card');
+    cards.forEach(card => {
+      const match = !q || card.textContent.toLowerCase().includes(q);
+      card.style.display = match ? 'flex' : 'none';
+    });
+  }
+}
+
+
+/* ─────────────────────────────────────────
+   7. TOAST NOTIFICATIONS & PARTICLES
+───────────────────────────────────────── */
+function showToast(msg, bg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.background = bg || '#2563eb';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(20px)';
+    t.style.transition = 'all 0.3s';
+    setTimeout(() => t.remove(), 300);
+  }, 3800);
+}
+
+function spawnHeroParticles() {
+  const host = document.getElementById('particles-host');
+  if (!host) return;
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = (Math.random() * 100) + 'vw';
+    p.style.bottom = '-10px';
+    const sz = (Math.random() * 3 + 1.5);
+    p.style.width = sz + 'px';
+    p.style.height = sz + 'px';
+    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+    p.style.animationDelay = (Math.random() * 6) + 's';
+    host.appendChild(p);
+  }
+}
+
+async function updatePortalMetrics() {
+  try {
+    const courses = getAllCourses();
+    const files = getAllPracticeFiles();
+    const videos = await getAllVideos();
+    let totalLessons = 0;
+    courses.forEach(c => {
+      totalLessons += (c.syllabus || []).length || 3;
+    });
+
+    const cEl = document.getElementById('stat-courses-count');
+    const vEl = document.getElementById('stat-videos-count');
+    const fEl = document.getElementById('stat-files-count');
+    const lEl = document.getElementById('stat-lessons-count');
+    if (cEl) cEl.textContent = courses.length;
+    if (vEl) vEl.textContent = videos.length;
+    if (fEl) fEl.textContent = files.length;
+    if (lEl) lEl.textContent = totalLessons;
+  } catch (err) {
+    console.error('Error updating portal metrics:', err);
+  }
+}
+
+
+/* ─────────────────────────────────────────
+   8. INITIALIZATION
+───────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  spawnHeroParticles();
+  showSection('home');
+  // Pre-fetch videos in background and update real portal metrics
+  getSharedVideos().then(() => updatePortalMetrics());
+  updatePortalMetrics();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    closeAdminLock();
+  }
+});
+</script>
+
+</body>
+</html>

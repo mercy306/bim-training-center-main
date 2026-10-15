@@ -1,0 +1,1 @@
+Drop your .mp4, .webm, or .mov video files here to serve them directly from GitHub Pages (e.g. videos/my_video.mp4)
