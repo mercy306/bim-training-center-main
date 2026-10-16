@@ -1,9 +1,20 @@
 [
   {
+    "id": "vid_1792136517537",
+    "cat": "revit",
+    "station": "all",
+    "title": "02 Rebar Families Part 2",
+    "desc": "Direct BIM modeling demonstration of custom parametric rebar families.",
+    "ytId": "local_vid_1792136517537",
+    "duration": "7:46",
+    "type": "local"
+  },
+  {
     "id": "vid_1791639419351",
     "cat": "revit",
-    "title": "EP 02 HOW  TO LINK REVIT FROM CLOUD AR MODELING",
-    "desc": "Direct BIM modeling demonstration.",
+    "station": "trainee",
+    "title": "EP 02 HOW TO LINK REVIT FROM CLOUD AR MODELING",
+    "desc": "Direct BIM modeling demonstration for cloud linking workflows.",
     "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4",
     "duration": "10:46",
     "type": "local"
@@ -11,7 +22,8 @@
   {
     "id": "vid_1791637811512",
     "cat": "revit",
-    "title": "EP 02 HOW  TO LINK REVIT FROM CLOUD AR MODELING",
+    "station": "trainee",
+    "title": "EP 02 HOW TO LINK REVIT FROM CLOUD AR MODELING",
     "desc": "Direct BIM modeling demonstration.",
     "ytId": "local_vid_1791637811512",
     "duration": "10:46",
@@ -20,6 +32,7 @@
   {
     "id": "vid_rebar_01",
     "cat": "revit",
+    "station": "engineer",
     "title": "Revit Structure: X Rebar Modeling Walkthrough",
     "desc": "Hands-on structural modeling demonstration covering cross reinforcement, rebar layout parameters, and clash-free placement.",
     "ytId": "videos/X_rebar_modeling.mp4",

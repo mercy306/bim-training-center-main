@@ -1,0 +1,132 @@
+[
+    {
+        "id": "curriculum_1792149639_4e61",
+        "cat": "coordination",
+        "station": "engineer",
+        "title": "MEP HVAC Duct Routing and Coordination",
+        "icon": "\ud83c\udfe2",
+        "level": "Advanced",
+        "duration": "18 hrs",
+        "desc": "Ductwork routing, equipment clearance zones, and airflow parameter validation.",
+        "syllabus": [
+            {
+                "id": "les_1792149639",
+                "title": "1. HVAC Clash Isolation & Tolerances",
+                "duration": "24:10",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            }
+        ]
+    },
+    {
+        "id": "revit-struct",
+        "cat": "revit",
+        "station": "engineer",
+        "title": "Revit Structure Modeling Mastery",
+        "icon": "\ud83d\udd29",
+        "level": "Intermediate",
+        "duration": "22 hrs",
+        "desc": "Hands-on structural modeling, foundation grids, cross reinforcement, rebar layout parameters, and clash-free placement.",
+        "syllabus": [
+            {
+                "id": "rs_l1",
+                "title": "1. Foundation Grids & Concrete Elements",
+                "duration": "14:20",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            },
+            {
+                "id": "rs_l2",
+                "title": "2. Cross Rebar Modeling & Detailing",
+                "duration": "18:35",
+                "type": "local",
+                "ytId": "videos/X_rebar_modeling.mp4"
+            },
+            {
+                "id": "rs_l3",
+                "title": "3. Structural Framing & Column Layout",
+                "duration": "19:40",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            }
+        ]
+    },
+    {
+        "id": "bim-coord",
+        "cat": "coordination",
+        "station": "all",
+        "title": "BIM Coordination & Advanced Workflows",
+        "icon": "\ud83c\udfd7\ufe0f",
+        "level": "Advanced",
+        "duration": "28 hrs",
+        "desc": "Multi-discipline model federation, clash matrices, clearance rules, and BCF issue resolution meetings.",
+        "syllabus": [
+            {
+                "id": "bc_l1",
+                "title": "1. Multi-discipline Model Federation",
+                "duration": "18:10",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            },
+            {
+                "id": "bc_l2",
+                "title": "2. Clash Detection Matrix & Tolerances",
+                "duration": "22:45",
+                "type": "local",
+                "ytId": "videos/X_rebar_modeling.mp4"
+            }
+        ]
+    },
+    {
+        "id": "navisworks",
+        "cat": "navisworks",
+        "station": "engineer",
+        "title": "Navisworks Clash Detection & Review",
+        "icon": "\ud83d\udd0d",
+        "level": "Intermediate",
+        "duration": "14 hrs",
+        "desc": "Mastering Navisworks Manage, NWD/NWC model aggregation, search sets, clash batches, and report generation.",
+        "syllabus": [
+            {
+                "id": "nw_l1",
+                "title": "1. Appending NWD & NWC Models",
+                "duration": "15:20",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            },
+            {
+                "id": "nw_l2",
+                "title": "2. Clash Batches & Grouping Rules",
+                "duration": "20:15",
+                "type": "local",
+                "ytId": "videos/X_rebar_modeling.mp4"
+            }
+        ]
+    },
+    {
+        "id": "autocad-2d",
+        "cat": "autocad",
+        "station": "trainee",
+        "title": "AutoCAD 2D/3D for BIM Professionals",
+        "icon": "\u270f\ufe0f",
+        "level": "Beginner",
+        "duration": "18 hrs",
+        "desc": "Precision drafting, layer standards, CAD underlays, and CAD-to-Revit clean export strategies.",
+        "syllabus": [
+            {
+                "id": "ac_l1",
+                "title": "1. Precision Drafting & Layer Conventions",
+                "duration": "17:00",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+            },
+            {
+                "id": "ac_l2",
+                "title": "2. DWG Underlays & CAD-to-Revit Import",
+                "duration": "19:30",
+                "type": "local",
+                "ytId": "videos/X_rebar_modeling.mp4"
+            }
+        ]
+    }
+]

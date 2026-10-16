@@ -353,25 +353,26 @@
       </div>
     </div>
 
-    <!-- Nav Links with Rounded Pill Highlight -->
-    <div style="display:flex;gap:8px;align-items:center;">
+    <!-- Nav Links with Rounded Pill Highlight (Pushed to the left) -->
+    <div style="display:flex;gap:8px;align-items:center;margin-left:28px;margin-right:auto;">
       <button onclick="showSection('home')"    class="nav-btn active" id="nav-home">Home</button>
       <button onclick="showSection('courses')" class="nav-btn"        id="nav-courses">Courses</button>
       <button onclick="showSection('videos')"  class="nav-btn"        id="nav-videos">Videos</button>
       <button onclick="showSection('files')"   class="nav-btn"        id="nav-files">Practice Files</button>
     </div>
 
-    <!-- Right: Search & Admin Lock -->
-    <div style="display:flex;align-items:center;gap:10px;">
+    <!-- Right: Big Prominent Upload Material & Search -->
+    <div style="display:flex;align-items:center;gap:14px;">
+      <!-- Big Noticeable Upload Material Button -->
+      <button onclick="openAdminUpload()" style="background:linear-gradient(135deg,#059669,#10b981);color:#ffffff;border:none;padding:10px 22px;border-radius:12px;font-size:14.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(16,185,129,0.4);transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'" id="nav-upload">
+        <span style="font-size:18px;line-height:1;">📤</span>
+        <span>Upload Material</span>
+      </button>
+
       <div style="display:flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:6px 12px;gap:8px;">
         <span style="color:#94a3b8;font-size:13px;">🔍</span>
         <input id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search..." style="border:none;background:transparent;outline:none;font-size:13px;width:130px;color:#0f172a;font-weight:600;" />
       </div>
-      
-      <!-- 🔒 ADMIN LOCKED BUTTON -->
-      <button onclick="openAdminUpload()" class="nav-btn" style="background:#f8fafc;border:1px solid #e2e8f0;color:#0369a1;padding:7px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;" id="nav-upload">
-        <span>🔒</span> Admin
-      </button>
     </div>
   </div>
 </nav>
