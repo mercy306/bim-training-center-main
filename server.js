@@ -55,6 +55,98 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Handle API endpoint to fetch system users
+  if (req.method === 'GET' && decodedUrl === '/api/users') {
+    try {
+      const usersData = JSON.parse(fs.readFileSync(path.join(PUBLIC_DIR, 'progress.json'), 'utf8'));
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      return res.end(JSON.stringify(usersData));
+    } catch (e) {
+      console.error('Error reading progress.json:', e);
+      res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      return res.end(JSON.stringify({ error: 'Could not load users' }));
+    }
+  }
+
+  // Handle API endpoint for training analytics & employee roster
+  if (req.method === 'GET' && decodedUrl === '/api/analytics') {
+    try {
+      const usersData = JSON.parse(fs.readFileSync(path.join(PUBLIC_DIR, 'progress.json'), 'utf8'));
+      let videosData = [];
+      try {
+        videosData = JSON.parse(fs.readFileSync(path.join(PUBLIC_DIR, 'videos.json'), 'utf8'));
+      } catch (_) {}
+
+      const totalVideos = Math.max(1, Array.isArray(videosData) ? videosData.length : 2);
+      const roster = [];
+      let sumPct = 0;
+      let fullyCompleted = 0;
+      let inProgress = 0;
+      const stationMap = {};
+
+      Object.keys(usersData).forEach(id => {
+        const u = usersData[id];
+        const vids = u.videos || {};
+        let done = 0;
+        if (Array.isArray(vids)) {
+          done = vids.length;
+        } else if (typeof vids === 'object') {
+          Object.values(vids).forEach(v => {
+            if (v && (v.completed || v.percent >= 100)) done++;
+          });
+        }
+        const pct = Math.min(100, Math.round((done / totalVideos) * 100));
+        sumPct += pct;
+        if (pct >= 100) fullyCompleted++;
+        else if (pct > 0) inProgress++;
+
+        const st = u.station || 'trainee';
+        if (!stationMap[st]) stationMap[st] = { count: 0, sum_pct: 0 };
+        stationMap[st].count++;
+        stationMap[st].sum_pct += pct;
+
+        let status = 'Not Started';
+        if (pct >= 100) status = 'Certified';
+        else if (pct > 0) status = 'In Progress';
+
+        roster.push({
+          id,
+          name: u.name,
+          station: st,
+          team_name: u.team_name || 'Structural Modeling Team A',
+          completed: done,
+          total_assigned: totalVideos,
+          percent: pct,
+          status,
+          last_active: u.last_active || 'Recent'
+        });
+      });
+
+      const totalEmployees = Math.max(1, roster.length);
+      const stationStats = Object.keys(stationMap).map(st => ({
+        station: st,
+        title: st === 'trainee' ? 'Trainees' : (st === 'engineer' ? 'Structural & MEP Engineers' : (st === 'architect' ? 'Architects & Designers' : 'BIM Modelers')),
+        headcount: stationMap[st].count,
+        avg_pct: Math.round(stationMap[st].sum_pct / Math.max(1, stationMap[st].count))
+      }));
+
+      const analytics = {
+        total_employees: roster.length,
+        avg_completion: Math.round(sumPct / totalEmployees),
+        fully_completed: fullyCompleted,
+        in_progress: inProgress,
+        station_stats: stationStats
+      };
+
+      res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      return res.end(JSON.stringify({ success: true, analytics, roster }));
+    } catch (e) {
+      console.error('Error generating analytics:', e);
+      res.writeHead(500, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+      return res.end(JSON.stringify({ error: 'Could not generate analytics' }));
+    }
+  }
+
   let filePath = path.join(PUBLIC_DIR, decodedUrl);
 
   // Default to index.html if root or directory

@@ -1,4 +1,18 @@
 {
+    "300": {
+        "name": "Mihiret Tsegaye",
+        "station": "engineer",
+        "team_id": 10,
+        "team_name": "Structural Modeling Team A",
+        "videos": {
+            "vid_rebar_01": {
+                "completed": true,
+                "percent": 100,
+                "updated_at": "2026-10-17 10:20:00"
+            }
+        },
+        "last_active": "2026-10-17 10:20:00"
+    },
     "301": {
         "name": "Yoni Levi",
         "station": "trainee",

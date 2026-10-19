@@ -161,10 +161,10 @@ function getActiveBimUser(): array {
 
     // Default to Employee view
     return [
-        'id' => 301,
-        'name' => 'Trainee Employee',
+        'id' => 300,
+        'name' => 'Mihiret Tsegaye',
         'role' => 'employee',
-        'station' => 'trainee',
+        'station' => 'engineer',
         'team_id' => 10,
         'team_name' => 'Structural Modeling Team A'
     ];

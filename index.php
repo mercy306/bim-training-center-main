@@ -15,6 +15,7 @@ $userStation = $user['station'] ?? 'all';
 $userName = $user['name'] ?? 'User';
 $teamName = $user['team_name'] ?? 'General Team';
 $teamId = $user['team_id'] ?? null;
+$userAvatar = !empty($user['avatar']) ? $user['avatar'] : (!empty($user['photo']) ? $user['photo'] : null);
 
 // Preload videos according to role & station
 // Employees only see videos assigned to their station or 'all'
@@ -48,31 +49,31 @@ $myProgress = getEmployeeProgressSummary($user['id']);
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     /* Blue Gradient Hero */
-    .hero-bg, .page-header-bg {
+    .hero-bg {
       position: relative;
-      background: linear-gradient(115deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);
+      background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);
       overflow: hidden;
       display: flex;
       align-items: center;
-      padding: 30px 24px;
+      padding: 38px 24px;
+    }
+    .page-header-bg {
+      position: relative;
+      background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 26px 24px;
     }
 
     .hero-glow-1 {
-      position: absolute;
-      top: -100px; left: -80px; width: 380px; height: 380px;
-      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 65%);
-      border-radius: 50%; pointer-events: none;
+      display: none;
     }
     .hero-glow-2 {
-      position: absolute;
-      bottom: -100px; right: -80px; width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
+      display: none;
     }
     .hero-circle-accent {
-      position: absolute; width: 240px; height: 240px;
-      border: 28px solid rgba(255,255,255,0.06);
-      border-radius: 50%; top: -30px; left: 30%; pointer-events: none;
+      display: none;
     }
 
     /* Cards */
@@ -97,10 +98,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
       display: flex; align-items: center; justify-content: center;
       font-size: 22px; color: #ffffff; flex-shrink: 0;
     }
-    .glow-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.4); }
-    .glow-green { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 18px -4px rgba(16, 185, 129, 0.4); }
-    .glow-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 8px 18px -4px rgba(139, 92, 246, 0.4); }
-    .glow-amber { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 18px -4px rgba(245, 158, 11, 0.4); }
+    .glow-blue, .glow-green, .glow-purple, .glow-amber { background: linear-gradient(135deg, #1d4ed8, #2563eb); box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.4); }
 
     .video-thumb {
       position: relative; overflow: hidden; border-radius: 14px; cursor: pointer;
@@ -122,37 +120,31 @@ $myProgress = getEmployeeProgressSummary($user['id']);
     }
 
     .nav-btn {
-      border: none; background: transparent; padding: 8px 16px; border-radius: 10px;
-      font-size: 13.5px; font-weight: 700; color: #64748b; cursor: pointer;
+      border: none; background: transparent; padding: 6px 14px; border-radius: 9px;
+      font-size: 13.5px; font-weight: 700; color: rgba(255, 255, 255, 0.88); cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .nav-btn:hover { color: #0f172a; background: #f1f5f9; }
-    .nav-btn.active { color: #ffffff; background: #2563eb; box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.4); }
+    .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.16); }
+    .nav-btn.active { color: #1d4ed8 !important; background: #ffffff !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
 
     .btn-upload-prominent {
-      background: linear-gradient(135deg, #059669, #10b981) !important;
-      color: #ffffff !important;
+      background: #ffffff !important;
+      color: #1d4ed8 !important;
       border: none !important;
-      padding: 10px 22px !important;
-      border-radius: 12px !important;
-      font-size: 14.5px !important;
+      padding: 7px 18px !important;
+      border-radius: 9px !important;
+      font-size: 13.5px !important;
       font-weight: 800 !important;
       letter-spacing: 0.01em;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4) !important;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+      transition: all 0.2s ease !important;
     }
     .btn-upload-prominent:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5) !important;
-      filter: brightness(1.06);
-    }
-    .btn-upload-prominent.active {
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3), 0 8px 24px rgba(16, 185, 129, 0.55) !important;
-      transform: scale(1.02);
+      background: #f1f5f9 !important;
+      transform: translateY(-1px);
     }
 
     .particle {
@@ -214,7 +206,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <!-- ══════════════════════════════════════════
      ROLE SWITCHER & CONTEXT BANNER
 ══════════════════════════════════════════ -->
-<div style="background:#0f172a;color:#cbd5e1;padding:8px 24px;font-size:12.5px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+<div style="background:#1e40af;color:#e0f2fe;padding:8px 24px;font-size:12.5px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(255,255,255,0.15);">
   <div style="display:flex;align-items:center;gap:12px;">
     <span style="display:inline-flex;align-items:center;gap:6px;font-weight:700;">
       <span style="width:8px;height:8px;border-radius:50%;background:<?= $isStaffAdmin ? '#10b981' : ($isTeamLeader ? '#38bdf8' : '#fbbf24') ?>;"></span>
@@ -245,72 +237,63 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR
 ══════════════════════════════════════════ -->
-<nav style="background:#ffffff;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px 0 rgba(0,0,0,0.04);border-bottom:1px solid #eef2f6;">
-  <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:70px;">
+<nav style="background:linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:sticky;top:0;z-index:100;border-bottom:none;">
+  <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:62px;gap:16px;">
     
-    <!-- Brand Logo -->
-    <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="showSection(getRoleLandingSection())">
-      <div style="width:42px;height:42px;background:linear-gradient(135deg,#1d4ed8,#0284c7);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(29,78,216,0.3);">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <!-- Left: Brand Logo + Navigation Tabs -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <!-- Brand Logo placed directly on blue navbar -->
+      <div style="display:flex;align-items:center;cursor:pointer;" onclick="showSection(getRoleLandingSection())">
+        <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:38px;width:auto;display:block;object-fit:contain;" />
       </div>
-      <div>
-        <div style="color:#0f172a;font-weight:900;font-size:18px;line-height:1.1;letter-spacing:-0.02em;">BSD BIM Center</div>
-        <div style="color:#2563eb;font-size:10px;letter-spacing:0.18em;font-weight:800;">
-          <?= $isStaffAdmin ? 'ENTERPRISE ANALYTICS & OPS' : ($isTeamLeader ? 'TEAM LEADER DASHBOARD' : 'LEARNING & TRAINING') ?>
-        </div>
+
+      <!-- Navigation Tabs -->
+      <div style="display:flex;gap:6px;align-items:center;">
+        <!-- Role Landing Tab Placed First -->
+        <?php if ($isStaffAdmin): ?>
+          <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics" style="color:#1d4ed8;background:#ffffff;">
+            📈 Analytics
+          </button>
+        <?php elseif ($isTeamLeader): ?>
+          <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress" style="color:#1d4ed8;background:#ffffff;">
+            👥 Team Progress
+          </button>
+        <?php elseif ($isEmployee): ?>
+          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress" style="color:#1d4ed8;background:#ffffff;">
+            📊 Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
+          </button>
+        <?php endif; ?>
+
+        <button onclick="showSection('home')"    class="nav-btn" id="nav-home">Home</button>
+        <button onclick="showSection('courses')" class="nav-btn" id="nav-courses">Courses</button>
+        <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Videos</button>
+        <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
       </div>
     </div>
 
-    <!-- Navigation Tabs (Pushed to the left next to logo) -->
-    <div style="display:flex;gap:8px;align-items:center;margin-left:28px;margin-right:auto;">
-      <!-- Role Landing Tab Placed First -->
-      <?php if ($isStaffAdmin): ?>
-        <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics" style="color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;">
-          📈 Analytics & Roster
-        </button>
-      <?php elseif ($isTeamLeader): ?>
-        <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress" style="color:#0369a1;background:#f0f9ff;border:1px solid #bae6fd;">
-          👥 My Team Progress
-        </button>
-      <?php elseif ($isEmployee): ?>
-        <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress" style="color:#0284c7;background:#f0f9ff;border:1px solid #bae6fd;">
-          📊 My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
-        </button>
-      <?php endif; ?>
-
-      <button onclick="showSection('home')"    class="nav-btn" id="nav-home">Home</button>
-      <button onclick="showSection('courses')" class="nav-btn" id="nav-courses">Courses</button>
-      <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Videos</button>
-      <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
-    </div>
-
-    <!-- Right: Big Prominent "Upload Material" Button + User Avatar & Search -->
-    <div style="display:flex;align-items:center;gap:14px;">
-      <!-- Big Noticeable "Upload Material" Button -->
+    <!-- Right: Upload + User Identity + Search -->
+    <div style="display:flex;align-items:center;gap:12px;">
+      <!-- Upload Material Button -->
       <?php if ($isStaffAdmin): ?>
         <button onclick="showSection('upload')" class="btn-upload-prominent" id="nav-upload" title="Upload video materials, practice datasets & curricula">
-          <span style="font-size:18px;line-height:1;">📤</span>
           <span>Upload Material</span>
         </button>
       <?php endif; ?>
 
-      <div style="display:flex;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:6px 12px;gap:8px;">
-        <span style="color:#94a3b8;font-size:13px;">🔍</span>
-        <input id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search..." style="border:none;background:transparent;outline:none;font-size:13px;width:120px;color:#0f172a;font-weight:600;" />
+      <!-- Search Input -->
+      <div style="display:flex;align-items:center;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:9px;padding:5px 10px;gap:6px;backdrop-filter:blur(8px);">
+        <span style="color:rgba(255,255,255,0.9);font-size:12px;">🔍</span>
+        <input id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search..." style="border:none;background:transparent;outline:none;font-size:12px;width:110px;color:#ffffff;font-weight:600;" />
       </div>
 
       <!-- User Identity Tag -->
-      <div style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;padding:5px 12px;border-radius:12px;">
-        <div style="width:28px;height:28px;border-radius:50%;background:<?= $isStaffAdmin ? '#1d4ed8' : ($isTeamLeader ? '#0284c7' : '#059669') ?>;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:3px 8px;border-radius:8px;backdrop-filter:blur(8px);">
+        <div style="width:24px;height:24px;border-radius:50%;background:#ffffff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">
           <?= strtoupper(substr($userName, 0, 1)) ?>
         </div>
-        <div style="text-align:left;">
-          <div style="font-size:12px;font-weight:800;color:#0f172a;line-height:1.1;"><?= htmlspecialchars($userName) ?></div>
-          <div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase;"><?= htmlspecialchars($role) ?></div>
-        </div>
+        <div style="font-size:11.5px;font-weight:800;color:#ffffff;line-height:1.1;"><?= htmlspecialchars($userName) ?></div>
       </div>
     </div>
-
   </div>
 </nav>
 
@@ -324,95 +307,92 @@ $myProgress = getEmployeeProgressSummary($user['id']);
      1. HOME SECTION
 ───────────────────────────────────────── -->
 <section id="section-home">
+  <!-- Large Prominent Blue Hero Banner (2-Column Layout) -->
   <div class="hero-bg">
-    <div class="hero-glow-1"></div>
-    <div class="hero-glow-2"></div>
-    <div class="hero-circle-accent"></div>
-    <div id="particles-host" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
-
-    <div style="position:relative;z-index:10;max-width:1240px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:300px;max-width:680px;">
-        <div class="badge" style="background:rgba(255,255,255,0.2);color:#ffffff;margin-bottom:12px;backdrop-filter:blur(6px);">
-          <?= $isStaffAdmin ? 'ENTERPRISE ADMINISTRATION' : ($isTeamLeader ? 'TEAM LEADER WORKSPACE' : 'EMPLOYEE TRAINING TRACK') ?>
+    <div style="position:absolute;left:-40px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
+    <div style="position:relative;z-index:10;max-width:1440px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
+      
+      <!-- Left Column: User Profile Welcome Card -->
+      <div style="flex:1;min-width:320px;display:flex;align-items:center;gap:24px;">
+        <div style="position:relative;flex-shrink:0;">
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.18);border:2.5px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.15);backdrop-filter:blur(8px);overflow:hidden;">
+            <?php if (!empty($userAvatar)): ?>
+              <img id="user-profile-avatar" src="<?= htmlspecialchars($userAvatar) ?>" alt="<?= htmlspecialchars($userName) ?>" style="width:100%;height:100%;object-fit:cover;" />
+            <?php else: ?>
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width:46px;height:46px;color:rgba(255,255,255,0.92);margin-top:6px;">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            <?php endif; ?>
+          </div>
         </div>
-        <h1 style="color:#ffffff;font-size:clamp(22px,3vw,34px);font-weight:900;line-height:1.2;margin:0 0 10px;letter-spacing:-0.02em;">
-          Master <span style="text-decoration:underline;text-decoration-color:rgba(255,255,255,0.45);text-underline-offset:6px;">BIM Coordination</span> & Engineering Workflows
-        </h1>
-        <p style="color:rgba(255,255,255,0.92);font-size:14.5px;margin:0 0 18px;">
-          <?php if ($isStaffAdmin): ?>
-            Manage company-wide training videos, assign targeted curricula to specific employee stations, and review workforce analytics.
-          <?php elseif ($isTeamLeader): ?>
-            Monitor training adoption across members of <strong><?= htmlspecialchars($teamName) ?></strong> and inspect video completion milestones.
-          <?php else: ?>
-            Watch tailored video tutorials assigned to the <strong><?= htmlspecialchars(BIM_STATIONS[$userStation] ?? $userStation) ?></strong> track. Your progress is automatically recorded.
-          <?php endif; ?>
-        </p>
-
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <button onclick="showSection('videos')" style="background:#ffffff;color:#1d4ed8;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,0.12);">
-            ▶ Watch Tutorials
-          </button>
-          <?php if ($isEmployee): ?>
-            <button onclick="showSection('my-progress')" style="background:rgba(255,255,255,0.2);color:#ffffff;border:1.5px solid rgba(255,255,255,0.4);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);">
-              📊 View My Progress (<?= $myProgress['overall_percent'] ?>%)
-            </button>
-          <?php elseif ($isTeamLeader): ?>
-            <button onclick="showSection('team-progress')" style="background:rgba(255,255,255,0.2);color:#ffffff;border:1.5px solid rgba(255,255,255,0.4);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);">
-              👥 Inspect Team (<?= $teamName ?>)
-            </button>
-          <?php elseif ($isStaffAdmin): ?>
-            <button onclick="showSection('analytics')" style="background:rgba(255,255,255,0.2);color:#ffffff;border:1.5px solid rgba(255,255,255,0.4);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);">
-              📈 Company Analytics & Roster
-            </button>
-          <?php endif; ?>
+        <div>
+          <div style="color:rgba(255,255,255,0.85);font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">
+            TIKIMT 7, 2019
+          </div>
+          <h1 style="color:#ffffff;font-size:clamp(22px,2.6vw,32px);font-weight:800;margin:0 0 12px;line-height:1.2;letter-spacing:-0.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span>Welcome back, <span id="user-profile-name"><?= htmlspecialchars($userName) ?></span>!</span>
+            <span style="display:inline-block;">👋</span>
+          </h1>
+          <!-- Dynamic Training Status Badge (replaces static pills) -->
+          <div id="user-training-status-container" style="display:flex;gap:10px;align-items:center;">
+            <?php if (!empty($myProgress['overall_percent']) && $myProgress['overall_percent'] >= 100): ?>
+              <span id="user-training-status-badge" style="background:rgba(16,185,129,0.25);border:1px solid rgba(52,211,153,0.4);color:#ffffff;padding:5px 16px;border-radius:9999px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <span style="width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;box-shadow:0 0 6px #34d399;"></span> Finished
+              </span>
+            <?php else: ?>
+              <span id="user-training-status-badge" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.32);color:#ffffff;padding:5px 16px;border-radius:9999px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <span style="width:8px;height:8px;border-radius:50%;background:#fbbf24;display:inline-block;box-shadow:0 0 6px #fbbf24;"></span> Training
+              </span>
+            <?php endif; ?>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Metrics Widget -->
-      <div style="background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:20px;backdrop-filter:blur(14px);padding:16px 20px;box-shadow:0 8px 25px rgba(0,0,0,0.06);min-width:270px;flex-shrink:0;">
-        <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:800;letter-spacing:0.08em;margin-bottom:10px;text-align:center;">
-          <?= $isStaffAdmin ? 'GLOBAL PORTAL METRICS' : ($isTeamLeader ? 'TEAM SUMMARY' : 'MY TRAINING STATS') ?>
+      <!-- Right Column: Portal Metrics Card Widget -->
+      <div style="background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:20px;backdrop-filter:blur(14px);padding:18px 22px;box-shadow:0 8px 25px rgba(0,0,0,0.06);min-width:280px;flex-shrink:0;">
+        <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:800;letter-spacing:0.08em;margin-bottom:12px;text-align:center;">
+          <?= $isStaffAdmin ? 'PORTAL METRICS' : ($isTeamLeader ? 'TEAM SUMMARY' : 'MY TRAINING STATS') ?>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
           <?php if ($isEmployee): ?>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-              <div id="stat-my-pct" style="font-size:22px;font-weight:900;color:#ffffff;"><?= $myProgress['overall_percent'] ?>%</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;">Completed</div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+              <div id="stat-my-pct" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $myProgress['overall_percent'] ?>%</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Completed</div>
             </div>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-              <div id="stat-my-done" style="font-size:22px;font-weight:900;color:#ffffff;"><?= $myProgress['completed_count'] ?> / <?= $myProgress['total_assigned'] ?></div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;">Videos Done</div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+              <div id="stat-my-done" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $myProgress['completed_count'] ?> / <?= $myProgress['total_assigned'] ?></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Videos Done</div>
             </div>
           <?php else: ?>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-              <div style="font-size:22px;font-weight:900;color:#ffffff;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;">Avg Progress</div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+              <div style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Avg Progress</div>
             </div>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-              <div style="font-size:22px;font-weight:900;color:#ffffff;"><?= $analytics['total_employees'] ?? 0 ?></div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;"><?= $isTeamLeader ? 'Team Members' : 'Total Employees' ?></div>
+            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+              <div style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $analytics['total_employees'] ?? 0 ?></div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;"><?= $isTeamLeader ? 'Members' : 'Employees' ?></div>
             </div>
           <?php endif; ?>
-          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-            <div id="stat-videos-count" style="font-size:22px;font-weight:900;color:#ffffff;"><?= count($visibleVideos) ?></div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;">Visible Videos</div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+            <div id="stat-videos-count" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= count($visibleVideos) ?></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Videos</div>
           </div>
-          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:8px 10px;">
-            <div id="stat-files-count" style="font-size:22px;font-weight:900;color:#ffffff;">6</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;">Practice Files</div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
+            <div id="stat-files-count" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;">6</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Practice Files</div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <!-- Featured Courses -->
-  <div style="background:#f4f7fc;padding:64px 24px;">
+  <div style="background:#f4f7fc;padding:44px 24px;">
     <div style="max-width:1200px;margin:0 auto;">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px;">
         <div>
-          <span class="badge" style="background:#eff6ff;color:#1d4ed8;margin-bottom:8px;">BIM CURRICULA</span>
-          <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">Core Training Programs</h2>
+          <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;letter-spacing:-0.02em;">Featured</h2>
         </div>
         <button onclick="showSection('courses')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1d4ed8;font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:10px;cursor:pointer;">
           View All Courses →
@@ -491,9 +471,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 ───────────────────────────────────────── -->
 <section id="section-files" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
-    <div style="margin-bottom:30px;">
-      <h2 style="font-size:30px;font-weight:900;color:#0f172a;margin:0 0 10px;">Practice Datasets & BIM Templates</h2>
-      <p style="color:#64748b;font-size:15px;margin:0;">Download real-world sample models (.RVT, .DWG, .NWD, .PDF) for hands-on exercises.</p>
+    <div style="margin-bottom:28px;">
+      <h2 style="font-size:30px;font-weight:900;color:#0f172a;margin:0;">Practice Datasets & BIM Templates</h2>
     </div>
 
     <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
@@ -794,9 +773,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
     
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="badge" style="background:#ecfdf5;color:#059669;margin-bottom:6px;">ADMIN ACCESS AUTHORIZED</div>
         <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0;">BIM Portal Content & Material Upload</h2>
-        <p style="color:#64748b;font-size:14px;margin:0;">Upload training videos, datasets, and curricula, and assign them specifically to Trainees, Engineers, Architects, or All Employees.</p>
       </div>
 
       <button onclick="showSection('analytics')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1d4ed8;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
@@ -819,8 +796,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 
     <!-- TAB 1: VIDEO UPLOAD WITH TARGET STATION SELECTOR -->
     <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 6px;">Upload Material & Assign Video Lesson</h3>
-      <p style="color:#64748b;font-size:14px;margin:0 0 20px;">Upload MP4 video files or YouTube links, and target which employee station will receive them.</p>
+      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 24px;">Upload Material & Assign Video Lesson</h3>
 
       <!-- Mode Selector -->
       <div style="display:flex;gap:8px;margin-bottom:20px;background:#f1f5f9;padding:6px;border-radius:12px;max-width:620px;flex-wrap:wrap;">
@@ -901,7 +877,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
                 <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Track Title *</label>
                 <input id="inline-curriculum-title" type="text" placeholder="e.g. Advanced Structural Revit & Rebar Detailing" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;">
               </div>
-              <div>
+              <div style="display:none;">
                 <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Skill Level</label>
                 <select id="inline-curriculum-level" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;">
                   <option value="Beginner">Beginner</option>
@@ -1041,7 +1017,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
             </select>
           </div>
 
-          <div>
+          <div style="display:none;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Difficulty Level</label>
             <select id="new-course-level" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
               <option value="Beginner">Beginner</option>
@@ -1063,8 +1039,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
           </div>
 
           <div style="grid-column:1/-1;">
-            <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Estimated Total Duration (e.g. 24 hrs)</label>
-            <input id="new-course-duration" type="text" placeholder="e.g. 15 hrs (or self-paced)" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+            <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Course Track</label>
+            <input id="new-course-duration" type="text" placeholder="e.g. Standard (or self-paced)" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
           </div>
 
           <div style="grid-column:1/-1;">
@@ -1127,8 +1103,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
         <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:14px;overflow:hidden;margin-bottom:18px;min-height:360px;"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div>
-            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">Lesson Overview</h3>
-            <div id="classroom-lesson-duration" style="font-size:13px;color:#64748b;font-weight:600;">⏱ 18:20 • HD Video</div>
+            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Lesson Overview</h3>
+            <div id="classroom-lesson-duration" style="display:none;"></div>
           </div>
           <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
             <span>○</span> Mark as Completed
@@ -1177,27 +1153,14 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 </div>
 
 
-<!-- ══════════════════════════════════════════
-     FOOTER
-══════════════════════════════════════════ -->
-<footer style="background:#ffffff;border-top:1px solid #eef2f6;color:#64748b;padding:48px 24px 24px;">
-  <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13px;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:30px;height:30px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;">B</div>
-      <span style="color:#0f172a;font-weight:800;">BSD BIM Training Center</span>
-      <span>• Integrated Role Management System</span>
-    </div>
-    <div style="color:#94a3b8;">
-      Logged in as <strong><?= htmlspecialchars($userName) ?></strong> (<?= htmlspecialchars(ucfirst($role)) ?>)
-    </div>
-  </div>
-</footer>
+
 
 
 <!-- ══════════════════════════════════════════
      CLIENT JAVASCRIPT & PROGRESS ENGINE
 ══════════════════════════════════════════ -->
 <script>
+const IS_STAFF_ADMIN = <?= $isStaffAdmin ? 'true' : 'false' ?>;
 let currentPlayingVideoId = null;
 let currentPlayingVideoElement = null;
 let videoProgressDebounceTimer = null;
@@ -1360,7 +1323,7 @@ function renderEmployeeProgressChecklist() {
           <div>
             <div style="font-size:15px;font-weight:800;color:#0f172a;">${v.title}</div>
             <div style="font-size:12px;color:#64748b;margin-top:2px;">
-              ${v.cat.toUpperCase()} • ⏱ ${v.duration || 'HD'} • Station: <strong style="color:#2563eb;">${stationLabel}</strong>
+              ${v.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${stationLabel}</strong>
             </div>
           </div>
         </div>
@@ -1476,7 +1439,7 @@ async function renderVideosCategory(category) {
                 <span style="font-size:16px;margin-left:3px;color:#2563eb;">▶</span>
               </div>
             </div>
-            ${isDone ? `<span style="position:absolute;top:10px;right:10px;background:#10b981;color:white;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">✓ WATCHED</span>` : ''}
+            ${isDone ? `<span style="position:absolute;top:10px;right:10px;background:#2563eb;color:white;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">✓ WATCHED</span>` : ''}
           </div>
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -1488,7 +1451,6 @@ async function renderVideosCategory(category) {
 
         <div style="padding-top:12px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
           <span style="color:#1d4ed8;font-size:13px;font-weight:700;">Watch Lesson →</span>
-          <span style="font-size:12px;color:#64748b;font-weight:600;">⏱ ${v.duration || 'HD'}</span>
         </div>
       </div>
     `;
@@ -1508,19 +1470,17 @@ function renderHomeFeatured() {
   const container = document.getElementById('home-featured-courses');
   if (!container) return;
   const courses = getAllCourses().slice(0, 3);
+  const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
   container.innerHTML = courses.map(c => `
     <div class="dashboard-card" onclick="openClassroom('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;">
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="icon-squircle glow-blue"><span>${c.icon}</span></div>
+        <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px;">
           <span class="badge" style="background:#eff6ff;color:#1d4ed8;">${c.cat.toUpperCase()}</span>
         </div>
         <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 8px;">${c.title}</h3>
-        <span style="font-size:12px;color:#64748b;">⏱ ${c.duration}</span>
       </div>
       <div style="padding-top:12px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;">
         <span style="color:#1d4ed8;font-size:13px;font-weight:700;">Start Curriculum →</span>
-        <span style="background:#f1f5f9;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;">${c.level}</span>
       </div>
     </div>
   `).join('');
@@ -1531,19 +1491,17 @@ function renderCoursesCatalog(filterCat) {
   if (!container) return;
   let list = getAllCourses();
   if (filterCat !== 'all') list = list.filter(c => c.cat === filterCat);
+  const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
   container.innerHTML = list.map(c => `
     <div class="dashboard-card" onclick="openClassroom('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;">
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="icon-squircle glow-blue"><span>${c.icon}</span></div>
+        <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:12px;">
           <span class="badge" style="background:#eff6ff;color:#1d4ed8;">${c.cat.toUpperCase()}</span>
         </div>
         <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 8px;">${c.title}</h3>
-        <span style="font-size:12px;color:#64748b;">⏱ ${c.duration}</span>
       </div>
       <div style="padding-top:12px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;">
         <span style="color:#1d4ed8;font-size:13px;font-weight:700;">Start Curriculum →</span>
-        <span style="background:#f1f5f9;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;">${c.level}</span>
       </div>
     </div>
   `).join('');
@@ -1580,7 +1538,6 @@ function renderClassroomPlaylist() {
   container.innerHTML = lessons.map((l, idx) => `
     <div onclick="loadClassroomLesson(${idx})" style="padding:12px;border-radius:10px;background:${idx === currentClassroomLessonIdx ? '#eff6ff' : '#f8fafc'};border:1.5px solid ${idx === currentClassroomLessonIdx ? '#3b82f6' : '#e2e8f0'};cursor:pointer;">
       <div style="font-size:13px;font-weight:700;color:#0f172a;">${l.title}</div>
-      <div style="font-size:11px;color:#64748b;margin-top:2px;">⏱ ${l.duration || 'HD'}</div>
     </div>
   `).join('');
 }
@@ -1616,15 +1573,14 @@ function renderPracticeFiles(filterCat = 'all') {
   const container = document.getElementById('practice-files-grid');
   if (!container) return;
   const list = getAllPracticeFiles();
+  const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
   container.innerHTML = list.map(f => `
     <div class="dashboard-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:160px;">
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <div class="icon-squircle glow-blue"><span>${f.icon}</span></div>
+        <div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:10px;">
           <span class="badge" style="background:#eff6ff;color:#1d4ed8;">${f.type}</span>
         </div>
         <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 4px;">${f.name}</h4>
-        <span style="font-size:11.5px;color:#64748b;">Size: ${f.size}</span>
       </div>
       <button onclick="showToast('📥 Downloading ${f.name}...', '#2563eb')" style="background:linear-gradient(135deg,#1d4ed8,#0284c7);color:white;border:none;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:12px;">
         ⤓ Download Dataset
@@ -1753,7 +1709,6 @@ function renderAdminCurriculaList() {
             <span style="font-weight:800;color:#2563eb;font-size:12px;">#${idx + 1}</span>
             <span style="font-weight:700;color:#0f172a;">${l.title}</span>
           </div>
-          <span style="font-size:12px;color:#64748b;font-weight:600;">⏱ ${l.duration || 'HD'}</span>
         </div>
       `).join('')
       : '<div style="font-size:12px;color:#94a3b8;font-style:italic;padding:8px 0;">No lessons attached yet. Upload a video and assign it to this curriculum!</div>';
@@ -1768,7 +1723,6 @@ function renderAdminCurriculaList() {
             <div>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                 <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">${c.title}</h4>
-                <span class="badge" style="background:#f1f5f9;color:#475569;">${c.level || 'Intermediate'}</span>
                 ${stationBadge}
               </div>
               <div style="font-size:12px;color:#64748b;margin-top:3px;">
