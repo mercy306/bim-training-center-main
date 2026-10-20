@@ -233,6 +233,123 @@ sort($allAvailableTeams);
     .progress-bar-fill {
       transition: width 0.4s ease-out;
     }
+
+    /* ── INTERACTION POLISH ───────────────────────────────────────────── */
+    :root {
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --focus-ring: 0 0 0 4px rgba(37, 99, 235, 0.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    button, a, select, input, textarea { -webkit-tap-highlight-color: transparent; }
+    button, select { touch-action: manipulation; }
+    button:focus-visible, a:focus-visible, select:focus-visible,
+    input:focus-visible, textarea:focus-visible, [role="button"]:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring) !important;
+    }
+    button:not(:disabled) { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
+    button:not(:disabled):active { transform: translateY(1px) scale(0.985); }
+    button:disabled { cursor: not-allowed; opacity: 0.62; }
+
+    /* The inline navigation uses two position declarations; this keeps it pinned while scrolling. */
+    body > nav { position: sticky !important; top: 0; }
+    #app-root { min-height: calc(100vh - 160px); }
+    #app-root > section { animation: sectionEnter 320ms var(--ease-out) both; }
+    #app-root > section.is-entering { animation: sectionEnter 320ms var(--ease-out) both; }
+    @keyframes sectionEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dashboard-card, .course-card { will-change: transform; }
+    .dashboard-card:hover, .course-card:hover { transform: translateY(-3px); }
+    .video-thumb .play-icon { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
+
+    /* ── TRANSLUCENT GLASS SURFACES ───────────────────────────────────── */
+    body {
+      background:
+        radial-gradient(circle at 10% 10%, rgba(96, 165, 250, 0.19), transparent 30rem),
+        radial-gradient(circle at 94% 34%, rgba(125, 211, 252, 0.17), transparent 26rem),
+        linear-gradient(145deg, #edf5ff 0%, #f8fbff 46%, #eef8ff 100%) !important;
+      background-attachment: fixed !important;
+    }
+    body > nav {
+      background: linear-gradient(105deg, rgba(29, 78, 216, 0.83), rgba(37, 99, 235, 0.76) 46%, rgba(2, 132, 199, 0.70)) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.26);
+      backdrop-filter: blur(20px) saturate(145%);
+      -webkit-backdrop-filter: blur(20px) saturate(145%);
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.14) !important;
+    }
+    .hero-bg, .page-header-bg {
+      background: linear-gradient(105deg, rgba(29, 78, 216, 0.86), rgba(37, 99, 235, 0.76) 48%, rgba(2, 132, 199, 0.68)) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: inset 0 1px rgba(255, 255, 255, 0.22);
+    }
+    .dashboard-card, .course-card, .modal-box {
+      background: rgba(255, 255, 255, 0.68) !important;
+      border-color: rgba(255, 255, 255, 0.7) !important;
+      backdrop-filter: blur(18px) saturate(135%);
+      -webkit-backdrop-filter: blur(18px) saturate(135%);
+      box-shadow: 0 12px 32px rgba(30, 64, 175, 0.08), inset 0 1px rgba(255, 255, 255, 0.58) !important;
+    }
+    .dashboard-card:hover, .course-card:hover {
+      background: rgba(255, 255, 255, 0.82) !important;
+      border-color: rgba(147, 197, 253, 0.78) !important;
+      box-shadow: 0 18px 38px rgba(30, 64, 175, 0.13), inset 0 1px rgba(255, 255, 255, 0.78) !important;
+    }
+    input, textarea, select {
+      background: rgba(255, 255, 255, 0.66) !important;
+      border-color: rgba(148, 163, 184, 0.42) !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    select option { background: #ffffff; color: #0f172a; }
+    .modal-overlay { background: rgba(15, 23, 42, 0.5); }
+    .glass-course-track {
+      background: rgba(255, 255, 255, 0.42) !important;
+      border-color: rgba(255, 255, 255, 0.62) !important;
+      box-shadow: 0 18px 42px rgba(30, 64, 175, 0.07), inset 0 1px rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(22px) saturate(130%);
+      -webkit-backdrop-filter: blur(22px) saturate(130%);
+    }
+    .glass-video-tile {
+      background: rgba(255, 255, 255, 0.48) !important;
+      border-color: rgba(255, 255, 255, 0.66) !important;
+      box-shadow: 0 12px 26px rgba(30, 64, 175, 0.08), inset 0 1px rgba(255, 255, 255, 0.58);
+      backdrop-filter: blur(16px) saturate(125%);
+      -webkit-backdrop-filter: blur(16px) saturate(125%);
+      cursor: default;
+      transition: transform 220ms var(--ease-out), background-color 220ms ease, box-shadow 220ms ease;
+      animation: tileFloat 5s ease-in-out infinite;
+    }
+    .glass-video-tile:hover {
+      background: rgba(255, 255, 255, 0.64) !important;
+      border-color: rgba(255, 255, 255, 0.82) !important;
+      box-shadow: 0 20px 34px rgba(30, 64, 175, 0.13), inset 0 1px rgba(255, 255, 255, 0.74);
+      animation-play-state: paused;
+      transform: translateY(-5px);
+    }
+    .glass-video-tile:nth-child(even) { animation-delay: -2.4s; }
+    .glass-video-frame { box-shadow: inset 0 1px rgba(255, 255, 255, 0.18); }
+    @keyframes tileFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @media (max-width: 720px) {
+      body > nav > div { min-height: auto !important; padding: 12px 16px 14px !important; gap: 12px !important; }
+      body > nav img { height: 40px !important; }
+      body > nav [style*="justify-content:space-between"] { justify-content: flex-start !important; }
+      .nav-btn { padding: 8px 12px; font-size: 13px; }
+      #app-root > section { padding-left: 16px !important; padding-right: 16px !important; }
+      #video-cards-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+      .modal-overlay { padding: 12px; align-items: flex-end; }
+      .modal-box { max-height: calc(100vh - 24px); border-radius: 20px 20px 14px 14px; }
+      .toast { left: 16px; right: 16px; bottom: 16px; justify-content: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 1ms !important; }
+    }
   </style>
   <script>
     window.ACTIVE_USER = <?= json_encode($user) ?>;
@@ -288,11 +405,9 @@ sort($allAvailableTeams);
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <?php if ($isStaffAdmin): ?>
           <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">Analytics</button>
-          <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Training Videos</button>
           <button onclick="showSection('upload')" class="nav-btn" id="nav-upload">Upload Material</button>
         <?php else: ?>
-          <button onclick="showSection('videos')"  class="nav-btn active" id="nav-videos">Training Videos</button>
-          <button onclick="showSection('my-progress')" class="nav-btn" id="nav-my-progress">My Progress</button>
+          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress">My Training</button>
           <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
         <?php endif; ?>
       </div>
@@ -314,27 +429,7 @@ sort($allAvailableTeams);
 
 
 
-<!-- ─────────────────────────────────────────
-     3. VIDEOS SECTION (STREAMING & PROGRESS)
-───────────────────────────────────────── -->
-<section id="section-videos" style="display:none;background:#ffffff;padding:40px 24px 80px;">
-  <div style="max-width:1200px;margin:0 auto;">
 
-    <!-- Video Type Filter Dropdown -->
-    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;">
-      <label for="video-type-select" style="font-size:13px;font-weight:700;color:#0f172a;">Video Type:</label>
-      <select id="video-type-select" onchange="switchVideoCategory(this.value)" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;font-weight:600;color:#0f172a;background:#ffffff;outline:none;min-width:200px;cursor:pointer;">
-        <option value="all_sims">All Videos</option>
-        <option value="revit">Revit Structure</option>
-        <option value="coordination">BIM Coordination</option>
-        <option value="autocad">AutoCAD</option>
-        <option value="navisworks">Navisworks</option>
-      </select>
-    </div>
-
-    <div id="video-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;"></div>
-  </div>
-</section>
 
 
 <!-- ─────────────────────────────────────────
@@ -1315,7 +1410,7 @@ function renderEmployeeProgressChecklist() {
             const syllabus = course.syllabus || [];
             
             return `
-              <div style="max-width:1000px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;">
+              <div class="glass-course-track" style="max-width:1000px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
                   <div style="font-size:17px;font-weight:800;color:#0f172a;">${course.title}</div>
                   <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
@@ -1350,14 +1445,14 @@ function renderEmployeeProgressChecklist() {
                       statusLabel = '✓ Completed';
                       statusColor = '#2563eb';
                     } else if (unlocked) {
-                      statusLabel = '▶ Up Next';
+                      statusLabel = 'Up next';
                       statusColor = '#2563eb';
                     }
 
                     return `
-                      <div style="background:#ffffff;border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;">
+                      <div class="glass-video-tile" style="background:#ffffff;border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;">
                         <div>
-                          <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;height:180px;">
+                          <div class="glass-video-frame" style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;height:180px;">
                             ${videoMediaHtml}
                           </div>
                           <div style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.35;margin-bottom:8px;">
@@ -1433,7 +1528,7 @@ function renderEmployeeProgressChecklist() {
 
 /* ── NAVIGATION ── */
 function showSection(name) {
-  if (name === 'home' || name === 'courses') {
+  if (name === 'home' || name === 'courses' || name === 'videos') {
     name = getRoleLandingSection();
   }
   // Strict role authorization:
@@ -1446,7 +1541,15 @@ function showSection(name) {
 
   ['videos','files','classroom','my-progress','team-progress','analytics','upload'].forEach(s => {
     const el = document.getElementById('section-' + s);
-    if (el) el.style.display = (s === name) ? 'block' : 'none';
+    if (el) {
+      const isActive = s === name;
+      el.style.display = isActive ? 'block' : 'none';
+      if (isActive) {
+        el.classList.remove('is-entering');
+        // Restart the entrance animation only for the section being opened.
+        requestAnimationFrame(() => el.classList.add('is-entering'));
+      }
+    }
 
     const btn = document.getElementById('nav-' + s);
     if (btn) {
@@ -2965,7 +3068,7 @@ function handleGlobalSearch(query) {
 
 function getRoleLandingSection() {
   if (window.USER_ROLE === 'admin') return 'analytics';
-  return 'videos';
+  return 'my-progress';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
