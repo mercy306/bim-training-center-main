@@ -112,17 +112,16 @@ sort($allAvailableTeams);
     /* Cards */
     .dashboard-card, .course-card {
       background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #eef2f6;
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      box-shadow: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       position: relative;
     }
     .dashboard-card:hover, .course-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.09);
-      border-color: #dbeafe;
+      border-color: #2563eb;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
     }
 
     /* Squircle Badges */
@@ -247,7 +246,7 @@ sort($allAvailableTeams);
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
   </script>
 </head>
-<body style="background:#f4f7fc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
+<body style="background:#ffffff;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
@@ -318,12 +317,11 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      3. VIDEOS SECTION (STREAMING & PROGRESS)
 ───────────────────────────────────────── -->
-<section id="section-videos" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-videos" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
-
-    <!-- Video Type Filter Dropdown (Replaces horizontal row) -->
-    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;background:#ffffff;border:1px solid #e2e8f0;padding:12px 18px;border-radius:10px;width:fit-content;">
+    <!-- Video Type Filter Dropdown -->
+    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;">
       <label for="video-type-select" style="font-size:13px;font-weight:700;color:#0f172a;">Video Type:</label>
       <select id="video-type-select" onchange="switchVideoCategory(this.value)" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;font-weight:600;color:#0f172a;background:#ffffff;outline:none;min-width:200px;cursor:pointer;">
         <option value="all_sims">All Videos</option>
@@ -342,12 +340,11 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-files" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
-
-    <!-- Practice File Type Filter Dropdown (Replaces horizontal row) -->
-    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;background:#ffffff;border:1px solid #e2e8f0;padding:12px 18px;border-radius:10px;width:fit-content;">
+    <!-- Practice File Type Filter Dropdown -->
+    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;">
       <label for="practice-file-type-select" style="font-size:13px;font-weight:700;color:#0f172a;">File Type:</label>
       <select id="practice-file-type-select" onchange="filterPracticeFiles(this.value)" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;font-weight:600;color:#0f172a;background:#ffffff;outline:none;min-width:200px;cursor:pointer;">
         <option value="all">All File Types</option>
@@ -367,27 +364,27 @@ sort($allAvailableTeams);
      5. EMPLOYEE PERSONAL PROGRESS SECTION
 ───────────────────────────────────────── -->
 <?php if ($isEmployee || $isTeamLeader): ?>
-<section id="section-my-progress" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-my-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1100px;margin:0 auto;">
     
     <!-- Hero Profile & Meter -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 6px 25px rgba(0,0,0,0.04);margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-bottom:32px;border-bottom:1px solid #e2e8f0;padding-bottom:28px;">
       <div>
-        <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0 0 6px;"><?= htmlspecialchars($userName) ?></h2>
+        <h2 style="font-size:24px;font-weight:800;color:#0f172a;margin:0 0 6px;"><?= htmlspecialchars($userName) ?></h2>
         <div style="color:#64748b;font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
           <span>Team: <strong><?= htmlspecialchars($teamName) ?></strong></span>
         </div>
       </div>
 
-      <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:18px 28px;text-align:center;min-width:220px;">
-        <div style="font-size:36px;font-weight:900;color:#1d4ed8;line-height:1;" id="my-overall-pct"><?= $myProgress['overall_percent'] ?>%</div>
-        <div style="font-size:11.5px;color:#64748b;margin-top:6px;" id="my-completed-ratio"><?= $myProgress['completed_count'] ?> of <?= $myProgress['total_assigned'] ?> Videos Completed</div>
+      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px 24px;text-align:center;min-width:200px;">
+        <div style="font-size:32px;font-weight:800;color:#1d4ed8;line-height:1;" id="my-overall-pct"><?= $myProgress['overall_percent'] ?>%</div>
+        <div style="font-size:12px;color:#64748b;margin-top:6px;" id="my-completed-ratio"><?= $myProgress['completed_count'] ?> of <?= $myProgress['total_assigned'] ?> Videos Completed</div>
       </div>
     </div>
 
     <!-- Video Completion Checklist -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-      <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 18px;">Assigned Training Materials Checklist</h3>
+    <div style="background:transparent;border:none;padding:0;box-shadow:none;">
+      <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px;">Assigned Training Materials Checklist</h3>
       <div id="my-videos-checklist" style="display:flex;flex-direction:column;gap:12px;"></div>
     </div>
 
@@ -400,15 +397,16 @@ sort($allAvailableTeams);
      6. TEAM LEADER SCOPED VIEW (TEAM ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isTeamLeader): ?>
-<section id="section-team-progress" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-team-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
     
-    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:18px;padding:18px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:18px;">
-                  </div>
+        <div style="width:36px;height:36px;border-radius:8px;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;">
+          TL
+        </div>
         <div>
-          <h3 style="font-size:18px;font-weight:900;color:#1e3a8a;margin:0;">Team Leader: <?= htmlspecialchars($userName) ?></h3>
+          <h3 style="font-size:17px;font-weight:800;color:#1e3a8a;margin:0;">Team Leader: <?= htmlspecialchars($userName) ?></h3>
           <div style="font-size:13px;color:#3b82f6;font-weight:600;">
             Scoped exclusively to members of: <strong><?= htmlspecialchars($teamName) ?></strong> (<?= count($roster) ?> assigned member<?= count($roster) === 1 ? '' : 's' ?>).
           </div>
@@ -427,23 +425,23 @@ sort($allAvailableTeams);
 
     <!-- Team Metrics -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Team Average Completion</div>
-        <div style="font-size:28px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+        <div style="font-size:26px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Assigned Members</div>
-        <div style="font-size:28px;font-weight:800;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
+        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
-        <div style="font-size:28px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
+        <div style="font-size:26px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
     </div>
 
     <!-- Scoped Team Member Roster -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
-      <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 16px;">Team Member Progress Details</h3>
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:20px;background:#ffffff;">
+      <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0 0 16px;">Team Member Progress Details</h3>
       
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
@@ -510,35 +508,35 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
 
     <!-- Metrics Row -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Total Enrolled</div>
-        <div style="font-size:28px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
+        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Completion Rate</div>
-        <div style="font-size:28px;font-weight:800;color:#1d4ed8;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+        <div style="font-size:26px;font-weight:800;color:#1d4ed8;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
-        <div style="font-size:28px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
+        <div style="font-size:26px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">In Progress</div>
-        <div style="font-size:28px;font-weight:800;color:#d97706;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
+        <div style="font-size:26px;font-weight:800;color:#d97706;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
       </div>
     </div>
 
     <!-- Station Comparison Breakdown (Hidden when empty) -->
     <?php if (!empty($analytics['station_stats'])): ?>
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
-      <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 16px;">Completion Rate by Station</h3>
+    <div style="margin-bottom:28px;">
+      <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 14px;">Completion Rate by Station</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;">
         <?php foreach ($analytics['station_stats'] as $st): ?>
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;">
@@ -557,11 +555,11 @@ sort($allAvailableTeams);
     <?php endif; ?>
 
     <!-- Company-Wide Employee Roster Table -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:20px;background:#ffffff;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
         <div>
-          <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
-          </div>
+          <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
+        </div>
         
         <div style="display:flex;gap:10px;align-items:center;">
           <div style="position:relative;display:flex;align-items:center;">
@@ -902,56 +900,56 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#f4f7fc;padding:32px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#ffffff;padding:32px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <button onclick="showSection('videos')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1e293b;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
+      <button onclick="showSection('videos')" style="background:#ffffff;border:1px solid #cbd5e1;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
         ← Back to Videos
       </button>
       <div style="display:flex;align-items:center;gap:10px;">
         <span id="classroom-course-cat" class="badge" style="background:#eff6ff;color:#1d4ed8;">BIM</span>
-        <h2 id="classroom-course-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Course Curriculum</h2>
+        <h2 id="classroom-course-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0;">Course Curriculum</h2>
       </div>
     </div>
 
-    <div id="classroom-restriction-banner" style="background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <div id="classroom-restriction-banner" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:10px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">️</span>
-        <span style="font-size:13px;font-weight:600;"><strong>Curriculum Tracker Active:</strong> Lessons unlock in sequence. Fast-forwarding is restricted, rewinding is enabled, and your watch position is automatically preserved via cookies.</span>
+        <span style="font-size:18px;">ℹ️</span>
+        <span style="font-size:13px;font-weight:600;"><strong>Curriculum Tracker:</strong> Lessons unlock in sequence. Fast-forwarding is restricted, rewinding is enabled, and progress is auto-saved.</span>
       </div>
       <div id="classroom-cookie-indicator" style="font-size:11.5px;color:#1e40af;background:#dbeafe;padding:4px 12px;border-radius:9999px;font-weight:700;display:flex;align-items:center;gap:5px;">
-        Cookie Auto-Resume Active
+        Auto-Resume Active
       </div>
     </div>
 
     <div id="classroom-layout-grid" style="display:grid;grid-template-columns:1fr 360px;gap:24px;">
-      <div style="background:#ffffff;border:1px solid #eef2f6;border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:14px;overflow:hidden;margin-bottom:18px;min-height:380px;"></div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:22px;box-shadow:none;">
+        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:10px;overflow:hidden;margin-bottom:18px;min-height:380px;"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
           <div>
-            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 4px;">Lesson Overview</h3>
-            <span id="classroom-lesson-resume-badge" style="display:none;background:#ecfdf5;color:#065f46;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;">⏱️ Resumed from cookie</span>
+            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 4px;">Lesson Overview</h3>
+            <span id="classroom-lesson-resume-badge" style="display:none;background:#ecfdf5;color:#065f46;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;">⏱️ Resumed</span>
           </div>
-          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1px solid #cbd5e1;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
             <span>○</span> Mark as Completed
           </button>
         </div>
 
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:14px;border-top:1px solid #f1f5f9;">
-          <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1.5px solid #cbd5e1;color:#334155;padding:8px 16px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;">
+          <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
             ← Previous Lesson
           </button>
           <div id="classroom-step-indicator" style="font-size:12px;color:#64748b;font-weight:700;">Lesson 1 of 1</div>
-          <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
             <span>Next Lesson</span> →
           </button>
         </div>
       </div>
 
-      <div style="background:#ffffff;border:1px solid #eef2f6;border-radius:20px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-shadow:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
           <div>
-            <h4 style="font-size:15px;font-weight:900;color:#0f172a;margin:0;">Course Syllabus</h4>
+            <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Syllabus</h4>
             <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Follow curriculum in sequence</div>
           </div>
           <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;">Lessons</span>
