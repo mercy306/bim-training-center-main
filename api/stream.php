@@ -78,6 +78,10 @@ header('Accept-Ranges: bytes');
 header('Cache-Control: public, max-age=86400');
 header('Access-Control-Allow-Origin: *');
 
+if ($_SERVER['REQUEST_METHOD'] === 'HEAD') {
+    exit;
+}
+
 $fp = fopen($fullPath, 'rb');
 if (!$fp) {
     http_response_code(500);

@@ -265,13 +265,9 @@ sort($allAvailableTeams);
     .dashboard-card:hover, .course-card:hover { transform: translateY(-3px); }
     .video-thumb .play-icon { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
 
-    /* ── TRANSLUCENT GLASS SURFACES ───────────────────────────────────── */
+    /* ── WARM WHITE CREAM BACKGROUND ───────────────────────────────────── */
     body {
-      background:
-        radial-gradient(circle at 10% 10%, rgba(96, 165, 250, 0.19), transparent 30rem),
-        radial-gradient(circle at 94% 34%, rgba(125, 211, 252, 0.17), transparent 26rem),
-        linear-gradient(145deg, #edf5ff 0%, #f8fbff 46%, #eef8ff 100%) !important;
-      background-attachment: fixed !important;
+      background: #faf8f5 !important;
     }
     body > nav {
       background: linear-gradient(105deg, rgba(29, 78, 216, 0.83), rgba(37, 99, 235, 0.76) 46%, rgba(2, 132, 199, 0.70)) !important;
@@ -363,7 +359,7 @@ sort($allAvailableTeams);
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
   </script>
 </head>
-<body style="background:#ffffff;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
+<body style="background:#faf8f5;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
@@ -435,7 +431,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-files" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <!-- Practice File Type Filter Dropdown -->
@@ -573,7 +569,7 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
@@ -666,7 +662,7 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-upload" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
     <div style="margin-bottom:24px;">
@@ -889,7 +885,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#ffffff;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#faf8f5;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation -->

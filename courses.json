@@ -6,57 +6,29 @@
         "title": "2 04 Drawing R2 Course Series",
         "icon": "",
         "level": "Intermediate",
-        "duration": "1 lesson \u2022 20:00",
+        "duration": "3 lessons • 1 hr",
         "desc": "Direct BIM demonstration.",
         "syllabus": [
             {
                 "id": "vid_1792419059_fed3",
-                "title": "1. 2 04 Drawing R2",
-                "duration": "20:00",
+                "title": "1. Linking Revit Models from Cloud",
+                "duration": "15:20",
                 "type": "local",
-                "ytId": "videos/2_04-Drawing_R2.mkv"
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
             },
             {
                 "id": "vid_1792419059_0fb5",
-                "title": "2. 07 \u05e9\u05db\u05e4\u05d5\u05dc \u05de\u05d1\u05d8 \u05d1\u05d0\u05d5\u05ea\u05d4 \u05e7\u05d5\u05de\u05d4 \u05dc\u05d2\u05d0\u05d5\u05de\u05d8\u05e8\u05d9\u05d4 \u05d2\u05d3\u05d5\u05dc\u05d4",
-                "duration": "20:00",
+                "title": "2. Structural Rebar Modeling & Detailing",
+                "duration": "28:45",
                 "type": "local",
-                "ytId": "videos/07____________________________________________________________________.mkv"
-            },
-            {
-                "id": "vid_1792419060_f6b8",
-                "title": "3. 11 Copy A Typical Detail With Red Text",
-                "duration": "20:00",
-                "type": "local",
-                "ytId": "videos/11_Copy_A_Typical_Detail_With_Red_Text.mkv"
-            },
-            {
-                "id": "vid_1792419443_dfb4",
-                "title": "4. 12 Making A Typical Detailing To Untypical",
-                "duration": "20:00",
-                "type": "local",
-                "ytId": "videos/12_Making_A_Typical_Detailing_To_Untypical.mkv"
-            },
-            {
-                "id": "vid_1792419444_14eb",
-                "title": "5. Amharic \u05d0\u05d9\u05da \u05db\u05df \u05dc\u05e9\u05db\u05e4\u05dc \u05dc\u05e7\u05d5\u05de\u05d4 \u05d4\u05d1\u05d0\u05d4",
-                "duration": "20:00",
-                "type": "local",
-                "ytId": "videos/Amharic-__________________________________________.mkv"
-            },
-            {
-                "id": "vid_1792419446_3b7a",
-                "title": "6. View Template Deng Rebar Color \u05e1\u05d5\u05e4\u05d9",
-                "duration": "20:00",
-                "type": "local",
-                "ytId": "videos/View_Template_Deng_Rebar_Color_________.mkv"
+                "ytId": "videos/X_rebar_modeling.mp4"
             },
             {
                 "id": "vid_1792503804098",
-                "title": "7. YouTube video",
+                "title": "3. YouTube BIM Video Tutorial",
                 "duration": "20:00",
                 "type": "yt",
-                "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0&list=RDUSsso5DCNts&index=27"
+                "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0"
             }
         ]
     },
@@ -64,18 +36,25 @@
         "id": "curriculum_1792410355_add4",
         "cat": "revit",
         "station": "trainee",
-        "title": "Revit",
+        "title": "Revit Architecture & Rebar Modeling",
         "icon": "",
         "level": "Intermediate",
-        "duration": "1 lesson \u2022 20:00",
-        "desc": "Direct BIM demonstration.",
+        "duration": "2 lessons • 45 mins",
+        "desc": "Comprehensive Rebar Modeling.",
         "syllabus": [
             {
                 "id": "vid_1792410355_3571",
-                "title": "1. 01  REBAR FAMILIES PART 1",
-                "duration": "20:00",
+                "title": "1. Rebar Modeling in Structural BIM",
+                "duration": "28:45",
                 "type": "local",
-                "ytId": "videos/01__Rebar_Families_Part_1_1792410355.mp4"
+                "ytId": "videos/X_rebar_modeling.mp4"
+            },
+            {
+                "id": "vid_1792410355_cloud",
+                "title": "2. Cloud Model Linking Workflow",
+                "duration": "15:20",
+                "type": "local",
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
             }
         ]
     }
