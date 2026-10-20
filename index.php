@@ -727,7 +727,7 @@ sort($allAvailableTeams);
       </div>
 
       <!-- Form Grid (Single Flat Layer) -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
         <div style="grid-column:1/-1;">
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Title *</label>
           <input id="new-video-title" type="text" placeholder="e.g. Structural Modeling & Detailing" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
@@ -752,14 +752,6 @@ sort($allAvailableTeams);
             <option value="architect">Architects & Designers</option>
           </select>
           <input type="hidden" id="new-video-assigned-employees" value="" />
-        </div>
-
-        <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Track</label>
-          <select id="new-video-curriculum-id" onchange="updateSelectedCurriculumInfo(this.value)" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
-            <!-- Populated via JavaScript -->
-          </select>
-          <div id="curriculum-existing-info" style="font-size:11.5px;color:#2563eb;margin-top:4px;font-weight:600;"></div>
         </div>
 
         <div>
@@ -1972,7 +1964,7 @@ function filterPracticeFiles(cat) { renderPracticeFiles(cat); }
 let currentVideoUploadMode = 'file';
 let selectedAdminVideoFiles = [];
 let selectedUploadStations = ['all'];
-let currentVideoCurriculumMode = 'existing';
+let currentVideoCurriculumMode = 'none';
 let currentRosterStation = 'all';
 let currentRosterQuery = '';
 

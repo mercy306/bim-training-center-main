@@ -1,1 +1,59 @@
-{}
+{
+    "79": {
+        "name": "Kalbekal Haileleul (Trainee)",
+        "station": "trainee",
+        "team_id": 10,
+        "team_name": "General Team",
+        "videos": {
+            "vid_1792419059_fed3": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:42"
+            },
+            "vid_1792419059_0fb5": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:44"
+            },
+            "vid_1792419060_f6b8": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:47"
+            },
+            "vid_1792419443_dfb4": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:48"
+            },
+            "vid_1792419444_14eb": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:50"
+            },
+            "vid_1792419446_3b7a": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:52"
+            },
+            "vid_1792503804098": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:12:55"
+            },
+            "vid_1792410355_3571": {
+                "percent": 100,
+                "completed": true,
+                "position": 0,
+                "updated_at": "2026-10-20 17:13:12"
+            }
+        },
+        "last_active": "2026-10-20 17:13:12"
+    }
+}
