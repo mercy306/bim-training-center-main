@@ -917,58 +917,105 @@ sort($allAvailableTeams);
 
 
 <!-- ─────────────────────────────────────────
-     9. CLASSROOM & PLAYER
+     9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#ffffff;padding:32px 24px 80px;">
-  <div style="max-width:1300px;margin:0 auto;">
+<section id="section-classroom" style="display:none;background:#ffffff;padding:24px 24px 80px;">
+  <div style="max-width:1400px;margin:0 auto;">
+    
+    <!-- Breadcrumbs Navigation -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <button onclick="showSection('videos')" style="background:#ffffff;border:1px solid #cbd5e1;color:#1e293b;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
-        ← Back to Videos
-      </button>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span id="classroom-course-cat" class="badge" style="background:#eff6ff;color:#1d4ed8;">BIM</span>
-        <h2 id="classroom-course-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0;">Course Curriculum</h2>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#64748b;font-weight:600;flex-wrap:wrap;">
+        <button onclick="showSection('my-progress')" style="background:#ffffff;border:1px solid #cbd5e1;color:#0f172a;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;">
+          <span>←</span> Back to My Training
+        </button>
+        <span style="color:#cbd5e1;">/</span>
+        <span>Curricula</span>
+        <span style="color:#cbd5e1;">/</span>
+        <span id="classroom-course-cat" style="color:#2563eb;font-weight:700;text-transform:uppercase;">REVIT</span>
+        <span style="color:#cbd5e1;">/</span>
+        <span id="classroom-course-title" style="color:#0f172a;font-weight:700;">Course Title</span>
       </div>
     </div>
 
-    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:1fr 360px;gap:24px;">
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:22px;box-shadow:none;">
-        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:10px;overflow:hidden;margin-bottom:18px;min-height:380px;"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
-          <div>
-            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 4px;">Lesson Overview</h3>
-            <span id="classroom-lesson-resume-badge" style="display:none;background:#ecfdf5;color:#065f46;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;">⏱️ Resumed</span>
-          </div>
-          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1px solid #cbd5e1;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
-            <span>○</span> Mark as Completed
-          </button>
+    <!-- Main Two-Column Player & Playlist Layout Grid -->
+    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:minmax(0, 1fr) 380px;gap:28px;align-items:start;">
+      
+      <!-- LEFT COLUMN: Main Video Player & Metadata -->
+      <div>
+        <!-- 16:9 Aspect Ratio Video Viewport -->
+        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.1);border:1px solid #e2e8f0;">
+          <div id="classroom-player" style="width:100%;height:100%;"></div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:14px;border-top:1px solid #f1f5f9;">
-          <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
-            ← Previous Lesson
-          </button>
-          <div id="classroom-step-indicator" style="font-size:12px;color:#64748b;font-weight:700;">Lesson 1 of 1</div>
-          <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <span>Next Lesson</span> →
-          </button>
+        <!-- Video Metadata, Tags, Title & Instructor Actions -->
+        <div style="margin-top:20px;">
+          <!-- Category / Tags Row -->
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;">BIM Training</span>
+            <span id="classroom-badge-software" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;">Revit Structure</span>
+            <span id="classroom-lesson-resume-badge" style="display:none;background:#eff6ff;color:#2563eb;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">⏱️ Resumed</span>
+          </div>
+
+          <!-- Video Lesson Title -->
+          <h1 id="classroom-lesson-title" style="font-size:24px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">Lesson Overview</h1>
+
+          <!-- Author & Controls Bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:16px;border-top:1px solid #e2e8f0;">
+            <!-- Author Info -->
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:42px;height:42px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">
+                BSD
+              </div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:#0f172a;">BSD BIM Department</div>
+                <div style="font-size:12px;color:#64748b;font-weight:500;">Training Center Instructor</div>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
+                <span id="classroom-complete-icon">○</span> Mark as Completed
+              </button>
+              <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
+                ← Prev
+              </button>
+              <div id="classroom-step-indicator" style="font-size:12px;color:#64748b;font-weight:700;">Lesson 1 of 1</div>
+              <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,99,235,0.25);">
+                <span>Next</span> →
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-shadow:none;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <div>
-            <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Syllabus</h4>
-            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Follow curriculum in sequence</div>
+      <!-- RIGHT COLUMN: Playlist Sidebar with Thumbnails + Suggested Courses -->
+      <div>
+        <!-- Course Lessons Playlist Card -->
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(15,23,42,0.03);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div>
+              <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
+              <div style="font-size:12px;color:#64748b;margin-top:2px;">Step-by-step curriculum</div>
+            </div>
+            <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;">0 / 0</span>
           </div>
-          <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;">Lessons</span>
+
+          <div style="background:#f1f5f9;border-radius:9999px;height:6px;overflow:hidden;margin-bottom:6px;">
+            <div id="classroom-progress-bar" style="background:#2563eb;width:0%;height:100%;transition:width 0.3s;"></div>
+          </div>
+          <div id="classroom-progress-text" style="font-size:11.5px;color:#64748b;font-weight:700;text-align:right;margin-bottom:16px;">0% Completed</div>
+
+          <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:450px;overflow-y:auto;padding-right:2px;"></div>
         </div>
-        <div style="background:#f1f5f9;border-radius:9999px;height:8px;overflow:hidden;margin-bottom:6px;">
-          <div id="classroom-progress-bar" style="background:linear-gradient(90deg,#2563eb,#06b6d4);width:0%;height:100%;transition:width 0.3s;"></div>
+
+        <!-- Suggested Courses Card -->
+        <div style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 20px rgba(15,23,42,0.03);">
+          <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 12px;">Other Curricula</h4>
+          <div id="classroom-suggested-courses" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
-        <div id="classroom-progress-text" style="font-size:11.5px;color:#475569;font-weight:700;text-align:right;margin-bottom:16px;">0% Completed</div>
-        <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:500px;overflow-y:auto;"></div>
       </div>
+
     </div>
   </div>
 </section>
@@ -1403,7 +1450,12 @@ function renderEmployeeProgressChecklist() {
               <div class="glass-course-track" style="max-width:1000px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
                   <div style="font-size:17px;font-weight:800;color:#0f172a;">${course.title}</div>
-                  <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
+                    <button onclick="openClassroom('${course.id}')" style="background:#2563eb;color:#ffffff;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(37,99,235,0.25);">
+                      <span>▶ Open Player</span>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Video Lessons Collection (Side by Side Grid) -->
@@ -1451,7 +1503,12 @@ function renderEmployeeProgressChecklist() {
                         </div>
                         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #f1f5f9;">
                           <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
-                          <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+                          <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+                            <button onclick="openClassroom('${course.id}', ${idx})" style="background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb;padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                              Player ↗
+                            </button>
+                          </div>
                         </div>
                       </div>
                     `;
@@ -1790,6 +1847,29 @@ function openClassroom(courseId, lessonIdx = null) {
   loadClassroomLesson(targetIdx);
 }
 
+function renderClassroomSuggestedCourses() {
+  const container = document.getElementById('classroom-suggested-courses');
+  if (!container) return;
+  const all = getAllCourses();
+  const others = all.filter(c => !currentClassroomCourse || c.id !== currentClassroomCourse.id);
+  if (others.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:#94a3b8;padding:8px 0;">No other curricula available.</div>';
+    return;
+  }
+  container.innerHTML = others.slice(0, 3).map(c => {
+    const lessonCount = (c.syllabus || []).length;
+    return `
+      <div onclick="openClassroom('${c.id}')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#0f172a;line-height:1.3;">${c.title}</div>
+          <div style="font-size:11.5px;color:#64748b;margin-top:2px;">${lessonCount} lesson${lessonCount === 1 ? '' : 's'} • ${(c.cat || 'BIM').toUpperCase()}</div>
+        </div>
+        <span style="color:#2563eb;font-weight:800;font-size:12px;white-space:nowrap;">Start →</span>
+      </div>
+    `;
+  }).join('');
+}
+
 function renderClassroomPlaylist() {
   const container = document.getElementById('classroom-playlist-items');
   if (!container || !currentClassroomCourse) return;
@@ -1797,7 +1877,7 @@ function renderClassroomPlaylist() {
 
   const stats = getCurriculumProgressStats(currentClassroomCourse);
   const countEl = document.getElementById('classroom-playlist-count');
-  if (countEl) countEl.textContent = `${stats.completedCount} / ${stats.total} Completed`;
+  if (countEl) countEl.textContent = `${stats.completedCount} / ${stats.total}`;
 
   const barEl = document.getElementById('classroom-progress-bar');
   if (barEl) barEl.style.width = stats.percent + '%';
@@ -1813,52 +1893,57 @@ function renderClassroomPlaylist() {
 
     let border = '#e2e8f0';
     let bg = '#ffffff';
-    let icon = '';
-    let iconColor = '#94a3b8';
-    let badgeText = `Locked (Finish #${idx} first)`;
+    let badgeText = isUnlocked ? 'Unlocked' : `Locked`;
     let badgeBg = '#f1f5f9';
     let badgeColor = '#64748b';
 
     if (isDone) {
       bg = isCurrent ? '#eff6ff' : '#f8fafc';
-      border = isCurrent ? '#3b82f6' : '#a7f3d0';
-      icon = '';
-      iconColor = '#059669';
-      badgeText = 'Completed';
-      badgeBg = '#ecfdf5';
-      badgeColor = '#059669';
+      border = isCurrent ? '#2563eb' : '#cbd5e1';
+      badgeText = '✓ Completed';
+      badgeBg = '#eff6ff';
+      badgeColor = '#2563eb';
     } else if (isUnlocked) {
       bg = isCurrent ? '#eff6ff' : '#ffffff';
-      border = isCurrent ? '#2563eb' : '#bfdbfe';
-      icon = isCurrent ? '▶' : '○';
-      iconColor = '#2563eb';
-      badgeText = isCurrent ? 'Playing Now' : 'Unlocked';
-      badgeBg = '#dbeafe';
-      badgeColor = '#1e40af';
+      border = isCurrent ? '#2563eb' : '#e2e8f0';
+      badgeText = isCurrent ? 'Playing Now' : 'Up Next';
+      badgeBg = isCurrent ? '#dbeafe' : '#f8fafc';
+      badgeColor = '#2563eb';
+    }
+
+    let cleanUrl = (l.ytId || '').replace(/^\.?\/?/, '');
+    const isYt = l.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+    let thumbHtml = '';
+    if (isYt) {
+      const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+      const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+      thumbHtml = `<img src="https://img.youtube.com/vi/${ytCode}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#93c5fd;font-size:14px;\'>▶</div>'" />`;
+    } else {
+      thumbHtml = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#ffffff;font-size:13px;font-weight:700;"><span style="color:#2563eb;">▶</span></div>`;
     }
 
     return `
-      <div onclick="loadClassroomLesson(${idx})" style="padding:12px 14px;border-radius:12px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};">
-        <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
-          <span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${badgeBg};color:${iconColor};font-size:12px;font-weight:900;flex-shrink:0;">
-            ${icon}
-          </span>
-          <div style="overflow:hidden;">
-            <div style="font-size:13px;font-weight:${isCurrent ? '800' : '700'};color:${isCurrent ? '#1d4ed8' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              ${l.title}
-            </div>
-            <div style="font-size:11px;color:#64748b;margin-top:2px;">
-              ${l.duration || '20:00'} • ${l.type === 'local' ? 'HD Direct Video' : 'Stream'}
-            </div>
-          </div>
+      <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:12px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 2px 8px rgba(37,99,235,0.12)' : 'none'};">
+        <!-- Thumbnail -->
+        <div style="width:68px;height:46px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;">
+          ${thumbHtml}
         </div>
 
-        <span style="font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;background:${badgeBg};color:${badgeColor};flex-shrink:0;">
-          ${badgeText}
-        </span>
+        <!-- Info -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+            <span style="font-size:11.5px;font-weight:700;color:${isCurrent ? '#2563eb' : '#64748b'};">${l.duration || '20:00'}</span>
+            <span style="font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:${badgeBg};color:${badgeColor};">${badgeText}</span>
+          </div>
+          <div style="font-size:13px;font-weight:${isCurrent ? '800' : '700'};color:${isCurrent ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${l.title}
+          </div>
+        </div>
       </div>
     `;
   }).join('');
+
+  renderClassroomSuggestedCourses();
 }
 
 function loadClassroomLesson(idx) {
@@ -1878,20 +1963,32 @@ function loadClassroomLesson(idx) {
   currentClassroomLessonIdx = idx;
   document.getElementById('classroom-lesson-title').textContent = l.title;
 
+  const badgeSoftware = document.getElementById('classroom-badge-software');
+  if (badgeSoftware) {
+    badgeSoftware.textContent = (currentClassroomCourse.cat || 'Revit').toUpperCase();
+  }
+
   const resumeBadge = document.getElementById('classroom-lesson-resume-badge');
   if (resumeBadge) resumeBadge.style.display = 'none';
 
   const player = document.getElementById('classroom-player');
   let cleanUrl = (l.ytId || '').replace(/^\.?\/?/, '');
-  if (cleanUrl.startsWith('videos/')) {
-    cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
-  }
+  const isYt = l.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
 
-  player.innerHTML = `<video id="classroom-vid-el" src="${cleanUrl}" controls autoplay playsinline style="width:100%;height:100%;background:#000;border-radius:12px;outline:none;"></video>`;
-  const vidEl = document.getElementById('classroom-vid-el');
-  const lId = l.id || ('les_' + idx);
-  if (vidEl) {
-    attachVideoTracking(vidEl, lId, { course: currentClassroomCourse, index: idx });
+  if (isYt) {
+    const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+    const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+    player.innerHTML = `<iframe id="classroom-yt-frame" src="https://www.youtube-nocookie.com/embed/${ytCode}?autoplay=1&rel=0&enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:100%;border:none;background:#000;display:block;"></iframe>`;
+  } else if (cleanUrl) {
+    if (cleanUrl.startsWith('videos/')) {
+      cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
+    }
+    player.innerHTML = `<video id="classroom-vid-el" src="${cleanUrl}" controls autoplay playsinline style="width:100%;height:100%;background:#000;outline:none;display:block;object-fit:contain;"></video>`;
+    const vidEl = document.getElementById('classroom-vid-el');
+    const lId = l.id || ('les_' + idx);
+    if (vidEl) {
+      attachVideoTracking(vidEl, lId, { course: currentClassroomCourse, index: idx });
+    }
   }
 
   updateClassroomNavButtons();
