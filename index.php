@@ -74,7 +74,6 @@ sort($allAvailableTeams);
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BSD BIM Training Center | <?= htmlspecialchars($userName) ?></title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     html { scroll-behavior: smooth; }
     ::-webkit-scrollbar { width: 7px; }
@@ -154,35 +153,37 @@ sort($allAvailableTeams);
     }
 
     .nav-btn {
-      border: 1px solid transparent; background: transparent; padding: 6px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 700; color: rgba(255, 255, 255, 0.88); cursor: pointer;
+      border: 1px solid transparent; background: transparent; padding: 10px 20px; border-radius: 11px;
+      font-size: 14px; font-weight: 700; color: rgba(255, 255, 255, 0.9); cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex; align-items: center; gap: 8px;
     }
-    .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.16); }
+    .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.18); }
     .nav-btn.active {
       color: #ffffff !important;
-      background: rgba(255, 255, 255, 0.22) !important;
-      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      background: rgba(255, 255, 255, 0.25) !important;
+      border: 1px solid rgba(255, 255, 255, 0.45) !important;
       backdrop-filter: blur(8px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     .nav-btn.active:hover {
-      background: rgba(255, 255, 255, 0.3) !important;
+      background: rgba(255, 255, 255, 0.32) !important;
     }
 
     .btn-upload-prominent {
       background: #ffffff !important;
       color: #1d4ed8 !important;
       border: none !important;
-      padding: 7px 18px !important;
-      border-radius: 9px !important;
-      font-size: 13.5px !important;
+      padding: 10px 22px !important;
+      border-radius: 11px !important;
+      font-size: 14px !important;
       font-weight: 800 !important;
       letter-spacing: 0.01em;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
       transition: all 0.2s ease !important;
     }
     .btn-upload-prominent:hover {
@@ -248,109 +249,77 @@ sort($allAvailableTeams);
 </head>
 <body style="background:#f4f7fc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
-<?php if (!empty($user['is_demo'])): ?>
 <!-- ══════════════════════════════════════════
-     ROLE SWITCHER & CONTEXT BANNER (Demo Mode Only)
+     TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
 ══════════════════════════════════════════ -->
-<div style="background:#1e40af;color:#e0f2fe;padding:8px 24px;font-size:12.5px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(255,255,255,0.15);">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <span style="display:inline-flex;align-items:center;gap:6px;font-weight:700;">
-      <span style="width:8px;height:8px;border-radius:50%;background:<?= $isStaffAdmin ? '#10b981' : ($isTeamLeader ? '#38bdf8' : '#fbbf24') ?>;"></span>
-      Active Role: 
-      <strong style="color:#ffffff;text-transform:uppercase;">
-        <?= $isStaffAdmin ? 'Enterprise Administrator' : ($isTeamLeader ? 'Team Leader' : 'Employee Learner') ?>
-      </strong>
-    </span>
-    <span style="color:#64748b;">|</span>
-    <span>Target Station: <strong style="color:#38bdf8;"><?= htmlspecialchars(BIM_STATIONS[$userStation] ?? ucfirst($userStation)) ?></strong></span>
-    <?php if (!$isStaffAdmin && $teamName): ?>
-      <span style="color:#64748b;">|</span>
-      <span>Team: <strong style="color:#f8fafc;"><?= htmlspecialchars($teamName) ?></strong></span>
-    <?php endif; ?>
-  </div>
+<nav style="background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:sticky;top:0;z-index:100;box-shadow:0 8px 30px rgba(14,116,144,0.22);position:relative;overflow:hidden;">
+  
+  <!-- Subtle Ambient Circles -->
+  <div style="position:absolute;left:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
+  <div style="position:absolute;right:80px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
 
-  <!-- Instant Demo Switcher -->
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-    <span style="color:#94a3b8;font-size:11.5px;font-weight:600;">Switch View:</span>
-    <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">👑 Admin</a>
-    <a href="?demo_role=team_leader" style="background:<?= $isTeamLeader ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">👥 Team Leader (<?= htmlspecialchars($isTeamLeader ? $userName : 'Tekle Ketema') ?>)</a>
-    <a href="?demo_role=employee_trainee" style="background:<?= ($isEmployee && $userStation === 'trainee') ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">🎓 Trainee</a>
-    <a href="?demo_role=employee_engineer" style="background:<?= ($isEmployee && $userStation === 'engineer') ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">📐 Engineer</a>
-  </div>
-</div>
-<?php endif; ?>
-
-
-<!-- ══════════════════════════════════════════
-     TOP NAVIGATION BAR
-══════════════════════════════════════════ -->
-<nav style="background:linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:sticky;top:0;z-index:100;border-bottom:none;">
-  <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:62px;gap:16px;">
+  <div style="width:100%;box-sizing:border-box;padding:16px 44px 18px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;position:relative;z-index:2;">
     
-    <!-- Left: Brand Logo + Navigation Tabs -->
-    <div style="display:flex;align-items:center;gap:16px;">
-      <!-- Brand Logo placed directly on blue navbar -->
-      <div style="display:flex;align-items:center;cursor:pointer;" onclick="showSection(getRoleLandingSection())">
-        <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:38px;width:auto;display:block;object-fit:contain;" />
+    <!-- Top Row: Brand Logo (HIGH UP) + Global Search + User Profile + Switch View -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;">
+      
+      <!-- Brand Logo - Positioned high up with enhanced size -->
+      <div style="display:flex;align-items:center;cursor:pointer;margin-top:0;" onclick="showSection(getRoleLandingSection())">
+        <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:56px;width:auto;display:block;object-fit:contain;" />
       </div>
 
+      <!-- Right Controls: Switch View -->
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+
+        <!-- Demo Switcher in-line with the top controls (Single Layer) -->
+        <?php if (!empty($user['is_demo'])): ?>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Admin</a>
+          <a href="?demo_role=team_leader" style="background:<?= ($isTeamLeader || ($isEmployee && $userStation === 'engineer')) ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Team Leader / Engineer</a>
+          <a href="?demo_role=employee_trainee" style="background:<?= ($isEmployee && $userStation === 'trainee') ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Trainee</a>
+        </div>
+        <?php endif; ?>
+
+      </div>
+    </div>
+
+    <!-- Bottom Row: Navigation Tabs + Upload Button + Station Status (Seamless, NO Horizontal Line) -->
+    <div style="padding-top:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+      
       <!-- Navigation Tabs -->
-      <div style="display:flex;gap:6px;align-items:center;">
-        <!-- Role Landing Tab Placed First -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <?php if ($isStaffAdmin): ?>
           <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">
-            📈 Analytics
+            Analytics Dashboard
           </button>
         <?php elseif ($isTeamLeader): ?>
           <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress">
-            👥 Team Progress
+            Team Progress
           </button>
           <button onclick="showSection('my-progress')" class="nav-btn" id="nav-my-progress">
-            📊 My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
+            My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
           </button>
         <?php elseif ($isEmployee): ?>
           <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress">
-            📊 My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
+            My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
           </button>
         <?php endif; ?>
 
-        <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Videos</button>
+        <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Training Videos</button>
         <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
       </div>
-    </div>
 
-    <!-- Right: Upload + User Identity + Search -->
-    <div style="display:flex;align-items:center;gap:12px;">
-      <!-- Upload Material Button -->
-      <?php if ($isStaffAdmin): ?>
-        <button onclick="showSection('upload')" class="btn-upload-prominent" id="nav-upload" title="Upload video materials, practice datasets & curricula">
-          <span>Upload Material</span>
-        </button>
-      <?php endif; ?>
-
-      <!-- Search Input -->
-      <div style="display:flex;align-items:center;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:9px;padding:5px 10px;gap:6px;backdrop-filter:blur(8px);">
-        <span style="color:rgba(255,255,255,0.9);font-size:12px;">🔍</span>
-        <input id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search..." style="border:none;background:transparent;outline:none;font-size:12px;width:110px;color:#ffffff;font-weight:600;" />
+      <!-- Right: Upload Button (Admin) -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <?php if ($isStaffAdmin): ?>
+          <button onclick="showSection('upload')" class="btn-upload-prominent" id="nav-upload" title="Upload video materials, practice datasets & curricula">
+            <span>Upload Material</span>
+          </button>
+        <?php endif; ?>
       </div>
 
-      <!-- User Identity Tag -->
-      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:3px 8px;border-radius:8px;backdrop-filter:blur(8px);">
-        <div style="width:24px;height:24px;border-radius:50%;background:#ffffff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">
-          <?= strtoupper(substr($userName, 0, 1)) ?>
-        </div>
-        <div style="font-size:11.5px;font-weight:800;color:#ffffff;line-height:1.1;"><?= htmlspecialchars($userName) ?></div>
-      </div>
-
-      <!-- Return to BSD Portal -->
-      <?php
-        $portalBackUrl = $isStaffAdmin ? 'BSD/bsd/admin_dashboard.php' : 'BSD/bsd/employee_management/employee_dashboard.php';
-      ?>
-      <a href="<?= $portalBackUrl ?>" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:5px 12px;border-radius:8px;color:#ffffff;font-size:12px;font-weight:700;text-decoration:none;backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">
-        <i class="fa-solid fa-arrow-left"></i>
-        <span>BSD Portal</span>
-      </a>
     </div>
+
   </div>
 </nav>
 
@@ -417,19 +386,15 @@ sort($allAvailableTeams);
     <!-- Hero Profile & Meter -->
     <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 6px 25px rgba(0,0,0,0.04);margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
       <div>
-        <div class="badge" style="background:#eff6ff;color:#1d4ed8;margin-bottom:8px;">STUDENT TRAINING DASHBOARD</div>
         <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0 0 6px;"><?= htmlspecialchars($userName) ?></h2>
         <div style="color:#64748b;font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-          <span>Station: <strong style="color:#0284c7;"><?= htmlspecialchars(BIM_STATIONS[$userStation] ?? $userStation) ?></strong></span>
-          <span>•</span>
           <span>Team: <strong><?= htmlspecialchars($teamName) ?></strong></span>
         </div>
       </div>
 
       <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:20px;padding:18px 28px;text-align:center;min-width:220px;">
         <div style="font-size:36px;font-weight:900;color:#1d4ed8;line-height:1;" id="my-overall-pct"><?= $myProgress['overall_percent'] ?>%</div>
-        <div style="font-size:12px;font-weight:800;color:#0f172a;margin-top:6px;">Overall Curriculum Progress</div>
-        <div style="font-size:11.5px;color:#64748b;margin-top:2px;" id="my-completed-ratio"><?= $myProgress['completed_count'] ?> of <?= $myProgress['total_assigned'] ?> Videos Completed</div>
+        <div style="font-size:11.5px;color:#64748b;margin-top:6px;" id="my-completed-ratio"><?= $myProgress['completed_count'] ?> of <?= $myProgress['total_assigned'] ?> Videos Completed</div>
       </div>
     </div>
 
@@ -454,8 +419,7 @@ sort($allAvailableTeams);
     <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:18px;padding:18px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="width:40px;height:40px;border-radius:12px;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:18px;">
-          👥
-        </div>
+                  </div>
         <div>
           <h3 style="font-size:18px;font-weight:900;color:#1e3a8a;margin:0;">Team Leader: <?= htmlspecialchars($userName) ?></h3>
           <div style="font-size:13px;color:#3b82f6;font-weight:600;">
@@ -475,26 +439,23 @@ sort($allAvailableTeams);
     </div>
 
     <!-- Team Metrics -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:18px;margin-bottom:28px;">
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-        <div style="font-size:12px;color:#64748b;font-weight:700;">TEAM AVERAGE COMPLETION</div>
-        <div style="font-size:32px;font-weight:900;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
-        <div style="font-size:12px;color:#10b981;font-weight:600;margin-top:4px;">Across all required training modules</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Team Average Completion</div>
+        <div style="font-size:28px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-        <div style="font-size:12px;color:#64748b;font-weight:700;">ASSIGNED MEMBERS</div>
-        <div style="font-size:32px;font-weight:900;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
-        <div style="font-size:12px;color:#64748b;font-weight:600;margin-top:4px;">Team personnel in training</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Assigned Members</div>
+        <div style="font-size:28px;font-weight:800;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-        <div style="font-size:12px;color:#64748b;font-weight:700;">FULLY CERTIFIED</div>
-        <div style="font-size:32px;font-weight:900;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
-        <div style="font-size:12px;color:#64748b;font-weight:600;margin-top:4px;">Completed 100% of curriculum</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
+        <div style="font-size:28px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
     </div>
 
     <!-- Scoped Team Member Roster -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
       <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 16px;">Team Member Progress Details</h3>
       
       <div style="overflow-x:auto;">
@@ -567,61 +528,57 @@ sort($allAvailableTeams);
     
 
 
-    <!-- KPI Row -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:20px;margin-bottom:32px;">
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.03);">
-        <div style="font-size:12.5px;color:#64748b;font-weight:700;">TOTAL WORKFORCE ENROLLED</div>
-        <div style="font-size:36px;font-weight:900;color:#0f172a;margin:6px 0;"><?= $analytics['total_employees'] ?? 0 ?></div>
-        <div style="font-size:12px;color:#2563eb;font-weight:600;">Employees in active learning tracks</div>
+    <!-- Metrics Row -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Total Enrolled</div>
+        <div style="font-size:28px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.03);">
-        <div style="font-size:12.5px;color:#64748b;font-weight:700;">ORGANIZATION COMPLETION RATE</div>
-        <div style="font-size:36px;font-weight:900;color:#1d4ed8;margin:6px 0;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
-        <div style="font-size:12px;color:#10b981;font-weight:600;">Overall modules completed</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Completion Rate</div>
+        <div style="font-size:28px;font-weight:800;color:#1d4ed8;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.03);">
-        <div style="font-size:12.5px;color:#64748b;font-weight:700;">FULLY CERTIFIED EMPLOYEES</div>
-        <div style="font-size:36px;font-weight:900;color:#059669;margin:6px 0;"><?= $analytics['fully_completed'] ?? 0 ?></div>
-        <div style="font-size:12px;color:#059669;font-weight:600;">100% of required station videos completed</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
+        <div style="font-size:28px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(0,0,0,0.03);">
-        <div style="font-size:12.5px;color:#64748b;font-weight:700;">IN PROGRESS</div>
-        <div style="font-size:36px;font-weight:900;color:#f59e0b;margin:6px 0;"><?= $analytics['in_progress'] ?? 0 ?></div>
-        <div style="font-size:12px;color:#d97706;font-weight:600;">Active learning sessions recorded</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px 22px;">
+        <div style="font-size:13px;color:#64748b;font-weight:600;">In Progress</div>
+        <div style="font-size:28px;font-weight:800;color:#d97706;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
       </div>
     </div>
 
-    <!-- Station Comparison Breakdown -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,0.04);margin-bottom:32px;">
-      <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 18px;">Completion Rate by Station / Discipline</h3>
+    <!-- Station Comparison Breakdown (Hidden when empty) -->
+    <?php if (!empty($analytics['station_stats'])): ?>
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px;">
+      <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 16px;">Completion Rate by Station</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;">
-        <?php foreach (($analytics['station_stats'] ?? []) as $st): ?>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:16px 20px;">
-            <div style="font-size:13.5px;font-weight:800;color:#0f172a;"><?= htmlspecialchars($st['title']) ?></div>
+        <?php foreach ($analytics['station_stats'] as $st): ?>
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;">
+            <div style="font-size:13px;font-weight:700;color:#0f172a;"><?= htmlspecialchars($st['title']) ?></div>
             <div style="display:flex;align-items:flex-end;justify-content:space-between;margin:8px 0;">
-              <span style="font-size:24px;font-weight:900;color:#2563eb;"><?= $st['avg_pct'] ?>%</span>
+              <span style="font-size:22px;font-weight:800;color:#2563eb;"><?= $st['avg_pct'] ?>%</span>
               <span style="font-size:12px;color:#64748b;font-weight:600;"><?= $st['headcount'] ?> employees</span>
             </div>
-            <div style="background:#e2e8f0;height:6px;border-radius:9999px;overflow:hidden;">
+            <div style="background:#e2e8f0;height:5px;border-radius:9999px;overflow:hidden;">
               <div style="width:<?= $st['avg_pct'] ?>%;background:#2563eb;height:100%;"></div>
             </div>
           </div>
         <?php endforeach; ?>
       </div>
     </div>
+    <?php endif; ?>
 
     <!-- Company-Wide Employee Roster Table -->
-    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
         <div>
           <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
-          <div style="font-size:12.5px;color:#64748b;margin-top:2px;">Filter employee progress by station navigation tabs or search by name</div>
-        </div>
+          </div>
         
         <div style="display:flex;gap:10px;align-items:center;">
           <div style="position:relative;display:flex;align-items:center;">
-            <span style="position:absolute;left:12px;color:#94a3b8;font-size:13px;">🔍</span>
-            <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 14px 8px 34px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;width:200px;outline:none;" />
+            <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;width:200px;outline:none;" />
           </div>
         </div>
       </div>
@@ -629,19 +586,19 @@ sort($allAvailableTeams);
       <!-- Station Filter Navigation (replacing dropdown) -->
       <div id="roster-station-nav" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:20px;border-bottom:1.5px solid #f1f5f9;padding-bottom:14px;">
         <button type="button" onclick="filterAdminRosterStation('all', this)" class="roster-station-btn" data-station="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;box-shadow:0 2px 6px rgba(37,99,235,0.3);">
-          <span>🌟 All Stations</span>
+          <span>All Stations</span>
           <span class="st-count" style="background:rgba(255,255,255,0.25);color:#ffffff;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= count($roster) ?></span>
         </button>
         <button type="button" onclick="filterAdminRosterStation('trainee', this)" class="roster-station-btn" data-station="trainee" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>🎓 Trainees</span>
+          <span>Trainees</span>
           <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['trainee'] ?? 0 ?></span>
         </button>
         <button type="button" onclick="filterAdminRosterStation('engineer', this)" class="roster-station-btn" data-station="engineer" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>📐 Structural & MEP Engineers</span>
+          <span>Structural & MEP Engineers</span>
           <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['engineer'] ?? 0 ?></span>
         </button>
         <button type="button" onclick="filterAdminRosterStation('architect', this)" class="roster-station-btn" data-station="architect" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>🏛️ Architects & Designers</span>
+          <span>️ Architects & Designers</span>
           <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['architect'] ?? 0 ?></span>
         </button>
       </div>
@@ -720,20 +677,20 @@ sort($allAvailableTeams);
       </div>
 
       <button onclick="showSection('analytics')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1d4ed8;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
-        📈 View Analytics Board
+        View Analytics Board
       </button>
     </div>
 
     <!-- Admin Subtabs -->
     <div style="display:flex;gap:10px;margin-bottom:24px;">
       <button id="atab-video" onclick="switchAdminUploadTab('video')" style="background:#2563eb;color:#ffffff;border:none;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;">
-        🎬 Video Lessons
+        Video Lessons
       </button>
       <button id="atab-course" onclick="switchAdminUploadTab('course')" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">
-        📚 Curricula Management
+        Curricula Management
       </button>
       <button id="atab-files" onclick="switchAdminUploadTab('files')" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">
-        📁 Practice Datasets
+        Practice Datasets
       </button>
     </div>
 
@@ -744,13 +701,13 @@ sort($allAvailableTeams);
       <!-- Mode Selector -->
       <div style="display:flex;gap:8px;margin-bottom:20px;background:#f1f5f9;padding:6px;border-radius:12px;max-width:620px;flex-wrap:wrap;">
         <button id="vmode-btn-file" onclick="setVideoUploadMode('file')" style="flex:1;background:#2563eb;color:white;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
-          💻 Upload Video File
+          Upload Video File
         </button>
         <button id="vmode-btn-yt" onclick="setVideoUploadMode('yt')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
-          📺 YouTube / Drive Link
+          YouTube / Drive Link
         </button>
         <button id="vmode-btn-folder" onclick="setVideoUploadMode('folder')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
-          📂 Direct Folder (videos/)
+          Direct Folder (videos/)
         </button>
       </div>
 
@@ -761,78 +718,75 @@ sort($allAvailableTeams);
         </div>
 
         <!-- TARGET STATION ASSIGNMENT WITH MULTI-SELECTION -->
-        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:18px;grid-column:1/-1;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-            <label style="font-size:13.5px;font-weight:800;color:#1d4ed8;margin:0;">🎯 Assign to Station(s) / Target Discipline(s) *</label>
-            <span style="font-size:11.5px;color:#2563eb;font-weight:600;">Click to select one or multiple stations</span>
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;grid-column:1/-1;">
+          <div style="margin-bottom:10px;">
+            <label style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0;">Assign to Station(s) / Target Discipline(s) *</label>
           </div>
 
           <div id="station-picker-group" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button type="button" onclick="toggleUploadStation('all', this)" class="st-pick-btn active" data-st="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;box-shadow:0 2px 6px rgba(37,99,235,0.25);">
-              🌟 All Employees
+            <button type="button" onclick="toggleUploadStation('all', this)" class="st-pick-btn active" data-st="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;">
+              All Employees
             </button>
             <button type="button" onclick="toggleUploadStation('trainee', this)" class="st-pick-btn" data-st="trainee" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              🎓 Trainees
+              Trainees
             </button>
             <button type="button" onclick="toggleUploadStation('engineer', this)" class="st-pick-btn" data-st="engineer" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              📐 Structural & MEP Engineers
+              Structural & MEP Engineers
             </button>
             <button type="button" onclick="toggleUploadStation('architect', this)" class="st-pick-btn" data-st="architect" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              🏛️ Architects & Designers
+              Architects & Designers
             </button>
-            <button type="button" id="btn-choose-individually" onclick="toggleIndividualPicker()" class="st-pick-btn" data-st="individual" style="background:#ffffff;color:#4338ca;border:1.5px solid #a5b4fc;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:6px;">
-              <span>👤</span> Choose Individually <span id="indiv-count-badge" style="display:none;background:#4f46e5;color:white;border-radius:999px;font-size:10px;padding:2px 7px;font-weight:800;margin-left:4px;">0</span>
+            <button type="button" id="btn-choose-individually" onclick="toggleIndividualPicker()" class="st-pick-btn" data-st="individual" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:6px;">
+              Choose Individually <span id="indiv-count-badge" style="display:none;background:#2563eb;color:white;border-radius:999px;font-size:10px;padding:2px 7px;font-weight:800;margin-left:4px;">0</span>
             </button>
           </div>
           <input type="hidden" id="new-video-station" value="all" />
           <input type="hidden" id="new-video-assigned-employees" value="" />
-          <div style="font-size:12px;color:#2563eb;margin-top:8px;" id="station-assignment-hint">Assigned to: <strong>All Employees (General Curriculum)</strong></div>
 
           <!-- INDIVIDUAL EMPLOYEE PICKER PANEL (DRAWER) -->
-          <div id="individual-employee-picker-panel" style="display:none;margin-top:14px;background:#f8faff;border:2px solid #818cf8;border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(79,70,229,0.08);">
+          <div id="individual-employee-picker-panel" style="display:none;margin-top:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
             <!-- Panel Header -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
               <div>
-                <h5 style="margin:0;font-size:14px;font-weight:900;color:#312e81;display:flex;align-items:center;gap:6px;">
-                  <span>👥</span> Choose Specific Employees or Teams to Assign
+                <h5 style="margin:0;font-size:14px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:6px;">
+                  Choose Specific Employees or Teams to Assign
                 </h5>
-                <p style="margin:2px 0 0;font-size:11.5px;color:#4f46e5;">Filter by station or team, assign whole teams at once, or hand-pick individual members.</p>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <button type="button" onclick="clearAllIndividualEmployees()" style="background:#fee2e2;color:#b91c1c;border:none;padding:5px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                <button type="button" onclick="clearAllIndividualEmployees()" style="background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:5px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;">
                   Clear All
                 </button>
-                <button type="button" onclick="closeIndividualPicker()" style="background:#4f46e5;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;">
+                <button type="button" onclick="closeIndividualPicker()" style="background:#2563eb;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
                   Done Selecting
                 </button>
               </div>
             </div>
 
             <!-- Filters Bar: Station Filter, Team Filter, and Search Name -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:12px;background:white;padding:12px;border-radius:10px;border:1px solid #e0e7ff;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:12px;background:white;padding:12px;border-radius:8px;border:1px solid #e2e8f0;">
               <!-- Station Filter Dropdown -->
               <div>
-                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Filter by Station / Discipline:</label>
+                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Filter by Station / Discipline:</label>
                 <select id="indiv-filter-station" onchange="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
-                  <option value="all">🌐 All Stations</option>
-                  <option value="trainee">🎓 Trainees</option>
-                  <option value="engineer">📐 Structural & MEP Engineers</option>
-                  <option value="architect">🏛️ Architects & Designers</option>
+                  <option value="all">All Stations</option>
+                  <option value="trainee">Trainees</option>
+                  <option value="engineer">Structural & MEP Engineers</option>
+                  <option value="architect">Architects & Designers</option>
                 </select>
               </div>
 
               <!-- Team Filter Dropdown -->
               <div>
-                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Filter by Team:</label>
+                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Filter by Team:</label>
                 <select id="indiv-filter-team" onchange="onIndivTeamFilterChange()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
-                  <option value="all">🏢 All Teams</option>
+                  <option value="all">All Teams</option>
                   <!-- Populated dynamically -->
                 </select>
               </div>
 
               <!-- Search Name -->
               <div>
-                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Search Employee Name:</label>
+                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Search Employee Name:</label>
                 <input id="indiv-search-name" type="text" placeholder="Type name or team..." oninput="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">
               </div>
             </div>
@@ -840,17 +794,17 @@ sort($allAvailableTeams);
             <!-- Quick Action Toolbar for Team / Bulk Selection -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <button type="button" id="btn-select-filtered-team" onclick="selectCurrentTeamEmployees()" style="background:#e0e7ff;color:#3730a3;border:1px solid #c7d2fe;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
-                  ⚡ Assign Entire Team / Filtered
+                <button type="button" id="btn-select-filtered-team" onclick="selectCurrentTeamEmployees()" style="background:#ffffff;color:#334155;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                  Assign Entire Team / Filtered
                 </button>
-                <button type="button" id="btn-deselect-filtered-team" onclick="deselectCurrentTeamEmployees()" style="background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                <button type="button" id="btn-deselect-filtered-team" onclick="deselectCurrentTeamEmployees()" style="background:#ffffff;color:#64748b;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
                   Deselect Filtered
                 </button>
-                <button type="button" onclick="selectAllFilteredEmployees()" style="background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                <button type="button" onclick="selectAllFilteredEmployees()" style="background:#ffffff;color:#2563eb;border:1px solid #2563eb;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
                   Select All Matching
                 </button>
               </div>
-              <div style="font-size:12px;font-weight:800;color:#4338ca;" id="indiv-selection-count-text">
+              <div style="font-size:12px;font-weight:800;color:#0f172a;" id="indiv-selection-count-text">
                 0 employees selected
               </div>
             </div>
@@ -869,7 +823,7 @@ sort($allAvailableTeams);
         <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:18px;grid-column:1/-1;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
             <label style="font-size:13.5px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:6px;">
-              <span>📚</span> Curriculum Track Assignment Option
+              Curriculum Track Assignment Option
             </label>
             <span style="font-size:11.5px;color:#64748b;font-weight:600;">Add to existing syllabus or create a brand new curriculum track</span>
           </div>
@@ -883,7 +837,7 @@ sort($allAvailableTeams);
 
             <label id="copt-label-new" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
               <input type="radio" name="video_curriculum_choice" value="new" onchange="toggleVideoCurriculumMode('new')">
-              <span>➕ Create New Curriculum with these Videos</span>
+              <span>Create New Curriculum with these Videos</span>
             </label>
 
             <label id="copt-label-none" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
@@ -904,7 +858,7 @@ sort($allAvailableTeams);
           <!-- Mode 2: Create New Curriculum On The Fly -->
           <div id="curriculum-container-new" style="display:none;background:#ffffff;border:1.5px solid #93c5fd;border-radius:12px;padding:16px;">
             <div style="font-size:13.5px;font-weight:800;color:#1d4ed8;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
-              <span>✨</span> New Curriculum Information (Uploaded videos will form the sequential syllabus)
+              New Curriculum Information (Uploaded videos will form the sequential syllabus)
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
               <div style="grid-column:1/-1;">
@@ -923,12 +877,12 @@ sort($allAvailableTeams);
                 <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Badge Icon</label>
                 <select id="inline-curriculum-icon" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;">
                   <option value="" selected>None (Clean Title)</option>
-                  <option value="📐">📐 Structure & Modeling</option>
-                  <option value="🔩">🔩 Reinforcement & Rebar</option>
-                  <option value="🔍">🔍 Coordination & Clash Detection</option>
-                  <option value="✏️">✏️ AutoCAD 2D/3D Drafting</option>
-                  <option value="🏢">🏢 Architectural BIM Design</option>
-                  <option value="📋">📋 Standards & ISO 19650</option>
+                  <option value="">Structure & Modeling</option>
+                  <option value="">Reinforcement & Rebar</option>
+                  <option value="">Coordination & Clash Detection</option>
+                  <option value="️">️ AutoCAD 2D/3D Drafting</option>
+                  <option value="">Architectural BIM Design</option>
+                  <option value="">Standards & ISO 19650</option>
                 </select>
               </div>
               <div style="grid-column:1/-1;">
@@ -937,7 +891,7 @@ sort($allAvailableTeams);
               </div>
             </div>
             <div style="font-size:12px;color:#1e40af;margin-top:10px;font-weight:600;background:#eff6ff;padding:8px 12px;border-radius:8px;">
-              💡 The uploaded videos will be registered in order as lessons in this new curriculum track!
+              The uploaded videos will be registered in order as lessons in this new curriculum track!
             </div>
           </div>
 
@@ -951,7 +905,6 @@ sort($allAvailableTeams);
         <div id="vinput-container-file" style="display:block;grid-column:1/-1;">
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Select Video File(s) (.mp4, .webm, .mov) * (Multiple Files Supported)</label>
           <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:2px dashed #cbd5e1;border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:all 0.2s;" ondragover="event.preventDefault();this.style.borderColor='#2563eb';this.style.background='#eff6ff'" ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'" ondrop="handleAdminVideoDrop(event)">
-            <div style="font-size:38px;margin-bottom:8px;">🎬</div>
             <div id="vfile-selected-name" style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:4px;">Click or drag to select one or multiple video files</div>
             <div style="font-size:12px;color:#64748b;">MP4, WEBM, MOV • Select multiple files at once</div>
             <input id="new-video-file-input" type="file" accept="video/*" multiple style="display:none;" onchange="handleAdminVideoFilePick(this)" />
@@ -1005,8 +958,8 @@ sort($allAvailableTeams);
       </div>
 
       <div style="display:flex;justify-content:flex-end;margin-bottom:28px;">
-        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(37,99,235,0.4);">
-          🚀 Publish Video to Station & Curriculum
+        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:#2563eb;color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
+          Publish Video to Station & Curriculum
         </button>
       </div>
 
@@ -1023,14 +976,14 @@ sort($allAvailableTeams);
     <div id="admin-panel-course" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
         <div>
-          <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 6px;">📚 Curricula Management & Creator</h3>
+          <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 6px;">Curricula Management & Creator</h3>
           <p style="color:#64748b;font-size:14px;margin:0;">Create comprehensive multi-lesson training curricula, set target stations, and organize course syllabi.</p>
         </div>
       </div>
 
       <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:16px;padding:22px;margin-bottom:28px;">
         <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
-          <span>✨</span> Create New Curriculum Track
+          Create New Curriculum Track
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
@@ -1052,10 +1005,10 @@ sort($allAvailableTeams);
           <div>
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Station Group *</label>
             <select id="new-course-station" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
-              <option value="all">🌟 All Employees (General Curriculum)</option>
-              <option value="trainee">🎓 Trainees (Onboarding & Foundation)</option>
-              <option value="engineer">📐 Structural & MEP Engineers</option>
-              <option value="architect">🏛️ Architects & Designers</option>
+              <option value="all">All Employees (General Curriculum)</option>
+              <option value="trainee">Trainees (Onboarding & Foundation)</option>
+              <option value="engineer">Structural & MEP Engineers</option>
+              <option value="architect">️ Architects & Designers</option>
             </select>
           </div>
 
@@ -1072,12 +1025,12 @@ sort($allAvailableTeams);
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Icon Badge</label>
             <select id="new-course-icon" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
               <option value="" selected>None (Clean Title)</option>
-              <option value="📐">📐 Structure & Modeling</option>
-              <option value="🔩">🔩 Reinforcement & Rebar</option>
-              <option value="🔍">🔍 Coordination & Clash</option>
-              <option value="✏️">✏️ AutoCAD 2D/3D</option>
-              <option value="🏢">🏢 Architecture & Building</option>
-              <option value="📋">📋 Standards & Management</option>
+              <option value="">Structure & Modeling</option>
+              <option value="">Reinforcement & Rebar</option>
+              <option value="">Coordination & Clash</option>
+              <option value="️">️ AutoCAD 2D/3D</option>
+              <option value="">Architecture & Building</option>
+              <option value="">Standards & Management</option>
             </select>
           </div>
 
@@ -1093,8 +1046,8 @@ sort($allAvailableTeams);
         </div>
 
         <div style="display:flex;justify-content:flex-end;">
-          <button id="admin-create-course-btn" onclick="adminPublishCourse()" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
-            ✨ Create Curriculum Track
+          <button id="admin-create-course-btn" onclick="adminPublishCourse()" style="background:#2563eb;color:white;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
+            Create Curriculum Track
           </button>
         </div>
       </div>
@@ -1115,7 +1068,6 @@ sort($allAvailableTeams);
     <div id="admin-panel-files" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
       <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 8px;">Upload Practice Datasets</h3>
       <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" style="border:2px dashed #cbd5e1;border-radius:16px;padding:48px 24px;text-align:center;cursor:pointer;background:#f8fafc;">
-        <div style="font-size:48px;margin-bottom:12px;">📁</div>
         <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:4px;">Upload RVT, DWG, NWD Datasets</div>
         <input id="admin-file-picker" type="file" multiple style="display:none;" onchange="handleAdminPracticeFilesUpload(this)" />
       </div>
@@ -1143,11 +1095,11 @@ sort($allAvailableTeams);
 
     <div id="classroom-restriction-banner" style="background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">🛡️</span>
+        <span style="font-size:20px;">️</span>
         <span style="font-size:13px;font-weight:600;"><strong>Curriculum Tracker Active:</strong> Lessons unlock in sequence. Fast-forwarding is restricted, rewinding is enabled, and your watch position is automatically preserved via cookies.</span>
       </div>
       <div id="classroom-cookie-indicator" style="font-size:11.5px;color:#1e40af;background:#dbeafe;padding:4px 12px;border-radius:9999px;font-weight:700;display:flex;align-items:center;gap:5px;">
-        <span>🍪</span> Cookie Auto-Resume Active
+        Cookie Auto-Resume Active
       </div>
     </div>
 
@@ -1201,7 +1153,7 @@ sort($allAvailableTeams);
 ══════════════════════════════════════════ -->
 <div id="modal-container" style="display:none;" class="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div id="modal-video" class="modal-box" style="display:none;max-width:860px;padding:24px;">
-    <button onclick="closeModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;z-index:10;">✕</button>
+    <button onclick="closeModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;z-index:10;"></button>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
       <span id="vmodal-station-badge" class="badge" style="background:#eff6ff;color:#1d4ed8;">ALL EMPLOYEES</span>
       <h3 id="vmodal-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0;padding-right:32px;">Demonstration Video</h3>
@@ -1458,7 +1410,7 @@ function attachVideoTracking(videoEl, videoId, courseContext = null) {
       const now = Date.now();
       if (now - lastWarnToastMs > 2500) {
         lastWarnToastMs = now;
-        showToast('⚠️ Fast-forwarding is restricted. Please watch the video to progress. (Rewind is allowed)', '#ef4444');
+        showToast('️ Fast-forwarding is restricted. Please watch the video to progress. (Rewind is allowed)', '#ef4444');
       }
     } else {
       // Rewinding or seeking within already-watched range is completely allowed
@@ -1500,7 +1452,7 @@ function attachVideoTracking(videoEl, videoId, courseContext = null) {
     // Update modal pill if visible
     const pill = document.getElementById('vmodal-status-pill');
     if (pill) {
-      pill.textContent = pct >= 90 ? '✓ Completed' : `Watching (${pct}%) • Cookies Active`;
+      pill.textContent = pct >= 90 ? 'Completed' : `Watching (${pct}%) • Cookies Active`;
       pill.style.background = pct >= 90 ? '#ecfdf5' : '#eff6ff';
       pill.style.color = pct >= 90 ? '#059669' : '#1d4ed8';
     }
@@ -1543,12 +1495,12 @@ function onVideoLessonFinished(videoId, position = 0, courseContext = null) {
 
     if (nextIdx < syllabus.length) {
       const nextL = syllabus[nextIdx];
-      showToast(`🎉 Lesson completed! Next video "${nextL.title}" is now unlocked!`, '#10b981');
+      showToast(`Lesson completed! Next video "${nextL.title}" is now unlocked!`, '#10b981');
     } else {
-      showToast('🏆 Masterclass Completed! All videos in this curriculum track finished!', '#059669');
+      showToast('Masterclass Completed! All videos in this curriculum track finished!', '#059669');
     }
   } else {
-    showToast('🎉 Video completed! Progress recorded.', '#10b981');
+    showToast('Video completed! Progress recorded.', '#10b981');
   }
 }
 
@@ -1568,11 +1520,7 @@ function renderEmployeeProgressChecklist() {
   if (courses.length > 0) {
     html += `
       <div style="margin-bottom:28px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-          <div>
-            <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">Assigned Curricula Tracks</h4>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;">Sequential learning paths. Videos must be completed in order.</div>
-          </div>
+        <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
           <span style="font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;padding:4px 10px;border-radius:8px;">
             ${courses.length} Active Tracks
           </span>
@@ -1583,7 +1531,7 @@ function renderEmployeeProgressChecklist() {
             const stats = getCurriculumProgressStats(course);
             const syllabus = course.syllabus || [];
             
-            const hasValidIcon = course.icon && !['🏗️', '🏗', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(course.icon);
+            const hasValidIcon = course.icon && !['️', '', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(course.icon);
             const iconMarkup = hasValidIcon ? `
               <div style="width:42px;height:42px;border-radius:12px;background:#ffffff;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 4px rgba(0,0,0,0.04);">
                 ${course.icon}
@@ -1597,9 +1545,6 @@ function renderEmployeeProgressChecklist() {
                     ${iconMarkup}
                     <div>
                       <div style="font-size:15px;font-weight:900;color:#0f172a;">${course.title}</div>
-                      <div style="font-size:12px;color:#64748b;">
-                        ${course.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${(course.station || 'all').toUpperCase()}</strong> • ${syllabus.length} Sequential Lessons
-                      </div>
                     </div>
                   </div>
 
@@ -1608,7 +1553,7 @@ function renderEmployeeProgressChecklist() {
                       <div style="font-size:13px;font-weight:900;color:${stats.isAllCompleted ? '#059669' : '#1d4ed8'};">${stats.percent}% Completed</div>
                       <div style="font-size:11.5px;color:#64748b;">${stats.completedCount} of ${stats.total} Lessons Done</div>
                     </div>
-                    <button onclick="openClassroom('${course.id}')" style="background:${stats.isAllCompleted ? '#f1f5f9' : 'linear-gradient(135deg,#2563eb,#06b6d4)'};color:${stats.isAllCompleted ? '#1e293b' : '#ffffff'};border:none;padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:${stats.isAllCompleted ? 'none' : '0 4px 12px rgba(37,99,235,0.25)'};">
+                    <button onclick="openClassroom('${course.id}')" style="background:${stats.isAllCompleted ? '#f1f5f9' : '#2563eb'};color:${stats.isAllCompleted ? '#1e293b' : '#ffffff'};border:none;padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:${stats.isAllCompleted ? 'none' : '0 2px 6px rgba(37,99,235,0.2)'};">
                       ${stats.isAllCompleted ? 'Rewatch Course' : 'Continue Curriculum →'}
                     </button>
                   </div>
@@ -1623,14 +1568,14 @@ function renderEmployeeProgressChecklist() {
                     
                     let statusBg = '#ffffff';
                     let statusBorder = '#e2e8f0';
-                    let statusIcon = '🔒';
+                    let statusIcon = '';
                     let statusLabel = `Locked (Complete Part ${idx} first)`;
                     let statusColor = '#94a3b8';
 
                     if (done) {
                       statusBg = '#ecfdf5';
                       statusBorder = '#a7f3d0';
-                      statusIcon = '✓';
+                      statusIcon = '';
                       statusLabel = 'Completed';
                       statusColor = '#059669';
                     } else if (unlocked) {
@@ -1642,7 +1587,7 @@ function renderEmployeeProgressChecklist() {
                     }
 
                     return `
-                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('🔒 Complete the previous lesson first to unlock!', '#ef4444')`}" style="background:${statusBg};border:1.5px solid ${statusBorder};border-radius:10px;padding:10px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:10px;transition:transform 0.15s;">
+                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#ef4444')`}" style="background:${statusBg};border:1.5px solid ${statusBorder};border-radius:10px;padding:10px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:10px;transition:transform 0.15s;">
                         <span style="font-weight:900;color:${statusColor};font-size:14px;">${statusIcon}</span>
                         <div style="overflow:hidden;flex:1;">
                           <div style="font-size:12px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${lesson.title}</div>
@@ -1683,7 +1628,7 @@ function renderEmployeeProgressChecklist() {
       <div style="background:#f8fafc;border:1.5px solid ${isDone ? '#a7f3d0' : (isCurriculumLocked ? '#f1f5f9' : '#e2e8f0')};border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;opacity:${isCurriculumLocked ? '0.75' : '1'};">
         <div style="display:flex;align-items:center;gap:14px;min-width:240px;flex:1;">
           <div style="width:36px;height:36px;border-radius:50%;background:${isDone ? '#10b981' : (isCurriculumLocked ? '#cbd5e1' : '#e2e8f0')};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;">
-            ${isDone ? '✓' : (isCurriculumLocked ? '🔒' : '○')}
+            ${isDone ? '' : (isCurriculumLocked ? '' : '○')}
           </div>
           <div>
             <div style="font-size:15px;font-weight:800;color:#0f172a;">${v.title}</div>
@@ -1705,7 +1650,7 @@ function renderEmployeeProgressChecklist() {
           </div>
 
           <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isCurriculumLocked ? '#e2e8f0' : (isDone ? '#f1f5f9' : '#2563eb')};color:${isCurriculumLocked ? '#64748b' : (isDone ? '#1e293b' : '#ffffff')};border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:${isCurriculumLocked ? 'not-allowed' : 'pointer'};">
-            ${isCurriculumLocked ? '🔒 Locked' : (isDone ? 'Rewatch' : 'Watch Now →')}
+            ${isCurriculumLocked ? 'Locked' : (isDone ? 'Rewatch' : 'Watch Now →')}
           </button>
         </div>
       </div>
@@ -1760,7 +1705,7 @@ async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, vide
   if (curCtx && !isLessonUnlocked(curCtx.course, curCtx.index)) {
     const prev = curCtx.course.syllabus[curCtx.index - 1];
     const prevTitle = prev ? prev.title : 'the prerequisite video';
-    showToast(`🔒 Locked: This video is Part ${curCtx.index + 1} of "${curCtx.course.title}". You must finish "${prevTitle}" first!`, '#ef4444');
+    showToast(`Locked: This video is Part ${curCtx.index + 1} of "${curCtx.course.title}". You must finish "${prevTitle}" first!`, '#ef4444');
     return;
   }
 
@@ -1812,10 +1757,9 @@ async function renderVideosCategory(category) {
   if (videos.length === 0) {
     container.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:54px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
-        <div style="font-size:42px;margin-bottom:12px;">🎬</div>
         <h4 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">No Training Videos Uploaded Yet</h4>
         <p style="color:#64748b;font-size:13.5px;max-width:480px;margin:0 auto 18px;">All dummy records have been removed. The video catalog is ready for real company training videos.</p>
-        ${isAdmin ? `<button onclick="showSection('upload')" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Upload First Video</button>` : ''}
+        ${isAdmin ? `<button onclick="showSection('upload')" style="background:#2563eb;color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Upload First Video</button>` : ''}
       </div>
     `;
     return;
@@ -1828,7 +1772,7 @@ async function renderVideosCategory(category) {
     const isLocal = v.type === 'local' || v.ytId.includes('videos/');
     const isDone = watchedMap[v.id]?.completed;
     const pct = watchedMap[v.id]?.percent || 0;
-    const thumbHtml = `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:40px;">🎬</span><span style="font-size:10px;font-weight:900;margin-top:4px;">HD VIDEO</span></div>`;
+    const thumbHtml = `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:40px;"></span><span style="font-size:10px;font-weight:900;margin-top:4px;">HD VIDEO</span></div>`;
 
     return `
       <div class="dashboard-card" onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:300px;">
@@ -1840,7 +1784,7 @@ async function renderVideosCategory(category) {
                 <span style="font-size:16px;margin-left:3px;color:#2563eb;">▶</span>
               </div>
             </div>
-            ${isDone ? `<span style="position:absolute;top:10px;right:10px;background:#2563eb;color:white;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">✓ WATCHED</span>` : ''}
+            ${isDone ? `<span style="position:absolute;top:10px;right:10px;background:#2563eb;color:white;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">WATCHED</span>` : ''}
           </div>
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -1876,7 +1820,6 @@ function renderHomeFeatured() {
   if (courses.length === 0) {
     container.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:42px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
-        <div style="font-size:36px;margin-bottom:10px;">📚</div>
         <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0 0 6px;">No Curricula Created Yet</h4>
         <p style="color:#64748b;font-size:13px;margin:0 auto 14px;max-width:440px;">Publish curriculum tracks with structured video lessons to train employees.</p>
         ${isAdmin ? `<button onclick="showSection('upload')" style="background:#2563eb;color:white;border:none;padding:9px 20px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">+ Create Curriculum</button>` : ''}
@@ -1910,10 +1853,9 @@ function renderCoursesCatalog(filterCat) {
   if (list.length === 0) {
     container.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:54px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
-        <div style="font-size:42px;margin-bottom:12px;">🎓</div>
         <h4 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">Curricula Catalog is Empty</h4>
         <p style="color:#64748b;font-size:13.5px;max-width:480px;margin:0 auto 18px;">All dummy tracks have been removed. Use <strong>Upload Material</strong> to create real curriculum tracks and attach videos in sequential order.</p>
-        ${isAdmin ? `<button onclick="showSection('upload')" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Create First Curriculum Track</button>` : ''}
+        ${isAdmin ? `<button onclick="showSection('upload')" style="background:#2563eb;color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Create First Curriculum Track</button>` : ''}
       </div>
     `;
     return;
@@ -2009,7 +1951,7 @@ function renderClassroomPlaylist() {
 
     let border = '#e2e8f0';
     let bg = '#ffffff';
-    let icon = '🔒';
+    let icon = '';
     let iconColor = '#94a3b8';
     let badgeText = `Locked (Finish #${idx} first)`;
     let badgeBg = '#f1f5f9';
@@ -2018,7 +1960,7 @@ function renderClassroomPlaylist() {
     if (isDone) {
       bg = isCurrent ? '#eff6ff' : '#f8fafc';
       border = isCurrent ? '#3b82f6' : '#a7f3d0';
-      icon = '✓';
+      icon = '';
       iconColor = '#059669';
       badgeText = 'Completed';
       badgeBg = '#ecfdf5';
@@ -2067,7 +2009,7 @@ function loadClassroomLesson(idx) {
   if (!unlocked) {
     const prev = syllabus[idx - 1];
     const prevTitle = prev ? prev.title : 'the previous lesson';
-    showToast(`🔒 Lesson Locked! You must finish "${prevTitle}" before opening this video.`, '#ef4444');
+    showToast(`Lesson Locked! You must finish "${prevTitle}" before opening this video.`, '#ef4444');
     return;
   }
 
@@ -2127,7 +2069,7 @@ function updateClassroomNavButtons() {
       } else {
         nextBtn.style.background = '#94a3b8';
         nextBtn.style.cursor = 'not-allowed';
-        nextBtn.innerHTML = '<span>🔒 Next Lesson Locked</span>';
+        nextBtn.innerHTML = '<span>Next Lesson Locked</span>';
       }
     }
   }
@@ -2139,7 +2081,7 @@ function updateClassroomNavButtons() {
       completeBtn.style.background = '#ecfdf5';
       completeBtn.style.borderColor = '#a7f3d0';
       completeBtn.style.color = '#059669';
-      completeBtn.innerHTML = '<span>✓</span> Completed';
+      completeBtn.innerHTML = 'Completed';
     } else {
       completeBtn.style.background = '#ffffff';
       completeBtn.style.borderColor = '#cbd5e1';
@@ -2159,7 +2101,7 @@ function goToNextClassroomLesson() {
   const nextIdx = currentClassroomLessonIdx + 1;
   const syllabus = currentClassroomCourse.syllabus || [];
   if (nextIdx >= syllabus.length) {
-    showToast('🎉 You have reached the end of this curriculum!', '#10b981');
+    showToast('You have reached the end of this curriculum!', '#10b981');
     return;
   }
   loadClassroomLesson(nextIdx);
@@ -2198,7 +2140,7 @@ function renderPracticeFiles(filterCat = 'all') {
         </div>
         <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 4px;">${f.name}</h4>
       </div>
-      <button onclick="showToast('📥 Downloading ${f.name}...', '#2563eb')" style="background:linear-gradient(135deg,#1d4ed8,#0284c7);color:white;border:none;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:12px;">
+      <button onclick="showToast('Downloading ${f.name}...', '#2563eb')" style="background:linear-gradient(135deg,#1d4ed8,#0284c7);color:white;border:none;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:12px;">
         ⤓ Download Dataset
       </button>
     </div>
@@ -2277,7 +2219,7 @@ function populateCurriculumDropdown(selectedId = null) {
     const lessonCount = Array.isArray(c.syllabus) ? c.syllabus.length : 0;
     const stationLabel = (c.station && c.station !== 'all') ? c.station.toUpperCase() : 'ALL';
     const isSel = (selectedId && c.id === selectedId) ? 'selected' : '';
-    return `<option value="${c.id}" ${isSel}>${c.icon || '📚'} ${c.title} (${lessonCount} lesson${lessonCount === 1 ? '' : 's'}) [Target: ${stationLabel}]</option>`;
+    return `<option value="${c.id}" ${isSel}>${c.icon || ''} ${c.title} (${lessonCount} lesson${lessonCount === 1 ? '' : 's'}) [Target: ${stationLabel}]</option>`;
   }).join('');
 
   if (selectedId) select.value = selectedId;
@@ -2332,7 +2274,7 @@ function renderAdminCurriculaList() {
       `).join('')
       : '<div style="font-size:12px;color:#94a3b8;font-style:italic;padding:8px 0;">No lessons attached yet. Upload a video and assign it to this curriculum!</div>';
 
-    const hasCurriculumIcon = c.icon && !['🏗️', '🏗', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(c.icon);
+    const hasCurriculumIcon = c.icon && !['️', '', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(c.icon);
     const curriculumIconMarkup = hasCurriculumIcon ? `
       <div style="width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:22px;">
         ${c.icon}
@@ -2360,7 +2302,7 @@ function renderAdminCurriculaList() {
               ▶ Open Classroom
             </button>
             <button onclick="prefillUploadWithCurriculum('${c.id}')" style="background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
-              ➕ Add Video Here
+              Add Video Here
             </button>
           </div>
         </div>
@@ -2389,7 +2331,7 @@ function prefillUploadWithCurriculum(courseId) {
   const rad = document.querySelector('input[name="video_curriculum_choice"][value="existing"]');
   if (rad) rad.checked = true;
   document.getElementById('new-video-title').focus();
-  showToast('🎯 Target curriculum selected! Choose video file to upload.', '#2563eb');
+  showToast('Target curriculum selected! Choose video file to upload.', '#2563eb');
 }
 
 async function adminPublishCourse() {
@@ -2402,7 +2344,7 @@ async function adminPublishCourse() {
   const desc = document.getElementById('new-course-desc').value.trim() || 'Comprehensive BIM curriculum track.';
 
   if (!title) {
-    showToast('⚠️ Curriculum Title is required', '#f59e0b');
+    showToast('️ Curriculum Title is required', '#f59e0b');
     return;
   }
 
@@ -2440,11 +2382,11 @@ async function adminPublishCourse() {
     renderAdminCurriculaList();
     renderCoursesCatalog('all');
 
-    showToast(`🎉 Curriculum "${title}" created successfully!`, '#10b981');
+    showToast(`Curriculum "${title}" created successfully!`, '#10b981');
 
   } catch (err) {
     console.error(err);
-    showToast('❌ Failed: ' + err.message, '#ef4444');
+    showToast('Failed: ' + err.message, '#ef4444');
   }
 }
 
@@ -2497,7 +2439,7 @@ function initIndividualPickerUI() {
     teams.forEach(t => {
       const opt = document.createElement('option');
       opt.value = t;
-      opt.textContent = '👥 ' + t;
+      opt.textContent = '' + t;
       teamSelect.appendChild(opt);
     });
   }
@@ -2550,7 +2492,7 @@ function renderIndividualEmployeeList() {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:24px;color:#64748b;font-size:13px;background:white;border-radius:10px;border:1px dashed #cbd5e1;">
-        🔍 No employees match the current filter or search criteria.
+        No employees match the current filter or search criteria.
       </div>
     `;
     updateIndividualAssignmentUI();
@@ -2558,35 +2500,35 @@ function renderIndividualEmployeeList() {
   }
 
   const stationIcons = {
-    trainee: '🎓 Trainee',
-    engineer: '📐 Engineer',
-    architect: '🏛️ Architect',
+    trainee: 'Trainee',
+    engineer: 'Engineer',
+    architect: 'Architect',
     modeler: 'Modeler',
-    all: '🌐 General'
+    all: 'General'
   };
 
   container.innerHTML = filtered.map(emp => {
     const isSelected = selectedIndividualEmployeeIds.includes(String(emp.id));
     const empStationLabel = stationIcons[emp.station] || (emp.station ? (emp.station.charAt(0).toUpperCase() + emp.station.slice(1)) : 'General');
-    const borderCol = isSelected ? '#4f46e5' : '#e2e8f0';
-    const bgCol = isSelected ? '#eef2ff' : '#ffffff';
+    const borderCol = isSelected ? '#2563eb' : '#e2e8f0';
+    const bgCol = isSelected ? '#eff6ff' : '#ffffff';
 
     return `
       <div onclick="toggleIndividualEmployeeSelection('${emp.id}')"
            style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid ${borderCol};background:${bgCol};border-radius:10px;transition:all 0.15s;user-select:none;"
-           onmouseover="this.style.borderColor='#6366f1'"
+           onmouseover="this.style.borderColor='#2563eb'"
            onmouseout="this.style.borderColor='${borderCol}'">
         <input type="checkbox"
                ${isSelected ? 'checked' : ''}
                onclick="event.stopPropagation();toggleIndividualEmployeeSelection('${emp.id}')"
-               style="cursor:pointer;accent-color:#4f46e5;width:16px;height:16px;margin:0;flex-shrink:0;">
+               style="cursor:pointer;accent-color:#2563eb;width:16px;height:16px;margin:0;flex-shrink:0;">
         <div style="min-width:0;flex:1;">
           <div style="font-size:13px;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
             ${escapeHtml(emp.name)}
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-top:2px;font-size:11px;flex-wrap:wrap;">
-            <span style="background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:4px;font-weight:600;">
-              👥 ${escapeHtml(emp.team_name || 'General Team')}
+            <span style="background:#eff6ff;color:#1d4ed8;padding:1px 6px;border-radius:4px;font-weight:600;">
+              ${escapeHtml(emp.team_name || 'General Team')}
             </span>
             <span style="background:#f1f5f9;color:#475569;padding:1px 6px;border-radius:4px;font-weight:600;">
               ${empStationLabel}
@@ -2674,21 +2616,21 @@ function syncIndividualSelectionWithUploadState() {
     });
 
     if (btnIndiv) {
-      btnIndiv.style.background = '#4f46e5';
+      btnIndiv.style.background = '#2563eb';
       btnIndiv.style.color = '#ffffff';
       btnIndiv.style.border = 'none';
-      btnIndiv.style.boxShadow = '0 2px 8px rgba(79,70,229,0.35)';
+      btnIndiv.style.boxShadow = 'none';
       btnIndiv.classList.add('active');
     }
     if (badge) {
       badge.textContent = count;
       badge.style.display = 'inline-block';
       badge.style.background = '#ffffff';
-      badge.style.color = '#4f46e5';
+      badge.style.color = '#2563eb';
     }
 
     if (hint) {
-      hint.innerHTML = `Assigned individually to: <strong style="color:#4338ca;">${count} Selected Employee${count > 1 ? 's' : ''}</strong> (Custom Assignment)`;
+      hint.innerHTML = `Assigned individually to: <strong style="color:#2563eb;">${count} Selected Employee${count > 1 ? 's' : ''}</strong> (Custom Assignment)`;
     }
   } else {
     if (hiddenStation && hiddenStation.value === 'custom') {
@@ -2698,8 +2640,8 @@ function syncIndividualSelectionWithUploadState() {
 
     if (btnIndiv) {
       btnIndiv.style.background = '#ffffff';
-      btnIndiv.style.color = '#4338ca';
-      btnIndiv.style.border = '1.5px solid #a5b4fc';
+      btnIndiv.style.color = '#0f172a';
+      btnIndiv.style.border = '1.5px solid #cbd5e1';
       btnIndiv.style.boxShadow = 'none';
       btnIndiv.classList.remove('active');
     }
@@ -2754,7 +2696,7 @@ function updateIndividualAssignmentUI() {
         return `
           <span style="display:inline-flex;align-items:center;gap:4px;background:#e0e7ff;color:#3730a3;padding:3px 8px;border-radius:999px;font-size:11.5px;font-weight:700;">
             ${escapeHtml(name)}
-            <button type="button" onclick="removeIndividualEmployee('${id}')" style="background:none;border:none;cursor:pointer;color:#4f46e5;font-weight:900;padding:0 2px;line-height:1;" title="Remove">✕</button>
+            <button type="button" onclick="removeIndividualEmployee('${id}')" style="background:none;border:none;cursor:pointer;color:#4f46e5;font-weight:900;padding:0 2px;line-height:1;" title="Remove"></button>
           </span>
         `;
       }).join('');
@@ -2770,8 +2712,8 @@ function toggleUploadStation(st, btn) {
   const btnIndiv = document.getElementById('btn-choose-individually');
   if (btnIndiv) {
     btnIndiv.style.background = '#ffffff';
-    btnIndiv.style.color = '#4338ca';
-    btnIndiv.style.border = '1.5px solid #a5b4fc';
+    btnIndiv.style.color = '#0f172a';
+    btnIndiv.style.border = '1.5px solid #cbd5e1';
     btnIndiv.style.boxShadow = 'none';
     btnIndiv.classList.remove('active');
   }
@@ -2802,7 +2744,7 @@ function toggleUploadStation(st, btn) {
       b.style.background = '#2563eb';
       b.style.color = '#ffffff';
       b.style.border = 'none';
-      b.style.boxShadow = '0 2px 6px rgba(37,99,235,0.25)';
+      b.style.boxShadow = 'none';
     } else {
       b.style.background = '#ffffff';
       b.style.color = '#334155';
@@ -2845,7 +2787,7 @@ function handleAdminVideoDrop(e) {
     if (files.length > 0) {
       addFilesToVideoQueue(files);
     } else {
-      showToast('⚠️ Please drop video files (.mp4, .webm, .mov)', '#f59e0b');
+      showToast('️ Please drop video files (.mp4, .webm, .mov)', '#f59e0b');
     }
   }
 }
@@ -2883,7 +2825,7 @@ function renderSelectedVideoFilesQueue() {
   const totalSizeMb = selectedAdminVideoFiles.reduce((acc, item) => acc + (item.file.size / (1024 * 1024)), 0).toFixed(1);
   if (title) title.textContent = `Selected Videos (${selectedAdminVideoFiles.length})`;
   if (sizeLbl) sizeLbl.textContent = `• Total: ${totalSizeMb} MB`;
-  if (dropLabel) dropLabel.textContent = `🎬 ${selectedAdminVideoFiles.length} video file(s) selected (${totalSizeMb} MB)`;
+  if (dropLabel) dropLabel.textContent = `${selectedAdminVideoFiles.length} video file(s) selected (${totalSizeMb} MB)`;
 
   const titleInput = document.getElementById('new-video-title');
   if (titleInput && (!titleInput.value || selectedAdminVideoFiles.length === 1)) {
@@ -2901,12 +2843,12 @@ function renderSelectedVideoFilesQueue() {
         <div style="flex:1;min-width:0;">
           <input type="text" value="${item.title.replace(/"/g, '&quot;')}" onchange="updateVideoQueueTitle(${idx}, this.value)" style="width:100%;font-size:13px;font-weight:700;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;padding:4px 8px;box-sizing:border-box;" placeholder="Video title..." />
           <div style="font-size:11.5px;color:#64748b;margin-top:3px;display:flex;gap:8px;">
-            <span>📁 ${item.file.name}</span>
+            <span>${item.file.name}</span>
             <span>(${item.sizeMb} MB)</span>
           </div>
         </div>
       </div>
-      <button type="button" onclick="removeSelectedVideoFile(${idx})" style="background:#fee2e2;color:#b91c1c;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove this video">✕</button>
+      <button type="button" onclick="removeSelectedVideoFile(${idx})" style="background:#fee2e2;color:#b91c1c;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove this video"></button>
     </div>
   `).join('');
 }
@@ -2945,7 +2887,7 @@ async function adminPublishVideo() {
   const newCurriculumDesc = document.getElementById('inline-curriculum-desc')?.value.trim() || defaultDesc;
 
   if (curriculumMode === 'new' && !newCurriculumTitle) {
-    showToast('⚠️ Please enter a Title for the new Curriculum Track', '#f59e0b');
+    showToast('️ Please enter a Title for the new Curriculum Track', '#f59e0b');
     return;
   }
 
@@ -2954,7 +2896,7 @@ async function adminPublishVideo() {
 
   if (currentVideoUploadMode === 'file') {
     if (!selectedAdminVideoFiles || selectedAdminVideoFiles.length === 0) {
-      showToast('⚠️ Please choose at least one video file to upload', '#f59e0b');
+      showToast('️ Please choose at least one video file to upload', '#f59e0b');
       return;
     }
 
@@ -3019,13 +2961,13 @@ async function adminPublishVideo() {
         successCount++;
       }
 
-      showToast(`🎉 Successfully uploaded and published ${successCount} video(s)!`, '#10b981');
-      if (publishBtn) publishBtn.innerHTML = `✅ All ${successCount} Videos Published!`;
+      showToast(`Successfully uploaded and published ${successCount} video(s)!`, '#10b981');
+      if (publishBtn) publishBtn.innerHTML = `All ${successCount} Videos Published!`;
       setTimeout(() => location.reload(), 1400);
 
     } catch (err) {
       console.error(err);
-      showToast('❌ Upload stopped: ' + err.message, '#ef4444');
+      showToast('Upload stopped: ' + err.message, '#ef4444');
       if (publishBtn) {
         publishBtn.disabled = false;
         publishBtn.style.opacity = '1';
@@ -3037,7 +2979,7 @@ async function adminPublishVideo() {
     // Mode is 'yt' (YouTube/Link) or 'folder'
     const mainTitle = document.getElementById('new-video-title')?.value.trim();
     if (!mainTitle) {
-      showToast('⚠️ Video Title is required', '#f59e0b');
+      showToast('️ Video Title is required', '#f59e0b');
       return;
     }
 
@@ -3053,7 +2995,7 @@ async function adminPublishVideo() {
       }
 
       if (!ytId) {
-        showToast('⚠️ Video URL or filename is required', '#f59e0b');
+        showToast('️ Video URL or filename is required', '#f59e0b');
         return;
       }
 
@@ -3106,12 +3048,12 @@ async function adminPublishVideo() {
         });
       }
 
-      showToast(`✅ Video published successfully!`, '#10b981');
+      showToast(`Video published successfully!`, '#10b981');
       setTimeout(() => location.reload(), 1200);
 
     } catch (err) {
       console.error(err);
-      showToast('❌ Failed: ' + err.message, '#ef4444');
+      showToast('Failed: ' + err.message, '#ef4444');
     }
   }
 }
@@ -3123,7 +3065,6 @@ async function renderAdminVideosList() {
   if (!videos || videos.length === 0) {
     container.innerHTML = `
       <div style="text-align:center;padding:28px 20px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;color:#64748b;">
-        <i class="fa-solid fa-film" style="font-size:24px;color:#94a3b8;margin-bottom:8px;display:block;"></i>
         <div style="font-weight:700;font-size:14px;color:#334155;">No videos uploaded yet</div>
         <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Use the upload form above to add your first training video.</div>
       </div>
