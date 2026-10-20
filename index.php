@@ -270,6 +270,7 @@ sort($allAvailableTeams);
       background: #faf8f5 !important;
     }
     body > nav {
+      position: relative !important;
       background: linear-gradient(105deg, rgba(29, 78, 216, 0.83), rgba(37, 99, 235, 0.76) 46%, rgba(2, 132, 199, 0.70)) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.26);
       backdrop-filter: blur(20px) saturate(145%);
@@ -364,7 +365,7 @@ sort($allAvailableTeams);
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
 ══════════════════════════════════════════ -->
-<nav style="background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:sticky;top:0;z-index:100;box-shadow:0 8px 30px rgba(14,116,144,0.22);position:relative;overflow:hidden;">
+<nav style="background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:relative;z-index:10;box-shadow:0 8px 30px rgba(14,116,144,0.22);overflow:hidden;">
   
   <!-- Subtle Ambient Circles -->
   <div style="position:absolute;left:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
