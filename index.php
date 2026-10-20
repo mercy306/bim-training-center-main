@@ -904,16 +904,6 @@ sort($allAvailableTeams);
       </div>
     </div>
 
-    <div id="classroom-restriction-banner" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:10px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:18px;">ℹ️</span>
-        <span style="font-size:13px;font-weight:600;"><strong>Curriculum Tracker:</strong> Lessons unlock in sequence. Fast-forwarding is restricted, rewinding is enabled, and progress is auto-saved.</span>
-      </div>
-      <div id="classroom-cookie-indicator" style="font-size:11.5px;color:#1e40af;background:#dbeafe;padding:4px 12px;border-radius:9999px;font-weight:700;display:flex;align-items:center;gap:5px;">
-        Auto-Resume Active
-      </div>
-    </div>
-
     <div id="classroom-layout-grid" style="display:grid;grid-template-columns:1fr 360px;gap:24px;">
       <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:22px;box-shadow:none;">
         <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:10px;overflow:hidden;margin-bottom:18px;min-height:380px;"></div>
