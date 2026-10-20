@@ -407,6 +407,160 @@ sort($allAvailableTeams);
       -webkit-backdrop-filter: blur(12px);
     }
 
+    /* Make the admin dashboard feel like a focused command centre. */
+    #section-analytics > div, #section-upload > div { padding-top: 76px; }
+    #section-analytics > div::after, #section-upload > div::after {
+      position: absolute; left: 0; top: 8px; z-index: 1;
+      color: #0f172a; font-size: clamp(22px, 3vw, 30px); font-weight: 900;
+      letter-spacing: -0.045em;
+    }
+    #section-analytics > div::after { content: 'Training Command Center'; }
+    #section-upload > div::after { content: 'Content Studio'; }
+    #section-analytics > div::before, #section-upload > div::before { z-index: 0; }
+    #section-analytics > div > *, #section-upload > div > * { position: relative; z-index: 1; }
+    #section-analytics > div > div:first-child > div {
+      min-height: 128px;
+      display: flex; flex-direction: column; justify-content: center;
+      transition: transform 180ms var(--ease-out), box-shadow 180ms ease;
+    }
+    #section-analytics > div > div:first-child > div:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 20px 40px rgba(30, 64, 175, 0.14), inset 0 1px rgba(255,255,255,.76);
+    }
+    #section-analytics > div > div:first-child > div:nth-child(1) { background: linear-gradient(135deg, rgba(219,234,254,.94), rgba(255,255,255,.68)) !important; }
+    #section-analytics > div > div:first-child > div:nth-child(2) { background: linear-gradient(135deg, rgba(224,231,255,.94), rgba(255,255,255,.68)) !important; }
+    #section-analytics > div > div:first-child > div:nth-child(3) { background: linear-gradient(135deg, rgba(209,250,229,.88), rgba(255,255,255,.68)) !important; }
+    #section-analytics > div > div:first-child > div:nth-child(4) { background: linear-gradient(135deg, rgba(254,243,199,.88), rgba(255,255,255,.68)) !important; }
+    #section-analytics > div > div:first-child > div > div:last-child {
+      font-size: 31px !important; letter-spacing: -0.05em;
+    }
+    #section-upload [id^="atab-"] { border-radius: 999px !important; padding: 10px 18px !important; }
+    #section-upload #atab-video { box-shadow: 0 8px 18px rgba(37, 99, 235, 0.26); }
+    #section-upload #admin-publish-video-btn, #section-upload #admin-create-course-btn {
+      border-radius: 12px !important;
+      background: linear-gradient(135deg, #1d4ed8, #0ea5e9) !important;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.28) !important;
+    }
+    #section-upload #admin-publish-video-btn:hover, #section-upload #admin-create-course-btn:hover {
+      transform: translateY(-3px); box-shadow: 0 16px 28px rgba(37, 99, 235, 0.36) !important;
+    }
+    #section-upload [id^="admin-panel-"] h3 { letter-spacing: -0.025em; }
+
+    /* Upload Material details */
+    #section-upload #vmode-btn-file, #section-upload #vmode-btn-yt, #section-upload #vmode-btn-folder {
+      border-radius: 10px !important;
+      min-height: 44px;
+    }
+    #section-upload #vinput-container-file .drop-zone {
+      padding: 38px 24px !important;
+      border-style: dashed !important;
+      border-width: 2px !important;
+      background: linear-gradient(135deg, rgba(239,246,255,.78), rgba(255,255,255,.5)) !important;
+    }
+    #section-upload #vinput-container-file .drop-zone::before {
+      content: '+'; display: grid; place-items: center;
+      width: 44px; height: 44px; margin: 0 auto 10px;
+      color: #ffffff; font-size: 24px; font-weight: 800;
+      border-radius: 14px; background: linear-gradient(135deg, #2563eb, #38bdf8);
+      box-shadow: 0 9px 18px rgba(37,99,235,.22);
+    }
+    #upload-video-preview {
+      border: 5px solid rgba(255,255,255,.62) !important;
+      box-shadow: 0 18px 34px rgba(15,23,42,.18);
+    }
+    #section-upload label { letter-spacing: .01em; }
+    #section-upload input:not([type="hidden"]), #section-upload select, #section-upload textarea {
+      border-radius: 10px !important;
+      box-shadow: inset 0 1px rgba(255,255,255,.56);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    }
+    #section-upload input:not([type="hidden"]):focus, #section-upload select:focus, #section-upload textarea:focus {
+      background: rgba(255,255,255,.88) !important;
+      border-color: #60a5fa !important;
+      box-shadow: var(--focus-ring), inset 0 1px rgba(255,255,255,.7) !important;
+    }
+    #vfiles-queue-container { border-radius: 14px !important; }
+    #vfiles-queue-list > div {
+      background: rgba(255,255,255,.68) !important;
+      border-color: rgba(191,219,254,.72) !important;
+      box-shadow: 0 6px 14px rgba(30,64,175,.05);
+    }
+    #admin-panel-course > div:not(:last-child) {
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(148,163,184,.18);
+    }
+    #admin-panel-files .drop-zone { min-height: 180px; display: grid; place-content: center; }
+
+    /* Curriculum builder: a design studio, not an application form. */
+    #admin-panel-course > div:nth-child(2) {
+      position: relative;
+      padding: 28px !important;
+      border: 1px solid rgba(191, 219, 254, .7) !important;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(239,246,255,.82), rgba(255,255,255,.45)) !important;
+      overflow: hidden;
+    }
+    #admin-panel-course > div:nth-child(2)::before {
+      content: 'LEARNING PATH DESIGNER';
+      display: inline-flex; margin-bottom: 10px;
+      color: #2563eb; font-size: 10px; font-weight: 900; letter-spacing: .14em;
+      padding: 5px 9px; border-radius: 999px;
+      background: rgba(219,234,254,.72); border: 1px solid rgba(147,197,253,.55);
+    }
+    #admin-panel-course > div:nth-child(2) > div:first-child {
+      color: #0f172a; font-size: 22px !important; letter-spacing: -.035em;
+    }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      margin: 18px 0 20px !important;
+    }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div {
+      padding: 14px !important;
+      border: 1px solid rgba(191,219,254,.58);
+      border-radius: 14px;
+      background: rgba(255,255,255,.55);
+      box-shadow: inset 0 1px rgba(255,255,255,.72);
+      transition: transform 180ms var(--ease-out), background-color 180ms ease, box-shadow 180ms ease;
+    }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div:hover {
+      background: rgba(255,255,255,.76);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(37,99,235,.08), inset 0 1px rgba(255,255,255,.8);
+    }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div:first-child {
+      background: linear-gradient(135deg, rgba(219,234,254,.82), rgba(255,255,255,.65));
+    }
+    #admin-panel-course > div:nth-child(2) label {
+      color: #1e3a8a !important; font-size: 11px !important;
+      font-weight: 900 !important; letter-spacing: .06em; text-transform: uppercase;
+    }
+    #admin-panel-course > div:nth-child(2) label::before { color: #38bdf8; margin-right: 5px; }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div:first-child label::before { content: '✦'; }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) label::before { content: '◈'; }
+    #admin-panel-course > div:nth-child(2) > div:nth-child(2) > div:nth-child(4) label::before { content: '✦'; }
+    #admin-panel-course > div:nth-child(2) input, #admin-panel-course > div:nth-child(2) select, #admin-panel-course > div:nth-child(2) textarea {
+      border: none !important;
+      background: rgba(255,255,255,.72) !important;
+      box-shadow: none !important;
+      padding: 11px 12px !important;
+    }
+    #admin-panel-course > div:nth-child(2) textarea { min-height: 94px; }
+    #admin-panel-course > div:nth-child(2) > div:last-child { margin-top: 4px; }
+    #admin-panel-course #admin-create-course-btn { min-width: 220px; }
+
+    @media (max-width: 720px) {
+      #admin-panel-course > div:nth-child(2) { padding: 18px !important; }
+      #admin-panel-course > div:nth-child(2) > div:nth-child(2) { grid-template-columns: 1fr !important; }
+      #admin-panel-course #admin-create-course-btn { width: 100%; }
+    }
+
+    @media (max-width: 720px) {
+      #section-analytics > div, #section-upload > div { padding-top: 62px; }
+      #section-analytics > div::after, #section-upload > div::after { font-size: 23px; }
+      #section-upload [id^="admin-panel-"] { padding: 16px !important; }
+    }
+
     @media (max-width: 720px) {
       body > nav > div { min-height: auto !important; padding: 12px 16px 14px !important; gap: 12px !important; }
       body > nav img { height: 40px !important; }
@@ -863,10 +1017,7 @@ sort($allAvailableTeams);
 
     <!-- TAB 2: CURRICULA MANAGEMENT & CREATOR -->
     <div id="admin-panel-course" style="display:none;background:transparent;border:none;padding:0;box-shadow:none;">
-      <div style="margin-bottom:20px;">
-        <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 6px;">Curricula Management</h3>
 
-      </div>
 
       <div style="margin-bottom:28px;">
         <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
