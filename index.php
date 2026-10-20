@@ -1373,14 +1373,14 @@ function renderEmployeeProgressChecklist() {
             const syllabus = course.syllabus || [];
             
             return `
-              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
-                  <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
+              <div style="max-width:1000px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                  <div style="font-size:17px;font-weight:800;color:#0f172a;">${course.title}</div>
                   <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
                 </div>
 
-                <!-- Video Lessons Collection (Each Item Is A Video) -->
-                <div style="display:flex;flex-direction:column;gap:14px;">
+                <!-- Video Lessons Collection (Side by Side Grid) -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));gap:16px;">
                   ${syllabus.map((lesson, idx) => {
                     const lId = lesson.id || ('les_' + idx);
                     const done = isLessonCompleted(lId);
@@ -1393,12 +1393,12 @@ function renderEmployeeProgressChecklist() {
                     if (isYt) {
                       const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
                       const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
-                      videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:290px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+                      videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:100%;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
                     } else if (cleanUrl) {
                       if (cleanUrl.startsWith('videos/')) {
                         cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
                       }
-                      videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;max-height:290px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+                      videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
                     }
 
                     let statusLabel = 'Locked';
@@ -1413,18 +1413,18 @@ function renderEmployeeProgressChecklist() {
                     }
 
                     return `
-                      <div style="background:#ffffff;border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;">
-                        <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
-                          ${videoMediaHtml}
-                        </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-                          <div style="font-size:13.5px;font-weight:700;color:#0f172a;word-break:break-word;">
+                      <div style="background:#ffffff;border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;">
+                        <div>
+                          <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;height:180px;">
+                            ${videoMediaHtml}
+                          </div>
+                          <div style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.35;margin-bottom:8px;">
                             ${lesson.title}
                           </div>
-                          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                            <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
-                            <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
-                          </div>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #f1f5f9;">
+                          <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
+                          <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
                         </div>
                       </div>
                     `;
@@ -1440,17 +1440,17 @@ function renderEmployeeProgressChecklist() {
 
   // 2. ASSIGNED VIDEOS CHECKLIST
   html += `
-    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:28px 0 14px;max-width:580px;">All Assigned Training Videos</h4>
+    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:28px 0 14px;max-width:1000px;">All Assigned Training Videos</h4>
   `;
 
   if (videos.length === 0) {
-    html += '<div style="color:#64748b;padding:20px;text-align:center;max-width:580px;">No videos assigned to your station yet.</div>';
+    html += '<div style="color:#64748b;padding:20px;text-align:center;max-width:1000px;">No videos assigned to your station yet.</div>';
     container.innerHTML = html;
     return;
   }
 
   html += `
-    <div style="display:flex;flex-direction:column;gap:14px;max-width:580px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));gap:16px;max-width:1000px;">
       ${videos.map(v => {
         const record = watchedMap[v.id] || {};
         const isDone = !!record.completed;
@@ -1461,21 +1461,23 @@ function renderEmployeeProgressChecklist() {
         if (isYt) {
           const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
           const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
-          videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:290px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+          videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:100%;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
         } else if (cleanUrl) {
           if (cleanUrl.startsWith('videos/')) {
             cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
           }
-          videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;max-height:290px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+          videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
         }
 
         return `
-          <div style="background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;">
-            <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
-              ${videoMediaHtml}
+          <div style="background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;height:180px;">
+                ${videoMediaHtml}
+              </div>
+              <div style="font-size:13.5px;font-weight:700;color:#0f172a;line-height:1.35;margin-bottom:8px;">${v.title}</div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-              <div style="font-size:13.5px;font-weight:700;color:#0f172a;">${v.title}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid #f1f5f9;">
               <span style="font-size:12px;font-weight:700;color:#2563eb;">${isDone ? '✓ Completed' : 'In Progress'}</span>
             </div>
           </div>
