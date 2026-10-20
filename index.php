@@ -514,127 +514,85 @@ sort($allAvailableTeams);
 
 
     <!-- Metrics Row -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:24px;">
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Total Enrolled</div>
-        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
       </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Completion Rate</div>
-        <div style="font-size:26px;font-weight:800;color:#1d4ed8;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
-        <div style="font-size:26px;font-weight:800;color:#059669;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
         <div style="font-size:13px;color:#64748b;font-weight:600;">In Progress</div>
-        <div style="font-size:26px;font-weight:800;color:#d97706;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
       </div>
     </div>
-
-    <!-- Station Comparison Breakdown (Hidden when empty) -->
-    <?php if (!empty($analytics['station_stats'])): ?>
-    <div style="margin-bottom:28px;">
-      <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 14px;">Completion Rate by Station</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;">
-        <?php foreach ($analytics['station_stats'] as $st): ?>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;">
-            <div style="font-size:13px;font-weight:700;color:#0f172a;"><?= htmlspecialchars($st['title']) ?></div>
-            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin:8px 0;">
-              <span style="font-size:22px;font-weight:800;color:#2563eb;"><?= $st['avg_pct'] ?>%</span>
-              <span style="font-size:12px;color:#64748b;font-weight:600;"><?= $st['headcount'] ?> employees</span>
-            </div>
-            <div style="background:#e2e8f0;height:5px;border-radius:9999px;overflow:hidden;">
-              <div style="width:<?= $st['avg_pct'] ?>%;background:#2563eb;height:100%;"></div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
-    </div>
-    <?php endif; ?>
 
     <!-- Company-Wide Employee Roster Table -->
-    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:20px;background:#ffffff;">
+    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:20px;background:#ffffff;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
         <div>
-          <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0;">Employee Training Progress</h3>
         </div>
         
-        <div style="display:flex;gap:10px;align-items:center;">
-          <div style="position:relative;display:flex;align-items:center;">
-            <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;width:200px;outline:none;" />
-          </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <select id="admin-roster-station-select" onchange="filterAdminRosterStation(this.value)" style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;outline:none;">
+            <option value="all">All Stations (<?= count($roster) ?>)</option>
+            <option value="trainee">Trainees (<?= $stationCounts['trainee'] ?? 0 ?>)</option>
+            <option value="engineer">Structural & MEP Engineers (<?= $stationCounts['engineer'] ?? 0 ?>)</option>
+            <option value="architect">Architects & Designers (<?= $stationCounts['architect'] ?? 0 ?>)</option>
+          </select>
+          <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;width:180px;outline:none;" />
         </div>
-      </div>
-
-      <!-- Station Filter Navigation (replacing dropdown) -->
-      <div id="roster-station-nav" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:20px;border-bottom:1.5px solid #f1f5f9;padding-bottom:14px;">
-        <button type="button" onclick="filterAdminRosterStation('all', this)" class="roster-station-btn" data-station="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;box-shadow:0 2px 6px rgba(37,99,235,0.3);">
-          <span>All Stations</span>
-          <span class="st-count" style="background:rgba(255,255,255,0.25);color:#ffffff;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= count($roster) ?></span>
-        </button>
-        <button type="button" onclick="filterAdminRosterStation('trainee', this)" class="roster-station-btn" data-station="trainee" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>Trainees</span>
-          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['trainee'] ?? 0 ?></span>
-        </button>
-        <button type="button" onclick="filterAdminRosterStation('engineer', this)" class="roster-station-btn" data-station="engineer" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>Structural & MEP Engineers</span>
-          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['engineer'] ?? 0 ?></span>
-        </button>
-        <button type="button" onclick="filterAdminRosterStation('architect', this)" class="roster-station-btn" data-station="architect" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-          <span>️ Architects & Designers</span>
-          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['architect'] ?? 0 ?></span>
-        </button>
       </div>
 
       <div style="overflow-x:auto;">
         <table id="admin-roster-table" style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
           <thead>
-            <tr style="border-bottom:2px solid #f1f5f9;color:#64748b;">
-              <th style="padding:12px 14px;">Employee Name</th>
-              <th style="padding:12px 14px;">Station</th>
-              <th style="padding:12px 14px;">Team</th>
-              <th style="padding:12px 14px;">Videos Completed</th>
-              <th style="padding:12px 14px;">Progress %</th>
-              <th style="padding:12px 14px;">Status</th>
-              <th style="padding:12px 14px;">Last Activity</th>
+            <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;">
+              <th style="padding:10px 14px;font-weight:600;">Employee Name</th>
+              <th style="padding:10px 14px;font-weight:600;">Station</th>
+              <th style="padding:10px 14px;font-weight:600;">Team</th>
+              <th style="padding:10px 14px;font-weight:600;">Videos</th>
+              <th style="padding:10px 14px;font-weight:600;">Progress</th>
+              <th style="padding:10px 14px;font-weight:600;">Status</th>
+              <th style="padding:10px 14px;font-weight:600;">Last Activity</th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($roster as $emp): ?>
-              <tr class="roster-row" data-name="<?= strtolower(htmlspecialchars($emp['name'])) ?>" data-station="<?= $emp['station'] ?>" style="border-bottom:1px solid #f8fafc;">
-                <td style="padding:14px;font-weight:800;color:#0f172a;">
-                  <div style="display:flex;align-items:center;gap:10px;">
-                    <span style="width:32px;height:32px;border-radius:50%;background:#e0f2fe;color:#0369a1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">
-                      <?= strtoupper(substr($emp['name'], 0, 1)) ?>
-                    </span>
-                    <?= htmlspecialchars($emp['name']) ?>
-                  </div>
+              <tr class="roster-row" data-name="<?= strtolower(htmlspecialchars($emp['name'])) ?>" data-station="<?= $emp['station'] ?>" style="border-bottom:1px solid #f1f5f9;">
+                <td style="padding:12px 14px;font-weight:700;color:#0f172a;">
+                  <?= htmlspecialchars($emp['name']) ?>
                 </td>
-                <td style="padding:14px;">
-                  <span class="badge" style="background:#f1f5f9;color:#334155;"><?= htmlspecialchars(BIM_STATIONS[$emp['station']] ?? $emp['station']) ?></span>
+                <td style="padding:12px 14px;color:#475569;">
+                  <?= htmlspecialchars(BIM_STATIONS[$emp['station']] ?? $emp['station']) ?>
                 </td>
-                <td style="padding:14px;color:#64748b;font-weight:600;">
+                <td style="padding:12px 14px;color:#64748b;">
                   <?= htmlspecialchars($emp['team_name']) ?>
                 </td>
-                <td style="padding:14px;font-weight:700;color:#0f172a;">
+                <td style="padding:12px 14px;font-weight:600;color:#0f172a;">
                   <?= $emp['completed'] ?> / <?= $emp['total_assigned'] ?>
                 </td>
-                <td style="padding:14px;width:180px;">
+                <td style="padding:12px 14px;width:160px;">
                   <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="flex:1;background:#f1f5f9;height:8px;border-radius:9999px;overflow:hidden;">
-                      <div style="width:<?= $emp['percent'] ?>%;background:linear-gradient(90deg,#2563eb,#06b6d4);height:100%;"></div>
+                    <div style="flex:1;background:#f1f5f9;height:6px;border-radius:9999px;overflow:hidden;">
+                      <div style="width:<?= $emp['percent'] ?>%;background:#2563eb;height:100%;"></div>
                     </div>
-                    <span style="font-weight:800;font-size:12px;color:#1e293b;"><?= $emp['percent'] ?>%</span>
+                    <span style="font-weight:700;font-size:12px;color:#0f172a;"><?= $emp['percent'] ?>%</span>
                   </div>
                 </td>
-                <td style="padding:14px;">
-                  <span class="badge" style="background:<?= $emp['percent'] >= 100 ? '#ecfdf5' : ($emp['percent'] > 0 ? '#eff6ff' : '#fef2f2') ?>;color:<?= $emp['percent'] >= 100 ? '#059669' : ($emp['percent'] > 0 ? '#1d4ed8' : '#b91c1c') ?>;">
+                <td style="padding:12px 14px;">
+                  <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;background:<?= $emp['percent'] >= 100 ? '#eff6ff' : '#f8fafc' ?>;color:<?= $emp['percent'] >= 100 ? '#2563eb' : '#475569' ?>;border:1px solid <?= $emp['percent'] >= 100 ? '#bfdbfe' : '#e2e8f0' ?>;">
                     <?= $emp['status'] ?>
                   </span>
                 </td>
-                <td style="padding:14px;color:#64748b;font-size:12px;">
+                <td style="padding:12px 14px;color:#64748b;font-size:12px;">
                   <?= htmlspecialchars($emp['last_active']) ?>
                 </td>
               </tr>
@@ -2945,32 +2903,12 @@ function filterAdminRoster(query) {
   applyRosterFilters();
 }
 
-function filterAdminRosterStation(station, btn) {
+function filterAdminRosterStation(station) {
   currentRosterStation = station || 'all';
-  document.querySelectorAll('.roster-station-btn').forEach(b => {
-    const isAct = (b === btn) || (b.getAttribute('data-station') === currentRosterStation);
-    if (isAct) {
-      b.style.background = '#2563eb';
-      b.style.color = '#ffffff';
-      b.style.border = 'none';
-      b.style.boxShadow = '0 2px 6px rgba(37,99,235,0.3)';
-      const badge = b.querySelector('.st-count');
-      if (badge) {
-        badge.style.background = 'rgba(255,255,255,0.25)';
-        badge.style.color = '#ffffff';
-      }
-    } else {
-      b.style.background = '#f8fafc';
-      b.style.color = '#475569';
-      b.style.border = '1.5px solid #e2e8f0';
-      b.style.boxShadow = 'none';
-      const badge = b.querySelector('.st-count');
-      if (badge) {
-        badge.style.background = '#e2e8f0';
-        badge.style.color = '#334155';
-      }
-    }
-  });
+  const sel = document.getElementById('admin-roster-station-select');
+  if (sel && sel.value !== currentRosterStation) {
+    sel.value = currentRosterStation;
+  }
   applyRosterFilters();
 }
 
