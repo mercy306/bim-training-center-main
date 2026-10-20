@@ -1368,47 +1368,38 @@ function renderEmployeeProgressChecklist() {
   if (courses.length > 0) {
     html += `
       <div style="margin-bottom:28px;">
-        <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:20px;">
           ${courses.map(course => {
-            const stats = getCurriculumProgressStats(course);
             const syllabus = course.syllabus || [];
-            const defaultLesson = syllabus[0] || {};
-            let defaultCleanUrl = (defaultLesson.ytId || '').replace(/^\.?\/?/, '');
-            const isYt = defaultLesson.type === 'yt' || defaultCleanUrl.includes('youtube.com') || defaultCleanUrl.includes('youtu.be');
-            let playerHtml = '';
-            if (isYt) {
-              const ytMatch = defaultCleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
-              const ytCode = ytMatch ? ytMatch[1] : defaultCleanUrl;
-              playerHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:310px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
-            } else if (defaultCleanUrl) {
-              if (defaultCleanUrl.startsWith('videos/')) {
-                defaultCleanUrl = 'api/stream.php?file=' + encodeURIComponent(defaultCleanUrl);
-              }
-              playerHtml = `<video src="${defaultCleanUrl}" controls playsinline style="width:100%;max-height:320px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
-            }
             
             return `
-              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;margin-bottom:14px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
                   <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
                   <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
                 </div>
 
-                <!-- Embedded Video Player (With The Video) -->
-                <div id="course-player-${course.id}" style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
-                  ${playerHtml}
-                </div>
-                <div style="font-size:12.5px;font-weight:700;color:#0f172a;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-                  <span>Now Playing: <strong id="course-current-title-${course.id}" style="color:#2563eb;">${defaultLesson.title || ''}</strong></span>
-                </div>
-
-                <!-- Video Lessons Playlist -->
-                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #f1f5f9;padding-top:12px;">
+                <!-- Video Lessons Collection (Each Item Is A Video) -->
+                <div style="display:flex;flex-direction:column;gap:14px;">
                   ${syllabus.map((lesson, idx) => {
                     const lId = lesson.id || ('les_' + idx);
                     const done = isLessonCompleted(lId);
                     const unlocked = isLessonUnlocked(course, idx);
-                    const isFirst = (idx === 0);
+
+                    let cleanUrl = (lesson.ytId || '').replace(/^\.?\/?/, '');
+                    const isYt = lesson.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+                    let videoMediaHtml = '';
+
+                    if (isYt) {
+                      const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+                      const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+                      videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:290px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+                    } else if (cleanUrl) {
+                      if (cleanUrl.startsWith('videos/')) {
+                        cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
+                      }
+                      videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;max-height:290px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+                    }
 
                     let statusLabel = 'Locked';
                     let statusColor = '#94a3b8';
@@ -1417,21 +1408,23 @@ function renderEmployeeProgressChecklist() {
                       statusLabel = '✓ Completed';
                       statusColor = '#2563eb';
                     } else if (unlocked) {
-                      statusLabel = '▶ Watch';
+                      statusLabel = '▶ Up Next';
                       statusColor = '#2563eb';
                     }
 
                     return `
-                      <div class="course-lesson-item-${course.id}" onclick="${unlocked ? `playCourseVideo('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#2563eb')`}" style="background:${isFirst ? '#eff6ff' : (done ? '#f8fafc' : '#ffffff')};border:1px solid ${isFirst ? '#2563eb' : (unlocked ? '#cbd5e1' : '#e2e8f0')};border-radius:8px;padding:9px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:12px;transition:all 0.15s;" onmouseover="if(${unlocked})this.style.borderColor='#2563eb'" onmouseout="if(${unlocked} && !this.style.background.includes('eff6ff'))this.style.borderColor='${unlocked ? '#cbd5e1' : '#e2e8f0'}'">
-                        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-                          <div style="width:28px;height:22px;border-radius:4px;background:#0f172a;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;flex-shrink:0;">
-                            ▶
-                          </div>
-                          <span style="font-size:13px;font-weight:700;color:#0f172a;word-break:break-word;">${lesson.title}</span>
+                      <div style="background:#ffffff;border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;">
+                        <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
+                          ${videoMediaHtml}
                         </div>
-                        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-                          <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
-                          <span style="font-size:11.5px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                          <div style="font-size:13.5px;font-weight:700;color:#0f172a;word-break:break-word;">
+                            ${lesson.title}
+                          </div>
+                          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                            <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
+                            <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+                          </div>
                         </div>
                       </div>
                     `;
@@ -1447,7 +1440,7 @@ function renderEmployeeProgressChecklist() {
 
   // 2. ASSIGNED VIDEOS CHECKLIST
   html += `
-    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 14px;max-width:580px;">All Assigned Training Videos</h4>
+    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:28px 0 14px;max-width:580px;">All Assigned Training Videos</h4>
   `;
 
   if (videos.length === 0) {
@@ -1456,46 +1449,40 @@ function renderEmployeeProgressChecklist() {
     return;
   }
 
-  html += videos.map(v => {
-    const record = watchedMap[v.id] || {};
-    const isDone = !!record.completed;
-    const pct = record.percent || (isDone ? 100 : 0);
-    const stationLabel = (v.station && v.station !== 'all') ? v.station.toUpperCase() : 'GENERAL';
-    const curCtx = findVideoCurriculumContext(v.id);
-    const isCurriculumLocked = curCtx && !isLessonUnlocked(curCtx.course, curCtx.index);
+  html += `
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:580px;">
+      ${videos.map(v => {
+        const record = watchedMap[v.id] || {};
+        const isDone = !!record.completed;
+        let cleanUrl = (v.ytId || '').replace(/^\.?\/?/, '');
+        const isYt = v.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+        let videoMediaHtml = '';
 
-    return `
-      <div style="max-width:580px;background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : (isCurriculumLocked ? '#f1f5f9' : '#e2e8f0')};border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;opacity:${isCurriculumLocked ? '0.75' : '1'};">
-        <div style="display:flex;align-items:center;gap:12px;min-width:200px;flex:1;">
-          <div style="width:28px;height:28px;border-radius:50%;background:${isDone ? '#2563eb' : (isCurriculumLocked ? '#cbd5e1' : '#f1f5f9')};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;">
-            ${isDone ? '✓' : (isCurriculumLocked ? '' : '○')}
-          </div>
-          <div>
-            <div style="font-size:13.5px;font-weight:700;color:#0f172a;">${v.title}</div>
-            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">
-              ${v.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${stationLabel}</strong>
-              ${curCtx ? ` • <span style="color:#0284c7;font-weight:700;">Part of ${curCtx.course.title}</span>` : ''}
+        if (isYt) {
+          const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+          const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+          videoMediaHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:290px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+        } else if (cleanUrl) {
+          if (cleanUrl.startsWith('videos/')) {
+            cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
+          }
+          videoMediaHtml = `<video src="${cleanUrl}" controls playsinline preload="metadata" style="width:100%;max-height:290px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+        }
+
+        return `
+          <div style="background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : '#e2e8f0'};border-radius:10px;padding:12px;box-sizing:border-box;">
+            <div style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
+              ${videoMediaHtml}
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div style="font-size:13.5px;font-weight:700;color:#0f172a;">${v.title}</div>
+              <span style="font-size:12px;font-weight:700;color:#2563eb;">${isDone ? '✓ Completed' : 'In Progress'}</span>
             </div>
           </div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:100px;">
-            <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#64748b;margin-bottom:3px;">
-              <span>Progress</span><span>${pct}%</span>
-            </div>
-            <div style="background:#e2e8f0;height:4px;border-radius:9999px;overflow:hidden;">
-              <div style="width:${pct}%;background:#2563eb;height:100%;"></div>
-            </div>
-          </div>
-
-          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isCurriculumLocked ? '#f1f5f9' : '#2563eb'};color:${isCurriculumLocked ? '#64748b' : '#ffffff'};border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:${isCurriculumLocked ? 'not-allowed' : 'pointer'};">
-            ${isCurriculumLocked ? 'Locked' : (isDone ? 'Rewatch' : 'Watch →')}
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
+        `;
+      }).join('')}
+    </div>
+  `;
 
   container.innerHTML = html;
 }
