@@ -407,7 +407,7 @@ sort($allAvailableTeams);
           <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">Analytics</button>
           <button onclick="showSection('upload')" class="nav-btn" id="nav-upload">Upload Material</button>
         <?php else: ?>
-          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress">My Training</button>
+          <button onclick="showSection('classroom')" class="nav-btn active" id="nav-classroom">Training</button>
           <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
         <?php endif; ?>
       </div>
@@ -455,37 +455,7 @@ sort($allAvailableTeams);
 </section>
 
 
-<!-- ─────────────────────────────────────────
-     5. EMPLOYEE PERSONAL PROGRESS SECTION
-───────────────────────────────────────── -->
-<?php if ($isEmployee || $isTeamLeader): ?>
-<section id="section-my-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
-  <div style="max-width:1100px;margin:0 auto;">
-    
-    <!-- Hero Profile & Meter -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-bottom:32px;border-bottom:1px solid #e2e8f0;padding-bottom:28px;">
-      <div>
-        <h2 style="font-size:24px;font-weight:800;color:#0f172a;margin:0 0 6px;"><?= htmlspecialchars($userName) ?></h2>
-        <div style="color:#64748b;font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-          <span>Team: <strong><?= htmlspecialchars($teamName) ?></strong></span>
-        </div>
-      </div>
 
-      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:16px 24px;text-align:center;min-width:200px;">
-        <div style="font-size:32px;font-weight:800;color:#1d4ed8;line-height:1;" id="my-overall-pct"><?= $myProgress['overall_percent'] ?>%</div>
-        <div style="font-size:12px;color:#64748b;margin-top:6px;" id="my-completed-ratio"><?= $myProgress['completed_count'] ?> of <?= $myProgress['total_assigned'] ?> Videos Completed</div>
-      </div>
-    </div>
-
-    <!-- Video Completion Checklist -->
-    <div style="background:transparent;border:none;padding:0;box-shadow:none;">
-      <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 16px;">Assigned Training Materials Checklist</h3>
-      <div id="my-videos-checklist" style="display:flex;flex-direction:column;gap:12px;"></div>
-    </div>
-
-  </div>
-</section>
-<?php endif; ?>
 
 
 <!-- ─────────────────────────────────────────
@@ -925,11 +895,7 @@ sort($allAvailableTeams);
     <!-- Breadcrumbs Navigation -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
       <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#64748b;font-weight:600;flex-wrap:wrap;">
-        <button onclick="showSection('my-progress')" style="background:#ffffff;border:1px solid #cbd5e1;color:#0f172a;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;">
-          <span>←</span> Back to My Training
-        </button>
-        <span style="color:#cbd5e1;">/</span>
-        <span>Curricula</span>
+        <span style="color:#0f172a;font-weight:800;">Curriculum</span>
         <span style="color:#cbd5e1;">/</span>
         <span id="classroom-course-cat" style="color:#2563eb;font-weight:700;text-transform:uppercase;">REVIT</span>
         <span style="color:#cbd5e1;">/</span>
@@ -3203,7 +3169,7 @@ function handleGlobalSearch(query) {
 
 function getRoleLandingSection() {
   if (window.USER_ROLE === 'admin') return 'analytics';
-  return 'my-progress';
+  return 'classroom';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -3212,6 +3178,12 @@ document.addEventListener('DOMContentLoaded', () => {
   populateCurriculumDropdown();
   renderAdminCurriculaList();
   renderAdminVideosList();
+  if (window.USER_ROLE !== 'admin') {
+    const courses = getAllCourses();
+    if (courses.length > 0) {
+      openClassroom(courses[0].id);
+    }
+  }
 });
 </script>
 
