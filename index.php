@@ -1308,6 +1308,51 @@ function onVideoLessonFinished(videoId, position = 0, courseContext = null) {
 }
 
 /* ── MY PROGRESS PAGE: CURRICULUM TRACKER & VIDEO CHECKLIST ── */
+function playCourseVideo(courseId, idx) {
+  const courses = getAllCourses();
+  const course = courses.find(c => c.id === courseId);
+  if (!course || !course.syllabus || !course.syllabus[idx]) return;
+
+  const lesson = course.syllabus[idx];
+  const playerContainer = document.getElementById('course-player-' + courseId);
+  const titleEl = document.getElementById('course-current-title-' + courseId);
+
+  if (titleEl) {
+    titleEl.textContent = lesson.title;
+  }
+
+  let cleanUrl = (lesson.ytId || '').replace(/^\.?\/?/, '');
+  const isYt = lesson.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+
+  if (playerContainer) {
+    if (isYt) {
+      const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+      const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+      playerContainer.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:310px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+    } else {
+      if (cleanUrl.startsWith('videos/')) {
+        cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
+      }
+      playerContainer.innerHTML = `<video src="${cleanUrl}" controls autoplay playsinline style="width:100%;max-height:320px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+      const vidEl = playerContainer.querySelector('video');
+      if (vidEl && typeof attachVideoTracking === 'function') {
+        attachVideoTracking(vidEl, lesson.id, { course, index: idx });
+      }
+    }
+  }
+
+  // Highlight active playlist item
+  document.querySelectorAll(`.course-lesson-item-${courseId}`).forEach((el, i) => {
+    if (i === idx) {
+      el.style.borderColor = '#2563eb';
+      el.style.background = '#eff6ff';
+    } else {
+      el.style.borderColor = '#e2e8f0';
+      el.style.background = '#ffffff';
+    }
+  });
+}
+
 function renderEmployeeProgressChecklist() {
   const container = document.getElementById('my-videos-checklist');
   if (!container) return;
@@ -1327,50 +1372,65 @@ function renderEmployeeProgressChecklist() {
           ${courses.map(course => {
             const stats = getCurriculumProgressStats(course);
             const syllabus = course.syllabus || [];
+            const defaultLesson = syllabus[0] || {};
+            let defaultCleanUrl = (defaultLesson.ytId || '').replace(/^\.?\/?/, '');
+            const isYt = defaultLesson.type === 'yt' || defaultCleanUrl.includes('youtube.com') || defaultCleanUrl.includes('youtu.be');
+            let playerHtml = '';
+            if (isYt) {
+              const ytMatch = defaultCleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+              const ytCode = ytMatch ? ytMatch[1] : defaultCleanUrl;
+              playerHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytCode}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:310px;border-radius:8px;border:none;background:#000;display:block;"></iframe>`;
+            } else if (defaultCleanUrl) {
+              if (defaultCleanUrl.startsWith('videos/')) {
+                defaultCleanUrl = 'api/stream.php?file=' + encodeURIComponent(defaultCleanUrl);
+              }
+              playerHtml = `<video src="${defaultCleanUrl}" controls playsinline style="width:100%;max-height:320px;border-radius:8px;background:#000;outline:none;display:block;"></video>`;
+            }
             
             return `
-              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;margin-bottom:8px;">
+              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;margin-bottom:14px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
-                  <div>
-                    <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
-                  </div>
-
-                  <button onclick="openClassroom('${course.id}')" style="background:#2563eb;color:#ffffff;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
-                    ${stats.isAllCompleted ? 'Rewatch Course' : 'Continue Course →'}
-                  </button>
+                  <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
+                  <span style="font-size:12px;color:#64748b;font-weight:600;">${syllabus.length} Video Lessons</span>
                 </div>
 
-                <!-- Clean Compact Vertical Syllabus Collection -->
-                <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">
+                <!-- Embedded Video Player (With The Video) -->
+                <div id="course-player-${course.id}" style="border-radius:8px;overflow:hidden;background:#000000;margin-bottom:10px;">
+                  ${playerHtml}
+                </div>
+                <div style="font-size:12.5px;font-weight:700;color:#0f172a;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+                  <span>Now Playing: <strong id="course-current-title-${course.id}" style="color:#2563eb;">${defaultLesson.title || ''}</strong></span>
+                </div>
+
+                <!-- Video Lessons Playlist -->
+                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #f1f5f9;padding-top:12px;">
                   ${syllabus.map((lesson, idx) => {
                     const lId = lesson.id || ('les_' + idx);
                     const done = isLessonCompleted(lId);
                     const unlocked = isLessonUnlocked(course, idx);
+                    const isFirst = (idx === 0);
 
-                    let numBg = '#f1f5f9';
-                    let numColor = '#64748b';
                     let statusLabel = 'Locked';
                     let statusColor = '#94a3b8';
 
                     if (done) {
-                      numBg = '#2563eb';
-                      numColor = '#ffffff';
                       statusLabel = '✓ Completed';
                       statusColor = '#2563eb';
                     } else if (unlocked) {
-                      numBg = '#eff6ff';
-                      numColor = '#2563eb';
-                      statusLabel = '▶ Up Next';
+                      statusLabel = '▶ Watch';
                       statusColor = '#2563eb';
                     }
 
                     return `
-                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#2563eb')`}" style="background:${done ? '#f8fafc' : '#ffffff'};border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:8px;padding:9px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:12px;transition:all 0.15s;" onmouseover="if(${unlocked})this.style.borderColor='#2563eb'" onmouseout="if(${unlocked})this.style.borderColor='${unlocked ? '#cbd5e1' : '#e2e8f0'}'">
+                      <div class="course-lesson-item-${course.id}" onclick="${unlocked ? `playCourseVideo('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#2563eb')`}" style="background:${isFirst ? '#eff6ff' : (done ? '#f8fafc' : '#ffffff')};border:1px solid ${isFirst ? '#2563eb' : (unlocked ? '#cbd5e1' : '#e2e8f0')};border-radius:8px;padding:9px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:12px;transition:all 0.15s;" onmouseover="if(${unlocked})this.style.borderColor='#2563eb'" onmouseout="if(${unlocked} && !this.style.background.includes('eff6ff'))this.style.borderColor='${unlocked ? '#cbd5e1' : '#e2e8f0'}'">
                         <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-                          <span style="width:24px;height:24px;border-radius:6px;background:${numBg};color:${numColor};font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${idx + 1}</span>
+                          <div style="width:28px;height:22px;border-radius:4px;background:#0f172a;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;flex-shrink:0;">
+                            ▶
+                          </div>
                           <span style="font-size:13px;font-weight:700;color:#0f172a;word-break:break-word;">${lesson.title}</span>
                         </div>
-                        <div style="flex-shrink:0;">
+                        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                          <span style="font-size:11.5px;color:#64748b;font-weight:600;">${lesson.duration || '20:00'}</span>
                           <span style="font-size:11.5px;font-weight:700;color:${statusColor};">${statusLabel}</span>
                         </div>
                       </div>
