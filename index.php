@@ -786,17 +786,12 @@ sort($allAvailableTeams);
           </select>
         </div>
 
-        <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Audience *</label>
-          <select id="new-video-station" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
-            <option value="trainee" selected>All Trainees</option>
-          </select>
-          <input type="hidden" id="new-video-assigned-employees" value="" />
-        </div>
+        <input type="hidden" id="new-video-station" value="trainee" />
+        <input type="hidden" id="new-video-assigned-employees" value="" />
 
         <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration</label>
-          <input id="new-video-duration" type="text" placeholder="20:00" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration <span style="font-weight:600;color:#64748b;">(automatic)</span></label>
+          <input id="new-video-duration" type="text" value="Select a video file" readonly aria-label="Automatically detected video duration" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;color:#475569;cursor:default;"/>
         </div>
 
         <div style="grid-column:1/-1;">
@@ -853,12 +848,7 @@ sort($allAvailableTeams);
             </select>
           </div>
 
-          <div>
-            <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Audience *</label>
-            <select id="new-course-station" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
-              <option value="trainee" selected>All Trainees (Onboarding & Foundation)</option>
-            </select>
-          </div>
+          <input type="hidden" id="new-course-station" value="trainee" />
 
           <div style="display:none;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Difficulty Level</label>
@@ -2668,14 +2658,54 @@ function addFilesToVideoQueue(files) {
   files.forEach(f => {
     if (!selectedAdminVideoFiles.some(item => item.file.name === f.name && item.file.size === f.size)) {
       const cleanTitle = f.name.replace(/\.[^/.]+$/, '').replace(/[_.-]+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
-      selectedAdminVideoFiles.push({
+      const item = {
         file: f,
         title: cleanTitle,
-        sizeMb: (f.size / (1024 * 1024)).toFixed(1)
+        sizeMb: (f.size / (1024 * 1024)).toFixed(1),
+        duration: ''
+      };
+      selectedAdminVideoFiles.push(item);
+      detectVideoDuration(f).then(duration => {
+        item.duration = duration;
+        renderSelectedVideoFilesQueue();
       });
     }
   });
   renderSelectedVideoFilesQueue();
+}
+
+function formatVideoDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '';
+  const total = Math.round(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  return hours > 0
+    ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+    : `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function detectVideoDuration(file) {
+  return new Promise(resolve => {
+    const video = document.createElement('video');
+    const objectUrl = URL.createObjectURL(file);
+    const cleanUp = () => {
+      URL.revokeObjectURL(objectUrl);
+      video.removeAttribute('src');
+      video.load();
+    };
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      const duration = formatVideoDuration(video.duration);
+      cleanUp();
+      resolve(duration);
+    };
+    video.onerror = () => {
+      cleanUp();
+      resolve('');
+    };
+    video.src = objectUrl;
+  });
 }
 
 function renderSelectedVideoFilesQueue() {
@@ -2703,6 +2733,8 @@ function renderSelectedVideoFilesQueue() {
   if (selectedAdminVideoFiles.length === 0) {
     container.style.display = 'none';
     if (dropLabel) dropLabel.textContent = 'Click or drag to select one or multiple video files';
+    const durationInput = document.getElementById('new-video-duration');
+    if (durationInput) durationInput.value = 'Select a video file';
     return;
   }
 
@@ -2720,6 +2752,11 @@ function renderSelectedVideoFilesQueue() {
   if (inlineTitle && !inlineTitle.value) {
     inlineTitle.value = selectedAdminVideoFiles[0].title + ' Course Series';
   }
+  const durationInput = document.getElementById('new-video-duration');
+  if (durationInput) {
+    const firstDuration = selectedAdminVideoFiles[0].duration;
+    durationInput.value = firstDuration || 'Detecting duration…';
+  }
 
   list.innerHTML = selectedAdminVideoFiles.map((item, idx) => `
     <div style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
@@ -2730,6 +2767,7 @@ function renderSelectedVideoFilesQueue() {
           <div style="font-size:11.5px;color:#64748b;margin-top:3px;display:flex;gap:8px;">
             <span>${item.file.name}</span>
             <span>(${item.sizeMb} MB)</span>
+            <span>${item.duration ? item.duration : 'Detecting duration…'}</span>
           </div>
         </div>
       </div>
@@ -2766,7 +2804,7 @@ async function adminPublishVideo() {
   const station = isIndividualMode ? 'custom' : (document.getElementById('new-video-station')?.value || 'all');
   const assignedEmployeesJson = document.getElementById('new-video-assigned-employees')?.value || (isIndividualMode ? JSON.stringify(selectedIndividualEmployeeIds) : '');
   const cat = document.getElementById('new-video-cat')?.value || 'revit';
-  const defaultDuration = document.getElementById('new-video-duration')?.value.trim() || '20:00';
+  const defaultDuration = document.getElementById('new-video-duration')?.value.trim() || '00:00';
   const defaultDesc = document.getElementById('new-video-desc')?.value.trim() || 'Direct BIM demonstration.';
 
   const curriculumMode = currentVideoCurriculumMode; // 'existing', 'new', 'none'
@@ -2817,7 +2855,7 @@ async function adminPublishVideo() {
         if (isIndividualMode) {
           formData.append('assigned_employees', assignedEmployeesJson);
         }
-        formData.append('duration', defaultDuration);
+        formData.append('duration', item.duration || defaultDuration);
         formData.append('description', defaultDesc);
 
         if (curriculumMode === 'new') {
