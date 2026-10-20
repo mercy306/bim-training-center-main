@@ -268,53 +268,33 @@ sort($allAvailableTeams);
         <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:56px;width:auto;display:block;object-fit:contain;" />
       </div>
 
-      <!-- Right Controls: Switch View -->
+      <!-- Right Controls: Switch View (Admin & Trainer Only) -->
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
 
         <!-- Demo Switcher in-line with the top controls (Single Layer) -->
         <?php if (!empty($user['is_demo'])): ?>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Admin</a>
-          <a href="?demo_role=team_leader" style="background:<?= ($isTeamLeader || ($isEmployee && $userStation === 'engineer')) ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Team Leader / Engineer</a>
-          <a href="?demo_role=employee_trainee" style="background:<?= ($isEmployee && $userStation === 'trainee') ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11.5px;">Trainee</a>
+          <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Admin</a>
+          <a href="?demo_role=employee_trainee" style="background:<?= !$isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Trainer</a>
         </div>
         <?php endif; ?>
 
       </div>
     </div>
 
-    <!-- Bottom Row: Navigation Tabs + Upload Button + Station Status (Seamless, NO Horizontal Line) -->
+    <!-- Bottom Row: Navigation Tabs (Seamless, Single Layer) -->
     <div style="padding-top:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
       
       <!-- Navigation Tabs -->
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <?php if ($isStaffAdmin): ?>
-          <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">
-            Analytics Dashboard
-          </button>
-        <?php elseif ($isTeamLeader): ?>
-          <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress">
-            Team Progress
-          </button>
-          <button onclick="showSection('my-progress')" class="nav-btn" id="nav-my-progress">
-            My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
-          </button>
-        <?php elseif ($isEmployee): ?>
-          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress">
-            My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
-          </button>
-        <?php endif; ?>
-
-        <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Training Videos</button>
-        <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
-      </div>
-
-      <!-- Right: Upload Button (Admin) -->
-      <div style="display:flex;align-items:center;gap:12px;">
-        <?php if ($isStaffAdmin): ?>
-          <button onclick="showSection('upload')" class="btn-upload-prominent" id="nav-upload" title="Upload video materials, practice datasets & curricula">
-            <span>Upload Material</span>
-          </button>
+          <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">Analytics</button>
+          <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Training Videos</button>
+          <button onclick="showSection('upload')" class="nav-btn" id="nav-upload">Upload Material</button>
+        <?php else: ?>
+          <button onclick="showSection('videos')"  class="nav-btn active" id="nav-videos">Training Videos</button>
+          <button onclick="showSection('my-progress')" class="nav-btn" id="nav-my-progress">My Progress</button>
+          <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
         <?php endif; ?>
       </div>
 
@@ -342,13 +322,16 @@ sort($allAvailableTeams);
   <div style="max-width:1200px;margin:0 auto;">
 
 
-    <!-- Category Tabs -->
-    <div style="display:flex;gap:20px;border-bottom:2px solid #e2e8f0;margin-bottom:30px;overflow-x:auto;">
-      <button class="vtab-btn" onclick="switchVideoCategory('all_sims', this)" style="background:none;border:none;padding:12px 4px;font-size:14px;font-weight:700;color:#2563eb;border-bottom:3px solid #2563eb;cursor:pointer;white-space:nowrap;">All Videos</button>
-      <button class="vtab-btn" onclick="switchVideoCategory('revit', this)"    style="background:none;border:none;padding:12px 4px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;white-space:nowrap;">Revit Structure</button>
-      <button class="vtab-btn" onclick="switchVideoCategory('coordination', this)" style="background:none;border:none;padding:12px 4px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;white-space:nowrap;">BIM Coordination</button>
-      <button class="vtab-btn" onclick="switchVideoCategory('autocad', this)"  style="background:none;border:none;padding:12px 4px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;white-space:nowrap;">AutoCAD</button>
-      <button class="vtab-btn" onclick="switchVideoCategory('navisworks', this)" style="background:none;border:none;padding:12px 4px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;white-space:nowrap;">Navisworks</button>
+    <!-- Video Type Filter Dropdown (Replaces horizontal row) -->
+    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;background:#ffffff;border:1px solid #e2e8f0;padding:12px 18px;border-radius:10px;width:fit-content;">
+      <label for="video-type-select" style="font-size:13px;font-weight:700;color:#0f172a;">Video Type:</label>
+      <select id="video-type-select" onchange="switchVideoCategory(this.value)" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;font-weight:600;color:#0f172a;background:#ffffff;outline:none;min-width:200px;cursor:pointer;">
+        <option value="all_sims">All Videos</option>
+        <option value="revit">Revit Structure</option>
+        <option value="coordination">BIM Coordination</option>
+        <option value="autocad">AutoCAD</option>
+        <option value="navisworks">Navisworks</option>
+      </select>
     </div>
 
     <div id="video-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;"></div>
@@ -363,12 +346,16 @@ sort($allAvailableTeams);
   <div style="max-width:1200px;margin:0 auto;">
 
 
-    <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
-      <button onclick="filterPracticeFiles('all')" id="ffilter-all" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">All Types</button>
-      <button onclick="filterPracticeFiles('rvt')" id="ffilter-rvt" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Revit (.RVT / .RFA)</button>
-      <button onclick="filterPracticeFiles('dwg')" id="ffilter-dwg" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">AutoCAD (.DWG)</button>
-      <button onclick="filterPracticeFiles('nwd')" id="ffilter-nwd" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Navisworks (.NWD)</button>
-      <button onclick="filterPracticeFiles('pdf')" id="ffilter-pdf" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">PDF Guides</button>
+    <!-- Practice File Type Filter Dropdown (Replaces horizontal row) -->
+    <div style="margin-bottom:28px;display:flex;align-items:center;gap:12px;background:#ffffff;border:1px solid #e2e8f0;padding:12px 18px;border-radius:10px;width:fit-content;">
+      <label for="practice-file-type-select" style="font-size:13px;font-weight:700;color:#0f172a;">File Type:</label>
+      <select id="practice-file-type-select" onchange="filterPracticeFiles(this.value)" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:7px;font-size:13px;font-weight:600;color:#0f172a;background:#ffffff;outline:none;min-width:200px;cursor:pointer;">
+        <option value="all">All File Types</option>
+        <option value="rvt">Revit (.RVT / .RFA)</option>
+        <option value="dwg">AutoCAD (.DWG)</option>
+        <option value="nwd">Navisworks (.NWD)</option>
+        <option value="pdf">PDF Guides</option>
+      </select>
     </div>
 
     <div id="practice-files-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;"></div>
@@ -694,278 +681,121 @@ sort($allAvailableTeams);
       </button>
     </div>
 
-    <!-- TAB 1: VIDEO UPLOAD WITH TARGET STATION SELECTOR -->
-    <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 24px;">Upload Material & Assign Video Lesson</h3>
+    <!-- TAB 1: VIDEO UPLOAD (Single Layer, Flat Clean UI) -->
+    <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
+      <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 20px;">Upload Training Video</h3>
 
       <!-- Mode Selector -->
-      <div style="display:flex;gap:8px;margin-bottom:20px;background:#f1f5f9;padding:6px;border-radius:12px;max-width:620px;flex-wrap:wrap;">
-        <button id="vmode-btn-file" onclick="setVideoUploadMode('file')" style="flex:1;background:#2563eb;color:white;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
+      <div style="display:flex;gap:8px;margin-bottom:20px;max-width:540px;">
+        <button type="button" id="vmode-btn-file" onclick="setVideoUploadMode('file')" style="flex:1;background:#2563eb;color:white;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
           Upload Video File
         </button>
-        <button id="vmode-btn-yt" onclick="setVideoUploadMode('yt')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
-          YouTube / Drive Link
+        <button type="button" id="vmode-btn-yt" onclick="setVideoUploadMode('yt')" style="flex:1;background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+          YouTube / Link
         </button>
-        <button id="vmode-btn-folder" onclick="setVideoUploadMode('folder')" style="flex:1;background:transparent;color:#475569;border:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">
-          Direct Folder (videos/)
+        <button type="button" id="vmode-btn-folder" onclick="setVideoUploadMode('folder')" style="flex:1;background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+          Local Folder
         </button>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+      <!-- Mode 1: File Upload Drop Zone & Fullscreen Preview Player -->
+      <div id="vinput-container-file" style="display:block;margin-bottom:20px;">
+        <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:1.5px dashed #cbd5e1;border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:border-color 0.2s;" ondragover="event.preventDefault();this.style.borderColor='#2563eb';" ondragleave="this.style.borderColor='#cbd5e1';" ondrop="handleAdminVideoDrop(event)">
+          <div id="vfile-selected-name" style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Click or drag to select video file (.mp4, .webm, .mov)</div>
+          <div style="font-size:12px;color:#64748b;">Multiple files supported • Click to preview fullscreen</div>
+          <input id="new-video-file-input" type="file" accept="video/*" multiple style="display:none;" onchange="handleAdminVideoFilePick(this)" />
+        </div>
+
+        <!-- Video Fullscreen Preview Shown Immediately When Added -->
+        <video id="upload-video-preview" controls playsinline style="width:100%;max-height:480px;border-radius:10px;background:#000;display:none;margin-top:14px;outline:none;"></video>
+
+        <!-- Multiple Files Queue -->
+        <div id="vfiles-queue-container" style="display:none;margin-top:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <span style="font-size:13px;font-weight:800;color:#0f172a;" id="vfiles-queue-title">Selected Videos</span>
+            <span style="font-size:12px;color:#64748b;" id="vfiles-queue-size"></span>
+            <button type="button" onclick="clearSelectedVideoFiles()" style="background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer;">Clear</button>
+          </div>
+          <div id="vfiles-queue-list" style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- Mode 2: Link -->
+      <div id="vinput-container-yt" style="display:none;margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video URL (YouTube or Web Link) *</label>
+        <input id="new-video-url" type="text" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
+      </div>
+
+      <!-- Mode 3: Direct Folder -->
+      <div id="vinput-container-folder" style="display:none;margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Filename in videos/ folder *</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-weight:700;color:#64748b;font-size:13.5px;background:#f1f5f9;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;">videos/</span>
+          <input id="new-video-folder-file" type="text" placeholder="lesson.mp4" style="flex:1;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
+        </div>
+      </div>
+
+      <!-- Form Grid (Single Flat Layer) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
         <div style="grid-column:1/-1;">
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Title *</label>
-          <input id="new-video-title" type="text" placeholder="e.g. Cross Rebar Placement & Splice Schedules" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
-        </div>
-
-        <!-- TARGET STATION ASSIGNMENT WITH MULTI-SELECTION -->
-        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;grid-column:1/-1;">
-          <div style="margin-bottom:10px;">
-            <label style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0;">Assign to Station(s) / Target Discipline(s) *</label>
-          </div>
-
-          <div id="station-picker-group" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button type="button" onclick="toggleUploadStation('all', this)" class="st-pick-btn active" data-st="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;">
-              All Employees
-            </button>
-            <button type="button" onclick="toggleUploadStation('trainee', this)" class="st-pick-btn" data-st="trainee" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              Trainees
-            </button>
-            <button type="button" onclick="toggleUploadStation('engineer', this)" class="st-pick-btn" data-st="engineer" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              Structural & MEP Engineers
-            </button>
-            <button type="button" onclick="toggleUploadStation('architect', this)" class="st-pick-btn" data-st="architect" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
-              Architects & Designers
-            </button>
-            <button type="button" id="btn-choose-individually" onclick="toggleIndividualPicker()" class="st-pick-btn" data-st="individual" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:6px;">
-              Choose Individually <span id="indiv-count-badge" style="display:none;background:#2563eb;color:white;border-radius:999px;font-size:10px;padding:2px 7px;font-weight:800;margin-left:4px;">0</span>
-            </button>
-          </div>
-          <input type="hidden" id="new-video-station" value="all" />
-          <input type="hidden" id="new-video-assigned-employees" value="" />
-
-          <!-- INDIVIDUAL EMPLOYEE PICKER PANEL (DRAWER) -->
-          <div id="individual-employee-picker-panel" style="display:none;margin-top:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
-            <!-- Panel Header -->
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-              <div>
-                <h5 style="margin:0;font-size:14px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:6px;">
-                  Choose Specific Employees or Teams to Assign
-                </h5>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <button type="button" onclick="clearAllIndividualEmployees()" style="background:#ffffff;color:#475569;border:1px solid #cbd5e1;padding:5px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;">
-                  Clear All
-                </button>
-                <button type="button" onclick="closeIndividualPicker()" style="background:#2563eb;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
-                  Done Selecting
-                </button>
-              </div>
-            </div>
-
-            <!-- Filters Bar: Station Filter, Team Filter, and Search Name -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:12px;background:white;padding:12px;border-radius:8px;border:1px solid #e2e8f0;">
-              <!-- Station Filter Dropdown -->
-              <div>
-                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Filter by Station / Discipline:</label>
-                <select id="indiv-filter-station" onchange="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
-                  <option value="all">All Stations</option>
-                  <option value="trainee">Trainees</option>
-                  <option value="engineer">Structural & MEP Engineers</option>
-                  <option value="architect">Architects & Designers</option>
-                </select>
-              </div>
-
-              <!-- Team Filter Dropdown -->
-              <div>
-                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Filter by Team:</label>
-                <select id="indiv-filter-team" onchange="onIndivTeamFilterChange()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
-                  <option value="all">All Teams</option>
-                  <!-- Populated dynamically -->
-                </select>
-              </div>
-
-              <!-- Search Name -->
-              <div>
-                <label style="font-size:11.5px;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Search Employee Name:</label>
-                <input id="indiv-search-name" type="text" placeholder="Type name or team..." oninput="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">
-              </div>
-            </div>
-
-            <!-- Quick Action Toolbar for Team / Bulk Selection -->
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <button type="button" id="btn-select-filtered-team" onclick="selectCurrentTeamEmployees()" style="background:#ffffff;color:#334155;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
-                  Assign Entire Team / Filtered
-                </button>
-                <button type="button" id="btn-deselect-filtered-team" onclick="deselectCurrentTeamEmployees()" style="background:#ffffff;color:#64748b;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
-                  Deselect Filtered
-                </button>
-                <button type="button" onclick="selectAllFilteredEmployees()" style="background:#ffffff;color:#2563eb;border:1px solid #2563eb;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
-                  Select All Matching
-                </button>
-              </div>
-              <div style="font-size:12px;font-weight:800;color:#0f172a;" id="indiv-selection-count-text">
-                0 employees selected
-              </div>
-            </div>
-
-            <!-- Selected Employees Chips Bar -->
-            <div id="indiv-selected-chips-bar" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;max-height:85px;overflow-y:auto;background:white;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;"></div>
-
-            <!-- Scrollable Employee Cards List -->
-            <div id="indiv-employee-card-list" style="max-height:280px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:8px;padding-right:4px;">
-              <!-- Cards rendered dynamically -->
-            </div>
-          </div>
-        </div>
-
-        <!-- CURRICULUM TRACK ASSIGNMENT SELECTOR -->
-        <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:18px;grid-column:1/-1;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-            <label style="font-size:13.5px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:6px;">
-              Curriculum Track Assignment Option
-            </label>
-            <span style="font-size:11.5px;color:#64748b;font-weight:600;">Add to existing syllabus or create a brand new curriculum track</span>
-          </div>
-
-          <!-- Curriculum Choice Radio Buttons -->
-          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-            <label id="copt-label-existing" style="display:flex;align-items:center;gap:8px;background:#eff6ff;border:2px solid #2563eb;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#1d4ed8;">
-              <input type="radio" name="video_curriculum_choice" value="existing" checked onchange="toggleVideoCurriculumMode('existing')">
-              <span>Add to Existing Curriculum</span>
-            </label>
-
-            <label id="copt-label-new" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
-              <input type="radio" name="video_curriculum_choice" value="new" onchange="toggleVideoCurriculumMode('new')">
-              <span>Create New Curriculum with these Videos</span>
-            </label>
-
-            <label id="copt-label-none" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
-              <input type="radio" name="video_curriculum_choice" value="none" onchange="toggleVideoCurriculumMode('none')">
-              <span>Standalone Videos Only</span>
-            </label>
-          </div>
-
-          <!-- Mode 1: Existing Curriculum Dropdown -->
-          <div id="curriculum-container-existing" style="display:block;">
-            <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Choose Target Curriculum Syllabus *</label>
-            <select id="new-video-curriculum-id" onchange="updateSelectedCurriculumInfo(this.value)" style="width:100%;padding:11px 14px;border:1.5px solid #94a3b8;border-radius:10px;font-size:14px;background:white;font-weight:600;color:#0f172a;">
-              <!-- Populated via JavaScript -->
-            </select>
-            <div id="curriculum-existing-info" style="font-size:12px;color:#2563eb;margin-top:6px;font-weight:600;"></div>
-          </div>
-
-          <!-- Mode 2: Create New Curriculum On The Fly -->
-          <div id="curriculum-container-new" style="display:none;background:#ffffff;border:1.5px solid #93c5fd;border-radius:12px;padding:16px;">
-            <div style="font-size:13.5px;font-weight:800;color:#1d4ed8;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
-              New Curriculum Information (Uploaded videos will form the sequential syllabus)
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-              <div style="grid-column:1/-1;">
-                <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Track Title *</label>
-                <input id="inline-curriculum-title" type="text" placeholder="e.g. Advanced Structural Revit & Rebar Detailing" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;">
-              </div>
-              <div style="display:none;">
-                <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Skill Level</label>
-                <select id="inline-curriculum-level" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;">
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate" selected>Intermediate</option>
-                  <option value="Advanced">Advanced</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Badge Icon</label>
-                <select id="inline-curriculum-icon" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;">
-                  <option value="" selected>None (Clean Title)</option>
-                  <option value="">Structure & Modeling</option>
-                  <option value="">Reinforcement & Rebar</option>
-                  <option value="">Coordination & Clash Detection</option>
-                  <option value="️">️ AutoCAD 2D/3D Drafting</option>
-                  <option value="">Architectural BIM Design</option>
-                  <option value="">Standards & ISO 19650</option>
-                </select>
-              </div>
-              <div style="grid-column:1/-1;">
-                <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Overview & Objectives</label>
-                <input id="inline-curriculum-desc" type="text" placeholder="Comprehensive curriculum designed for station competency..." style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;">
-              </div>
-            </div>
-            <div style="font-size:12px;color:#1e40af;margin-top:10px;font-weight:600;background:#eff6ff;padding:8px 12px;border-radius:8px;">
-              The uploaded videos will be registered in order as lessons in this new curriculum track!
-            </div>
-          </div>
-
-          <!-- Mode 3: Standalone Notice -->
-          <div id="curriculum-container-none" style="display:none;background:#f1f5f9;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#475569;">
-            ℹ️ These videos will be published in the general video list and assigned to the selected station(s), without belonging to a curriculum course.
-          </div>
-        </div>
-
-        <!-- Mode 1: Direct File Upload (Multiple Supported) -->
-        <div id="vinput-container-file" style="display:block;grid-column:1/-1;">
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Select Video File(s) (.mp4, .webm, .mov) * (Multiple Files Supported)</label>
-          <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:2px dashed #cbd5e1;border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:all 0.2s;" ondragover="event.preventDefault();this.style.borderColor='#2563eb';this.style.background='#eff6ff'" ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'" ondrop="handleAdminVideoDrop(event)">
-            <div id="vfile-selected-name" style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:4px;">Click or drag to select one or multiple video files</div>
-            <div style="font-size:12px;color:#64748b;">MP4, WEBM, MOV • Select multiple files at once</div>
-            <input id="new-video-file-input" type="file" accept="video/*" multiple style="display:none;" onchange="handleAdminVideoFilePick(this)" />
-          </div>
-
-          <!-- Multiple Files Selected Queue Preview -->
-          <div id="vfiles-queue-container" style="display:none;margin-top:16px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:18px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-              <div>
-                <span style="font-size:14px;font-weight:900;color:#0f172a;" id="vfiles-queue-title">Selected Videos (0)</span>
-                <span style="font-size:12px;color:#64748b;margin-left:8px;" id="vfiles-queue-size"></span>
-              </div>
-              <button type="button" onclick="clearSelectedVideoFiles()" style="background:#fee2e2;color:#b91c1c;border:none;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">Clear Selection</button>
-            </div>
-            <div id="vfiles-queue-list" style="display:flex;flex-direction:column;gap:10px;max-height:280px;overflow-y:auto;"></div>
-          </div>
-        </div>
-
-        <!-- Mode 2: Link -->
-        <div id="vinput-container-yt" style="display:none;grid-column:1/-1;">
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">YouTube URL, Google Drive Share Link, or Video Link *</label>
-          <input id="new-video-url" type="text" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
-        </div>
-
-        <!-- Mode 3: Direct Folder -->
-        <div id="vinput-container-folder" style="display:none;grid-column:1/-1;">
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Filename in <code style="color:#2563eb;background:#e0f2fe;padding:2px 6px;border-radius:4px;">videos/</code> folder *</label>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-weight:700;color:#64748b;font-size:14px;background:#f1f5f9;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;">videos/</span>
-            <input id="new-video-folder-file" type="text" placeholder="lesson.mp4" style="flex:1;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
-          </div>
+          <input id="new-video-title" type="text" placeholder="e.g. Structural Modeling & Detailing" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
         </div>
 
         <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Category *</label>
-          <select id="new-video-cat" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Type *</label>
+          <select id="new-video-cat" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
             <option value="revit">Revit Structure</option>
-            <option value="autocad">AutoCAD Drafting</option>
             <option value="coordination">BIM Coordination</option>
+            <option value="autocad">AutoCAD Drafting</option>
             <option value="navisworks">Navisworks</option>
           </select>
         </div>
+
         <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration (e.g. 28:45)</label>
-          <input id="new-video-duration" type="text" placeholder="28:45" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Station *</label>
+          <select id="new-video-station" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
+            <option value="all">All Employees</option>
+            <option value="trainee">Trainees</option>
+            <option value="engineer">Structural & MEP Engineers</option>
+            <option value="architect">Architects & Designers</option>
+          </select>
+          <input type="hidden" id="new-video-assigned-employees" value="" />
         </div>
+
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Track</label>
+          <select id="new-video-curriculum-id" onchange="updateSelectedCurriculumInfo(this.value)" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
+            <!-- Populated via JavaScript -->
+          </select>
+          <div id="curriculum-existing-info" style="font-size:11.5px;color:#2563eb;margin-top:4px;font-weight:600;"></div>
+        </div>
+
+        <div>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration</label>
+          <input id="new-video-duration" type="text" placeholder="20:00" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
+        </div>
+
         <div style="grid-column:1/-1;">
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Description</label>
-          <textarea id="new-video-desc" rows="3" placeholder="Key learning outcomes..." style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="new-video-desc" rows="3" placeholder="Learning outcomes..." style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
       </div>
 
-      <div style="display:flex;justify-content:flex-end;margin-bottom:28px;">
-        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:#2563eb;color:white;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
-          Publish Video to Station & Curriculum
+      <input type="hidden" id="inline-curriculum-title" value="" />
+      <input type="hidden" id="inline-curriculum-level" value="Intermediate" />
+      <input type="hidden" id="inline-curriculum-icon" value="" />
+      <input type="hidden" id="inline-curriculum-desc" value="" />
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:24px;">
+        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:#2563eb;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">
+          Publish Video
         </button>
       </div>
 
       <!-- Live Video Management List -->
-      <div style="border-top:1.5px solid #f1f5f9;padding-top:24px;">
-        <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0 0 14px;">
+      <div style="border-top:1px solid #e2e8f0;padding-top:20px;">
+        <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0 0 14px;">
           Published Videos Catalog (<span id="admin-video-count"><?= count($visibleVideos) ?></span>)
         </h4>
         <div id="admin-video-manage-list" style="display:flex;flex-direction:column;gap:10px;"></div>
@@ -1152,20 +982,22 @@ sort($allAvailableTeams);
      POPUP MODALS (VIDEO PLAYER WITH RANGE & PROGRESS)
 ══════════════════════════════════════════ -->
 <div id="modal-container" style="display:none;" class="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div id="modal-video" class="modal-box" style="display:none;max-width:860px;padding:24px;">
-    <button onclick="closeModal()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;z-index:10;"></button>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <span id="vmodal-station-badge" class="badge" style="background:#eff6ff;color:#1d4ed8;">ALL EMPLOYEES</span>
-      <h3 id="vmodal-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0;padding-right:32px;">Demonstration Video</h3>
+  <div id="modal-video" class="modal-box" style="display:none;width:95vw;max-width:1200px;max-height:94vh;padding:20px;border-radius:12px;background:#ffffff;box-sizing:border-box;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px;">
+      <h3 id="vmodal-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Demonstration Video</h3>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <button type="button" onclick="toggleActiveVideoFullscreen()" style="background:#2563eb;color:#ffffff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">
+          Fullscreen
+        </button>
+        <button type="button" onclick="closeModal()" style="background:#f1f5f9;border:1px solid #cbd5e1;font-size:14px;font-weight:800;color:#64748b;padding:4px 10px;border-radius:6px;cursor:pointer;">✕</button>
+      </div>
     </div>
     
-    <div class="yt-frame" id="vmodal-player" style="background:#000;"></div>
+    <div class="yt-frame" id="vmodal-player" style="background:#000;border-radius:10px;overflow:hidden;width:100%;min-height:500px;"></div>
     
-    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-      <p id="vmodal-desc" style="color:#64748b;font-size:13.5px;line-height:1.5;margin:0;flex:1;"></p>
-      <div id="vmodal-status-pill" class="badge" style="background:#f1f5f9;color:#334155;padding:6px 12px;font-size:12px;">
-        Tracking Progress...
-      </div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <p id="vmodal-desc" style="color:#64748b;font-size:13px;line-height:1.4;margin:0;flex:1;"></p>
+      <div id="vmodal-status-pill" style="color:#64748b;font-size:12px;font-weight:600;"></div>
     </div>
   </div>
 </div>
@@ -1802,11 +1634,9 @@ async function renderVideosCategory(category) {
   }).join('');
 }
 
-function switchVideoCategory(cat, btn) {
-  document.querySelectorAll('.vtab-btn').forEach(b => {
-    b.style.color = '#64748b'; b.style.borderBottom = 'none'; b.style.fontWeight = '600';
-  });
-  btn.style.color = '#2563eb'; btn.style.borderBottom = '3px solid #2563eb'; btn.style.fontWeight = '700';
+function switchVideoCategory(cat, btn = null) {
+  const sel = document.getElementById('video-type-select');
+  if (sel && sel.value !== cat) sel.value = cat;
   renderVideosCategory(cat);
 }
 
@@ -2812,6 +2642,19 @@ function renderSelectedVideoFilesQueue() {
   const title = document.getElementById('vfiles-queue-title');
   const sizeLbl = document.getElementById('vfiles-queue-size');
   const dropLabel = document.getElementById('vfile-selected-name');
+  const preview = document.getElementById('upload-video-preview');
+
+  if (preview) {
+    if (selectedAdminVideoFiles.length > 0) {
+      try {
+        preview.src = URL.createObjectURL(selectedAdminVideoFiles[0].file);
+        preview.style.display = 'block';
+      } catch (e) {}
+    } else {
+      preview.style.display = 'none';
+      preview.src = '';
+    }
+  }
 
   if (!container || !list) return;
 
@@ -2868,6 +2711,11 @@ function clearSelectedVideoFiles() {
   selectedAdminVideoFiles = [];
   const input = document.getElementById('new-video-file-input');
   if (input) input.value = '';
+  const preview = document.getElementById('upload-video-preview');
+  if (preview) {
+    preview.style.display = 'none';
+    preview.src = '';
+  }
   renderSelectedVideoFilesQueue();
 }
 
@@ -3144,6 +2992,16 @@ function closeModal() {
   if (p) p.innerHTML = '';
 }
 
+function toggleActiveVideoFullscreen() {
+  const vid = document.getElementById('active-bim-video');
+  const iframe = document.querySelector('#vmodal-player iframe');
+  const target = vid || iframe;
+  if (!target) return;
+  if (target.requestFullscreen) target.requestFullscreen();
+  else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+  else if (target.msRequestFullscreen) target.msRequestFullscreen();
+}
+
 let activeToastTimer = null;
 function showToast(msg, bg) {
   // Clear any existing toasts to prevent DOM flood and UI freezing
@@ -3188,8 +3046,7 @@ function handleGlobalSearch(query) {
 
 function getRoleLandingSection() {
   if (window.USER_ROLE === 'admin') return 'analytics';
-  if (window.USER_ROLE === 'team_leader') return 'team-progress';
-  return 'my-progress';
+  return 'videos';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
