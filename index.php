@@ -1339,22 +1339,22 @@ function renderEmployeeProgressChecklist() {
             const syllabus = course.syllabus || [];
             
             return `
-              <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:22px;margin-bottom:8px;">
-                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:14px;">
+              <div style="max-width:580px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;margin-bottom:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
                   <div>
-                    <div style="font-size:17px;font-weight:800;color:#0f172a;">${course.title}</div>
-                    <div style="font-size:12.5px;color:#64748b;margin-top:3px;">
+                    <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
+                    <div style="font-size:12px;color:#64748b;margin-top:2px;">
                       ${stats.completedCount} of ${stats.total} Lessons Completed (${stats.percent}%)
                     </div>
                   </div>
 
-                  <button onclick="openClassroom('${course.id}')" style="background:#2563eb;color:#ffffff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">
+                  <button onclick="openClassroom('${course.id}')" style="background:#2563eb;color:#ffffff;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
                     ${stats.isAllCompleted ? 'Rewatch Course' : 'Continue Course →'}
                   </button>
                 </div>
 
-                <!-- Clean Vertical Syllabus Collection -->
-                <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #f1f5f9;">
+                <!-- Clean Compact Vertical Syllabus Collection -->
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;">
                   ${syllabus.map((lesson, idx) => {
                     const lId = lesson.id || ('les_' + idx);
                     const done = isLessonCompleted(lId);
@@ -1378,13 +1378,13 @@ function renderEmployeeProgressChecklist() {
                     }
 
                     return `
-                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#2563eb')`}" style="background:${done ? '#f8fafc' : '#ffffff'};border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:8px;padding:12px 16px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:14px;transition:all 0.15s;" onmouseover="if(${unlocked})this.style.borderColor='#2563eb'" onmouseout="if(${unlocked})this.style.borderColor='${unlocked ? '#cbd5e1' : '#e2e8f0'}'">
-                        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
-                          <span style="width:28px;height:28px;border-radius:6px;background:${numBg};color:${numColor};font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${idx + 1}</span>
-                          <span style="font-size:13.5px;font-weight:700;color:#0f172a;word-break:break-word;">${lesson.title}</span>
+                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('Complete the previous lesson first to unlock!', '#2563eb')`}" style="background:${done ? '#f8fafc' : '#ffffff'};border:1px solid ${unlocked ? '#cbd5e1' : '#e2e8f0'};border-radius:8px;padding:9px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:12px;transition:all 0.15s;" onmouseover="if(${unlocked})this.style.borderColor='#2563eb'" onmouseout="if(${unlocked})this.style.borderColor='${unlocked ? '#cbd5e1' : '#e2e8f0'}'">
+                        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+                          <span style="width:24px;height:24px;border-radius:6px;background:${numBg};color:${numColor};font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${idx + 1}</span>
+                          <span style="font-size:13px;font-weight:700;color:#0f172a;word-break:break-word;">${lesson.title}</span>
                         </div>
                         <div style="flex-shrink:0;">
-                          <span style="font-size:12px;font-weight:700;color:${statusColor};">${statusLabel}</span>
+                          <span style="font-size:11.5px;font-weight:700;color:${statusColor};">${statusLabel}</span>
                         </div>
                       </div>
                     `;
@@ -1400,11 +1400,11 @@ function renderEmployeeProgressChecklist() {
 
   // 2. ASSIGNED VIDEOS CHECKLIST
   html += `
-    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 14px;">All Assigned Training Videos</h4>
+    <h4 style="font-size:16px;font-weight:800;color:#0f172a;margin:0 0 14px;max-width:580px;">All Assigned Training Videos</h4>
   `;
 
   if (videos.length === 0) {
-    html += '<div style="color:#64748b;padding:20px;text-align:center;">No videos assigned to your station yet.</div>';
+    html += '<div style="color:#64748b;padding:20px;text-align:center;max-width:580px;">No videos assigned to your station yet.</div>';
     container.innerHTML = html;
     return;
   }
@@ -1418,32 +1418,32 @@ function renderEmployeeProgressChecklist() {
     const isCurriculumLocked = curCtx && !isLessonUnlocked(curCtx.course, curCtx.index);
 
     return `
-      <div style="background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : (isCurriculumLocked ? '#f1f5f9' : '#e2e8f0')};border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;opacity:${isCurriculumLocked ? '0.75' : '1'};">
-        <div style="display:flex;align-items:center;gap:14px;min-width:240px;flex:1;">
-          <div style="width:32px;height:32px;border-radius:50%;background:${isDone ? '#2563eb' : (isCurriculumLocked ? '#cbd5e1' : '#f1f5f9')};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;">
+      <div style="max-width:580px;background:#ffffff;border:1px solid ${isDone ? '#bfdbfe' : (isCurriculumLocked ? '#f1f5f9' : '#e2e8f0')};border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;opacity:${isCurriculumLocked ? '0.75' : '1'};">
+        <div style="display:flex;align-items:center;gap:12px;min-width:200px;flex:1;">
+          <div style="width:28px;height:28px;border-radius:50%;background:${isDone ? '#2563eb' : (isCurriculumLocked ? '#cbd5e1' : '#f1f5f9')};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;">
             ${isDone ? '✓' : (isCurriculumLocked ? '' : '○')}
           </div>
           <div>
-            <div style="font-size:14.5px;font-weight:700;color:#0f172a;">${v.title}</div>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;">
+            <div style="font-size:13.5px;font-weight:700;color:#0f172a;">${v.title}</div>
+            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">
               ${v.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${stationLabel}</strong>
               ${curCtx ? ` • <span style="color:#0284c7;font-weight:700;">Part of ${curCtx.course.title}</span>` : ''}
             </div>
           </div>
         </div>
 
-        <div style="display:flex;align-items:center;gap:16px;">
-          <div style="width:120px;">
-            <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:100px;">
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:700;color:#64748b;margin-bottom:3px;">
               <span>Progress</span><span>${pct}%</span>
             </div>
-            <div style="background:#e2e8f0;height:5px;border-radius:9999px;overflow:hidden;">
+            <div style="background:#e2e8f0;height:4px;border-radius:9999px;overflow:hidden;">
               <div style="width:${pct}%;background:#2563eb;height:100%;"></div>
             </div>
           </div>
 
-          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isCurriculumLocked ? '#f1f5f9' : '#2563eb'};color:${isCurriculumLocked ? '#64748b' : '#ffffff'};border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:${isCurriculumLocked ? 'not-allowed' : 'pointer'};">
-            ${isCurriculumLocked ? 'Locked' : (isDone ? 'Rewatch' : 'Watch Now →')}
+          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isCurriculumLocked ? '#f1f5f9' : '#2563eb'};color:${isCurriculumLocked ? '#64748b' : '#ffffff'};border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:${isCurriculumLocked ? 'not-allowed' : 'pointer'};">
+            ${isCurriculumLocked ? 'Locked' : (isDone ? 'Rewatch' : 'Watch →')}
           </button>
         </div>
       </div>
