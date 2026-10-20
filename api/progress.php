@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $videoId = trim($data['video_id'] ?? '');
     $percent = intval($data['percent'] ?? 0);
     $completed = !empty($data['completed']) || $percent >= 90;
+    $position = floatval($data['position'] ?? 0);
 
     if (empty($videoId)) {
         http_response_code(400);
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $saved = recordEmployeeVideoProgress($employeeId, $videoId, $percent, $completed);
+    $saved = recordEmployeeVideoProgress($employeeId, $videoId, $percent, $completed, $position);
     $summary = getEmployeeProgressSummary($employeeId);
 
     echo json_encode([
@@ -59,10 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit;
         }
 
-        // If Team Leader, strictly scope to their own team!
-        $teamFilter = ($currentUser['role'] === 'team_leader') ? (int)$currentUser['team_id'] : null;
+        // If Team Leader, strictly scope to members of their own team!
+        $isTeamLeader = ($currentUser['role'] === 'team_leader');
+        $teamFilter = $isTeamLeader ? (int)$currentUser['team_id'] : null;
+        $leaderId = $isTeamLeader ? (int)$currentUser['id'] : null;
         $stationFilter = $_GET['station'] ?? null;
-        $roster = getEmployeeRosterWithStats($teamFilter, $stationFilter);
+        $roster = getEmployeeRosterWithStats($teamFilter, $stationFilter, $leaderId);
 
         echo json_encode([
             'success'   => true,

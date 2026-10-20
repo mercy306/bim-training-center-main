@@ -53,13 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $initialVideo = $data['initial_video'] ?? null;
         $newCurriculum = createBimCurriculum([
-            'title'    => $title,
-            'cat'      => $data['cat'] ?? 'coordination',
-            'station'  => $data['station'] ?? 'all',
-            'level'    => $data['level'] ?? 'Intermediate',
-            'duration' => $data['duration'] ?? '10 lessons • 15 hrs',
-            'desc'     => $data['desc'] ?? 'Comprehensive BIM curriculum track.',
-            'icon'     => $data['icon'] ?? '🏗️'
+            'title'              => $title,
+            'cat'                => $data['cat'] ?? 'coordination',
+            'station'            => $data['station'] ?? 'all',
+            'assigned_employees' => $data['assigned_employees'] ?? [],
+            'level'              => $data['level'] ?? 'Intermediate',
+            'duration'           => $data['duration'] ?? '10 lessons • 15 hrs',
+            'desc'               => $data['desc'] ?? 'Comprehensive BIM curriculum track.',
+            'icon'               => $data['icon'] ?? ''
         ], $initialVideo);
 
         echo json_encode([

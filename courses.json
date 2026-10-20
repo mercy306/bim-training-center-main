@@ -1,131 +1,74 @@
 [
     {
-        "id": "curriculum_1792149639_4e61",
-        "cat": "coordination",
-        "station": "engineer",
-        "title": "MEP HVAC Duct Routing and Coordination",
-        "icon": "\ud83c\udfe2",
-        "level": "Advanced",
-        "duration": "18 hrs",
-        "desc": "Ductwork routing, equipment clearance zones, and airflow parameter validation.",
-        "syllabus": [
-            {
-                "id": "les_1792149639",
-                "title": "1. HVAC Clash Isolation & Tolerances",
-                "duration": "24:10",
-                "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
-            }
-        ]
-    },
-    {
-        "id": "revit-struct",
+        "id": "curriculum_1792419059_251e",
         "cat": "revit",
-        "station": "engineer",
-        "title": "Revit Structure Modeling Mastery",
-        "icon": "\ud83d\udd29",
-        "level": "Intermediate",
-        "duration": "22 hrs",
-        "desc": "Hands-on structural modeling, foundation grids, cross reinforcement, rebar layout parameters, and clash-free placement.",
-        "syllabus": [
-            {
-                "id": "rs_l1",
-                "title": "1. Foundation Grids & Concrete Elements",
-                "duration": "14:20",
-                "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
-            },
-            {
-                "id": "rs_l2",
-                "title": "2. Cross Rebar Modeling & Detailing",
-                "duration": "18:35",
-                "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
-            },
-            {
-                "id": "rs_l3",
-                "title": "3. Structural Framing & Column Layout",
-                "duration": "19:40",
-                "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
-            }
-        ]
-    },
-    {
-        "id": "bim-coord",
-        "cat": "coordination",
-        "station": "all",
-        "title": "BIM Coordination & Advanced Workflows",
-        "icon": "\ud83c\udfd7\ufe0f",
-        "level": "Advanced",
-        "duration": "28 hrs",
-        "desc": "Multi-discipline model federation, clash matrices, clearance rules, and BCF issue resolution meetings.",
-        "syllabus": [
-            {
-                "id": "bc_l1",
-                "title": "1. Multi-discipline Model Federation",
-                "duration": "18:10",
-                "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
-            },
-            {
-                "id": "bc_l2",
-                "title": "2. Clash Detection Matrix & Tolerances",
-                "duration": "22:45",
-                "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
-            }
-        ]
-    },
-    {
-        "id": "navisworks",
-        "cat": "navisworks",
-        "station": "engineer",
-        "title": "Navisworks Clash Detection & Review",
-        "icon": "\ud83d\udd0d",
-        "level": "Intermediate",
-        "duration": "14 hrs",
-        "desc": "Mastering Navisworks Manage, NWD/NWC model aggregation, search sets, clash batches, and report generation.",
-        "syllabus": [
-            {
-                "id": "nw_l1",
-                "title": "1. Appending NWD & NWC Models",
-                "duration": "15:20",
-                "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
-            },
-            {
-                "id": "nw_l2",
-                "title": "2. Clash Batches & Grouping Rules",
-                "duration": "20:15",
-                "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
-            }
-        ]
-    },
-    {
-        "id": "autocad-2d",
-        "cat": "autocad",
         "station": "trainee",
-        "title": "AutoCAD 2D/3D for BIM Professionals",
-        "icon": "\u270f\ufe0f",
-        "level": "Beginner",
-        "duration": "18 hrs",
-        "desc": "Precision drafting, layer standards, CAD underlays, and CAD-to-Revit clean export strategies.",
+        "title": "2 04 Drawing R2 Course Series",
+        "icon": "",
+        "level": "Intermediate",
+        "duration": "1 lesson \u2022 20:00",
+        "desc": "Direct BIM demonstration.",
         "syllabus": [
             {
-                "id": "ac_l1",
-                "title": "1. Precision Drafting & Layer Conventions",
-                "duration": "17:00",
+                "id": "vid_1792419059_fed3",
+                "title": "1. 2 04 Drawing R2",
+                "duration": "20:00",
                 "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+                "ytId": "videos/2_04-Drawing_R2.mkv"
             },
             {
-                "id": "ac_l2",
-                "title": "2. DWG Underlays & CAD-to-Revit Import",
-                "duration": "19:30",
+                "id": "vid_1792419059_0fb5",
+                "title": "2. 07 \u05e9\u05db\u05e4\u05d5\u05dc \u05de\u05d1\u05d8 \u05d1\u05d0\u05d5\u05ea\u05d4 \u05e7\u05d5\u05de\u05d4 \u05dc\u05d2\u05d0\u05d5\u05de\u05d8\u05e8\u05d9\u05d4 \u05d2\u05d3\u05d5\u05dc\u05d4",
+                "duration": "20:00",
                 "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
+                "ytId": "videos/07____________________________________________________________________.mkv"
+            },
+            {
+                "id": "vid_1792419060_f6b8",
+                "title": "3. 11 Copy A Typical Detail With Red Text",
+                "duration": "20:00",
+                "type": "local",
+                "ytId": "videos/11_Copy_A_Typical_Detail_With_Red_Text.mkv"
+            },
+            {
+                "id": "vid_1792419443_dfb4",
+                "title": "4. 12 Making A Typical Detailing To Untypical",
+                "duration": "20:00",
+                "type": "local",
+                "ytId": "videos/12_Making_A_Typical_Detailing_To_Untypical.mkv"
+            },
+            {
+                "id": "vid_1792419444_14eb",
+                "title": "5. Amharic \u05d0\u05d9\u05da \u05db\u05df \u05dc\u05e9\u05db\u05e4\u05dc \u05dc\u05e7\u05d5\u05de\u05d4 \u05d4\u05d1\u05d0\u05d4",
+                "duration": "20:00",
+                "type": "local",
+                "ytId": "videos/Amharic-__________________________________________.mkv"
+            },
+            {
+                "id": "vid_1792419446_3b7a",
+                "title": "6. View Template Deng Rebar Color \u05e1\u05d5\u05e4\u05d9",
+                "duration": "20:00",
+                "type": "local",
+                "ytId": "videos/View_Template_Deng_Rebar_Color_________.mkv"
+            }
+        ]
+    },
+    {
+        "id": "curriculum_1792410355_add4",
+        "cat": "revit",
+        "station": "trainee",
+        "title": "Revit",
+        "icon": "",
+        "level": "Intermediate",
+        "duration": "1 lesson \u2022 20:00",
+        "desc": "Direct BIM demonstration.",
+        "syllabus": [
+            {
+                "id": "vid_1792410355_3571",
+                "title": "1. 01  REBAR FAMILIES PART 1",
+                "duration": "20:00",
+                "type": "local",
+                "ytId": "videos/01__Rebar_Families_Part_1_1792410355.mp4"
             }
         ]
     }

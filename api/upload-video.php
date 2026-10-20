@@ -64,16 +64,31 @@ $duration = trim($_POST['duration'] ?? '15:00');
 $desc = trim($_POST['description'] ?? 'Direct BIM modeling tutorial.');
 
 $station = trim($_POST['station'] ?? 'all');
+$assignedEmployeesRaw = trim($_POST['assigned_employees'] ?? '');
+$assignedEmployees = [];
+if (!empty($assignedEmployeesRaw)) {
+    $decoded = json_decode($assignedEmployeesRaw, true);
+    if (is_array($decoded)) {
+        $assignedEmployees = array_values(array_unique(array_map('strval', $decoded)));
+    } else {
+        $parts = array_filter(array_map('trim', explode(',', $assignedEmployeesRaw)));
+        $assignedEmployees = array_values(array_unique($parts));
+    }
+}
+if (!empty($assignedEmployees) && $station === 'all') {
+    $station = 'custom';
+}
 
 $newEntry = [
-    'id'       => 'vid_' . time() . '_' . substr(md5(uniqid()), 0, 4),
-    'cat'      => $cat,
-    'station'  => $station,
-    'title'    => $title,
-    'desc'     => $desc,
-    'ytId'     => $relativePath,
-    'duration' => $duration,
-    'type'     => 'local'
+    'id'                 => 'vid_' . time() . '_' . substr(md5(uniqid()), 0, 4),
+    'cat'                => $cat,
+    'station'            => $station,
+    'assigned_employees' => $assignedEmployees,
+    'title'              => $title,
+    'desc'               => $desc,
+    'ytId'               => $relativePath,
+    'duration'           => $duration,
+    'type'               => 'local'
 ];
 
 // Append to videos.json automatically
@@ -91,20 +106,22 @@ if ($curriculumMode === 'existing' && !empty($_POST['curriculum_id'])) {
     $attachedCurriculum = $curriculumId;
 } elseif ($curriculumMode === 'new' && !empty($_POST['new_curriculum_title'])) {
     $newCurriculum = createBimCurriculum([
-        'title'    => trim($_POST['new_curriculum_title']),
-        'cat'      => $cat,
-        'station'  => $station,
-        'level'    => trim($_POST['new_curriculum_level'] ?? 'Intermediate'),
-        'duration' => '1 lesson • ' . $duration,
-        'desc'     => trim($_POST['new_curriculum_desc'] ?? $desc),
-        'icon'     => trim($_POST['new_curriculum_icon'] ?? '🏗️')
+        'title'              => trim($_POST['new_curriculum_title']),
+        'cat'                => $cat,
+        'station'            => $station,
+        'assigned_employees' => $assignedEmployees,
+        'level'              => trim($_POST['new_curriculum_level'] ?? 'Intermediate'),
+        'duration'           => '1 lesson • ' . $duration,
+        'desc'               => trim($_POST['new_curriculum_desc'] ?? $desc),
+        'icon'               => trim($_POST['new_curriculum_icon'] ?? '')
     ], $newEntry);
     $attachedCurriculum = $newCurriculum['id'];
 }
 
 echo json_encode([
-    'success' => true,
-    'video'   => $newEntry,
-    'message' => 'Video uploaded and published successfully!'
+    'success'       => true,
+    'video'         => $newEntry,
+    'curriculum_id' => $attachedCurriculum,
+    'message'       => 'Video uploaded and published successfully!'
 ]);
 exit;

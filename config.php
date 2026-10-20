@@ -32,9 +32,7 @@ define('BIM_STATIONS', [
     'all'        => 'All Employees',
     'trainee'    => 'Trainees',
     'engineer'   => 'Structural & MEP Engineers',
-    'architect'  => 'Architects & Designers',
-    'modeler'    => 'BIM Modelers & Drafters',
-    'manager'    => 'Project Managers & Supervisors'
+    'architect'  => 'Architects & Designers'
 ]);
 
 // ============================================================================
@@ -63,7 +61,109 @@ if (session_status() === PHP_SESSION_NONE) {
  * Returns array with: id, name, role ('admin'|'team_leader'|'employee'), station, team_id, team_name
  */
 function getActiveBimUser(): array {
-    // 1. Role switcher simulation for standalone/preview
+    // 1. BSD Integrated Session: Check logged-in BSD user FIRST
+    if (!empty($_SESSION['user_id'])) {
+        // Clear any previous demo overrides
+        unset($_SESSION['demo_role'], $_SESSION['demo_leader_id']);
+
+        require_once __DIR__ . '/db.php';
+        require_once __DIR__ . '/includes/functions.php';
+        global $pdo;
+
+        $parentRole = strtolower((string)($_SESSION['role'] ?? 'employee'));
+        $name = $_SESSION['full_name'] ?? ($_SESSION['username'] ?? 'BSD Employee');
+        $userId = (int)$_SESSION['user_id'];
+        $empId = $userId;
+        $station = 'all';
+        $teamId = isset($_SESSION['team_id']) ? (int)$_SESSION['team_id'] : null;
+        $teamName = $_SESSION['team_name'] ?? 'General Team';
+
+        // Resolve real employee record linked via employees.user_id = users.id
+        if ($pdo) {
+            try {
+                $eStmt = $pdo->prepare("
+                    SELECT id, full_name_english, full_name_hebrew, department, position, is_trainee, team
+                    FROM employees
+                    WHERE user_id = ? OR id = ?
+                    LIMIT 1
+                ");
+                $eStmt->execute([$userId, $userId]);
+                $empRow = $eStmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($empRow) {
+                    $empId = (int)$empRow['id'];
+                    if (!empty($empRow['full_name_english'])) {
+                        $name = trim($empRow['full_name_english']);
+                    } elseif (!empty($empRow['full_name_hebrew'])) {
+                        $name = trim($empRow['full_name_hebrew']);
+                    }
+
+                    $dept = strtolower((string)($empRow['department'] ?? ''));
+                    $pos = strtolower((string)($empRow['position'] ?? ''));
+                    if (!empty($empRow['is_trainee'])) {
+                        $station = 'trainee';
+                    } elseif (strpos($dept, 'architect') !== false || strpos($pos, 'architect') !== false) {
+                        $station = 'architect';
+                    } elseif (strpos($dept, 'civil') !== false || strpos($dept, 'sanitory') !== false || strpos($pos, 'engineer') !== false) {
+                        $station = 'engineer';
+                    } elseif (strpos($dept, 'model') !== false || strpos($pos, 'model') !== false || strpos($pos, 'draft') !== false) {
+                        $station = 'modeler';
+                    } elseif (strpos($pos, 'manager') !== false || strpos($pos, 'supervisor') !== false) {
+                        $station = 'manager';
+                    } else {
+                        $station = 'all';
+                    }
+
+                    if (!empty($empRow['team'])) {
+                        $teamName = $empRow['team'];
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log("Failed to resolve employee for user $userId: " . $e->getMessage());
+            }
+        }
+
+        // Map parent roles: Admin
+        if (in_array($parentRole, ['admin', 'system_admin', 'office_admin'])) {
+            return [
+                'id' => $empId,
+                'name' => $name,
+                'role' => 'admin',
+                'station' => 'all',
+                'team_id' => null,
+                'team_name' => 'All Departments',
+                'is_demo' => false
+            ];
+        }
+
+        // Strictly verify if employee is tagged as a Team Leader in PostgreSQL
+        if (isEmployeeTeamLeader($empId)) {
+            $ledTeams = getEmployeeLedTeams($empId);
+            $primaryTeam = !empty($ledTeams) ? $ledTeams[0] : null;
+            return [
+                'id' => $empId,
+                'name' => $name,
+                'role' => 'team_leader',
+                'station' => $station ?: 'engineer',
+                'team_id' => $primaryTeam ? (int)$primaryTeam['id'] : $teamId,
+                'team_name' => $primaryTeam ? $primaryTeam['team_name'] : $teamName,
+                'is_demo' => false
+            ];
+        }
+
+        // Standard Employee Learner
+        return [
+            'id' => $empId,
+            'name' => $name,
+            'role' => 'employee',
+            'station' => $station ?: 'trainee',
+            'team_id' => $teamId,
+            'team_name' => $teamName,
+            'is_demo' => false
+        ];
+    }
+
+    // 2. Standalone / Demo simulation ONLY when no BSD user is logged in
     if (isset($_GET['demo_role'])) {
         $_SESSION['demo_role'] = $_GET['demo_role'];
     }
@@ -76,75 +176,79 @@ function getActiveBimUser(): array {
             'role' => 'admin',
             'station' => 'all',
             'team_id' => null,
-            'team_name' => 'All Departments'
+            'team_name' => 'All Departments',
+            'is_demo' => true
         ];
     } elseif ($demoRole === 'team_leader') {
-        return [
-            'id' => 201,
-            'name' => 'David Cohen (Team Leader)',
-            'role' => 'team_leader',
-            'station' => 'engineer',
-            'team_id' => 10,
-            'team_name' => 'Structural Modeling Team A'
-        ];
+        // Support inspecting different real BSD team leaders via ?leader_id=
+        $reqLeaderId = isset($_GET['leader_id']) ? (int)$_GET['leader_id'] : (isset($_SESSION['demo_leader_id']) ? (int)$_SESSION['demo_leader_id'] : 27);
+        if (isset($_GET['leader_id'])) {
+            $_SESSION['demo_leader_id'] = $reqLeaderId;
+        }
+
+        // Real team leader presets
+        if ($reqLeaderId === 8) {
+            return [
+                'id' => 8,
+                'name' => 'Bezawit Birhanu (Team Leader)',
+                'role' => 'team_leader',
+                'station' => 'architect',
+                'team_id' => 12,
+                'team_name' => 'ARCH',
+                'is_demo' => true
+            ];
+        } elseif ($reqLeaderId === 43) {
+            return [
+                'id' => 43,
+                'name' => 'Natan Derara (Team Leader)',
+                'role' => 'team_leader',
+                'station' => 'engineer',
+                'team_id' => 13,
+                'team_name' => 'IT',
+                'is_demo' => true
+            ];
+        } elseif ($reqLeaderId === 28) {
+            return [
+                'id' => 28,
+                'name' => 'Henok Solomon (Team Leader)',
+                'role' => 'team_leader',
+                'station' => 'engineer',
+                'team_id' => 16,
+                'team_name' => 'BSD',
+                'is_demo' => true
+            ];
+        } else {
+            // Default real team leader: Tekle Ketema (Leads Team A.D_DOR)
+            return [
+                'id' => 27,
+                'name' => 'Tekle Ketema (Team Leader)',
+                'role' => 'team_leader',
+                'station' => 'engineer',
+                'team_id' => 4,
+                'team_name' => 'A.D_DOR',
+                'is_demo' => true
+            ];
+        }
     } elseif ($demoRole === 'employee_trainee') {
         return [
-            'id' => 301,
-            'name' => 'Yoni Levi (Trainee)',
+            'id' => 79,
+            'name' => 'Kalbekal Haileleul (Trainee)',
             'role' => 'employee',
             'station' => 'trainee',
-            'team_id' => 10,
-            'team_name' => 'Structural Modeling Team A'
+            'team_id' => null,
+            'team_name' => 'General Team',
+            'is_demo' => true
         ];
     } elseif ($demoRole === 'employee_engineer') {
         return [
-            'id' => 302,
-            'name' => 'Sarah Alon (Engineer)',
+            'id' => 29,
+            'name' => 'Wondifraw Shituneh (Civil Engineer)',
             'role' => 'employee',
             'station' => 'engineer',
-            'team_id' => 10,
-            'team_name' => 'Structural Modeling Team A'
+            'team_id' => 4,
+            'team_name' => 'A.D_DOR',
+            'is_demo' => true
         ];
-    }
-
-    // 2. BSD Integrated Session: Check logged-in BSD user
-    if (isset($_SESSION['user_id'])) {
-        $parentRole = strtolower((string)($_SESSION['role'] ?? 'employee'));
-        $name = $_SESSION['full_name'] ?? ($_SESSION['username'] ?? 'BSD Employee');
-        $userId = (int)$_SESSION['user_id'];
-        $station = strtolower((string)($_SESSION['station'] ?? $_SESSION['department'] ?? 'all'));
-        $teamId = isset($_SESSION['team_id']) ? (int)$_SESSION['team_id'] : null;
-        $teamName = $_SESSION['team_name'] ?? 'General Team';
-
-        // Map parent roles
-        if (in_array($parentRole, ['admin', 'system_admin', 'office_admin'])) {
-            return [
-                'id' => $userId,
-                'name' => $name,
-                'role' => 'admin',
-                'station' => 'all',
-                'team_id' => null,
-                'team_name' => 'All Departments'
-            ];
-        } elseif (in_array($parentRole, ['team_leader', 'supervisor', 'office_supervisor'])) {
-            return [
-                'id' => $userId,
-                'name' => $name,
-                'role' => 'team_leader',
-                'station' => $station,
-                'team_id' => $teamId ?: 10,
-                'team_name' => $teamName
-            ];
-        } else {
-            return [
-                'id' => $userId,
-                'name' => $name,
-                'role' => 'employee',
-                'station' => $station ?: 'trainee',
-                'team_id' => $teamId ?: 10,
-                'team_name' => $teamName
-            ];
-        }
     }
 
     // 3. Standalone mode fallback
@@ -155,18 +259,20 @@ function getActiveBimUser(): array {
             'role' => 'admin',
             'station' => 'all',
             'team_id' => null,
-            'team_name' => 'Management'
+            'team_name' => 'Management',
+            'is_demo' => false
         ];
     }
 
-    // Default to Employee view
+    // Default to real active employee view (Kalbekal Haileleul, Trainee)
     return [
-        'id' => 300,
-        'name' => 'Mihiret Tsegaye',
+        'id' => 79,
+        'name' => 'Kalbekal Haileleul',
         'role' => 'employee',
-        'station' => 'engineer',
+        'station' => 'trainee',
         'team_id' => 10,
-        'team_name' => 'Structural Modeling Team A'
+        'team_name' => 'Civil & Architecture',
+        'is_demo' => true
     ];
 }
 

@@ -21,10 +21,12 @@ if ($currentUser['role'] === 'employee') {
 }
 
 // Scoped to team for Team Leader; global for Admin
-$teamFilter = ($currentUser['role'] === 'team_leader') ? (int)$currentUser['team_id'] : null;
+$isTeamLeader = ($currentUser['role'] === 'team_leader');
+$teamFilter = $isTeamLeader ? (int)($currentUser['team_id'] ?? 0) : null;
+$leaderId = $isTeamLeader ? (int)$currentUser['id'] : null;
 
-$analytics = getTrainingAnalytics($teamFilter);
-$roster = getEmployeeRosterWithStats($teamFilter);
+$analytics = getTrainingAnalytics($teamFilter, $leaderId);
+$roster = getEmployeeRosterWithStats($teamFilter, null, $leaderId);
 
 echo json_encode([
     'success'      => true,

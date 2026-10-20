@@ -11,6 +11,19 @@ require_once __DIR__ . '/includes/functions.php';
 // Active User & Role
 $user = getActiveBimUser();
 $role = $user['role']; // 'admin' | 'team_leader' | 'employee'
+
+// Enforce: Only employees tagged as team leaders in PostgreSQL can access team leader mode
+$isRealLeader = isEmployeeTeamLeader((int)$user['id']);
+if ($role === 'team_leader' && !$isRealLeader) {
+    // Downgrade to standard employee if not tagged as team leader
+    $role = 'employee';
+    $user['role'] = 'employee';
+}
+
+$isStaffAdmin = ($role === 'admin');
+$isTeamLeader = ($role === 'team_leader');
+$isEmployee = ($role === 'employee');
+
 $userStation = $user['station'] ?? 'all';
 $userName = $user['name'] ?? 'User';
 $teamName = $user['team_name'] ?? 'General Team';
@@ -18,20 +31,41 @@ $teamId = $user['team_id'] ?? null;
 $userAvatar = !empty($user['avatar']) ? $user['avatar'] : (!empty($user['photo']) ? $user['photo'] : null);
 
 // Preload videos according to role & station
-// Employees only see videos assigned to their station or 'all'
-$isStaffAdmin = ($role === 'admin');
-$isTeamLeader = ($role === 'team_leader');
-$isEmployee = ($role === 'employee');
-
-$visibleVideos = getBimVideos($isStaffAdmin ? null : $userStation);
-$visibleCourses = getBimCourses($isStaffAdmin ? null : $userStation);
+// Employees only see videos assigned to their station, 'all', or assigned to them individually
+$visibleVideos = getBimVideos($isStaffAdmin ? null : $userStation, $isStaffAdmin ? null : ($user['id'] ?? null));
+$visibleCourses = getBimCourses($isStaffAdmin ? null : $userStation, $isStaffAdmin ? null : ($user['id'] ?? null));
 $allCourses = getBimCourses(); // Complete curricula catalog for admin assignment
 $allStations = BIM_STATIONS;
 
-// Preload analytics for admin / team leader
-$analytics = ($isStaffAdmin || $isTeamLeader) ? getTrainingAnalytics($isTeamLeader ? (int)$teamId : null) : null;
-$roster = ($isStaffAdmin || $isTeamLeader) ? getEmployeeRosterWithStats($isTeamLeader ? (int)$teamId : null) : [];
+// Preload analytics for admin / team leader (strictly scoped to leader's team members!)
+$analytics = ($isStaffAdmin || $isTeamLeader) ? getTrainingAnalytics($isTeamLeader ? (int)$teamId : null, $isTeamLeader ? (int)$user['id'] : null) : null;
+$roster = ($isStaffAdmin || $isTeamLeader) ? getEmployeeRosterWithStats($isTeamLeader ? (int)$teamId : null, null, $isTeamLeader ? (int)$user['id'] : null) : [];
 $myProgress = getEmployeeProgressSummary($user['id']);
+
+$stationCounts = [];
+foreach ($roster as $rEmp) {
+    $stKey = $rEmp['station'] ?? 'trainee';
+    $stationCounts[$stKey] = ($stationCounts[$stKey] ?? 0) + 1;
+}
+
+// Collect all active employees and teams for Individual Video Assignment Picker
+$allStore = getProgressStore();
+$allAssignableEmployees = [];
+$allAvailableTeams = [];
+foreach ($allStore as $eId => $eData) {
+    $eTeam = !empty($eData['team_name']) ? trim($eData['team_name']) : 'General Team';
+    $allAssignableEmployees[] = [
+        'id'        => (string)$eId,
+        'name'      => $eData['name'] ?? ('Employee #' . $eId),
+        'station'   => $eData['station'] ?? 'all',
+        'team_id'   => $eData['team_id'] ?? null,
+        'team_name' => $eTeam
+    ];
+    if ($eTeam && !in_array($eTeam, $allAvailableTeams, true)) {
+        $allAvailableTeams[] = $eTeam;
+    }
+}
+sort($allAvailableTeams);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,12 +154,21 @@ $myProgress = getEmployeeProgressSummary($user['id']);
     }
 
     .nav-btn {
-      border: none; background: transparent; padding: 6px 14px; border-radius: 9px;
+      border: 1px solid transparent; background: transparent; padding: 6px 14px; border-radius: 9px;
       font-size: 13.5px; font-weight: 700; color: rgba(255, 255, 255, 0.88); cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nav-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.16); }
-    .nav-btn.active { color: #1d4ed8 !important; background: #ffffff !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+    .nav-btn.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.22) !important;
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+    .nav-btn.active:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+    }
 
     .btn-upload-prominent {
       background: #ffffff !important;
@@ -196,6 +239,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
     window.SERVER_INITIAL_VIDEOS = <?= json_encode($visibleVideos, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.SERVER_INITIAL_COURSES = <?= json_encode($visibleCourses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.ALL_ADMIN_COURSES = <?= json_encode($allCourses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+    window.ALL_ASSIGNABLE_EMPLOYEES = <?= json_encode($allAssignableEmployees, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+    window.ALL_AVAILABLE_TEAMS = <?= json_encode($allAvailableTeams, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.USER_ROLE = '<?= $role ?>';
     window.USER_STATION = '<?= $userStation ?>';
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
@@ -203,8 +248,9 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 </head>
 <body style="background:#f4f7fc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
+<?php if (!empty($user['is_demo'])): ?>
 <!-- ══════════════════════════════════════════
-     ROLE SWITCHER & CONTEXT BANNER
+     ROLE SWITCHER & CONTEXT BANNER (Demo Mode Only)
 ══════════════════════════════════════════ -->
 <div style="background:#1e40af;color:#e0f2fe;padding:8px 24px;font-size:12.5px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(255,255,255,0.15);">
   <div style="display:flex;align-items:center;gap:12px;">
@@ -224,14 +270,15 @@ $myProgress = getEmployeeProgressSummary($user['id']);
   </div>
 
   <!-- Instant Demo Switcher -->
-  <div style="display:flex;align-items:center;gap:8px;">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
     <span style="color:#94a3b8;font-size:11.5px;font-weight:600;">Switch View:</span>
     <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">👑 Admin</a>
-    <a href="?demo_role=team_leader" style="background:<?= $isTeamLeader ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">👥 Team Leader</a>
+    <a href="?demo_role=team_leader" style="background:<?= $isTeamLeader ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">👥 Team Leader (<?= htmlspecialchars($isTeamLeader ? $userName : 'Tekle Ketema') ?>)</a>
     <a href="?demo_role=employee_trainee" style="background:<?= ($isEmployee && $userStation === 'trainee') ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">🎓 Trainee</a>
     <a href="?demo_role=employee_engineer" style="background:<?= ($isEmployee && $userStation === 'engineer') ? '#2563eb' : '#1e293b' ?>;color:#fff;padding:3px 10px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11px;">📐 Engineer</a>
   </div>
 </div>
+<?php endif; ?>
 
 
 <!-- ══════════════════════════════════════════
@@ -251,21 +298,22 @@ $myProgress = getEmployeeProgressSummary($user['id']);
       <div style="display:flex;gap:6px;align-items:center;">
         <!-- Role Landing Tab Placed First -->
         <?php if ($isStaffAdmin): ?>
-          <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics" style="color:#1d4ed8;background:#ffffff;">
+          <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">
             📈 Analytics
           </button>
         <?php elseif ($isTeamLeader): ?>
-          <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress" style="color:#1d4ed8;background:#ffffff;">
+          <button onclick="showSection('team-progress')" class="nav-btn active" id="nav-team-progress">
             👥 Team Progress
           </button>
+          <button onclick="showSection('my-progress')" class="nav-btn" id="nav-my-progress">
+            📊 My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
+          </button>
         <?php elseif ($isEmployee): ?>
-          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress" style="color:#1d4ed8;background:#ffffff;">
-            📊 Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
+          <button onclick="showSection('my-progress')" class="nav-btn active" id="nav-my-progress">
+            📊 My Progress (<span id="nav-my-pct"><?= $myProgress['overall_percent'] ?>%</span>)
           </button>
         <?php endif; ?>
 
-        <button onclick="showSection('home')"    class="nav-btn" id="nav-home">Home</button>
-        <button onclick="showSection('courses')" class="nav-btn" id="nav-courses">Courses</button>
         <button onclick="showSection('videos')"  class="nav-btn" id="nav-videos">Videos</button>
         <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
       </div>
@@ -293,6 +341,15 @@ $myProgress = getEmployeeProgressSummary($user['id']);
         </div>
         <div style="font-size:11.5px;font-weight:800;color:#ffffff;line-height:1.1;"><?= htmlspecialchars($userName) ?></div>
       </div>
+
+      <!-- Return to BSD Portal -->
+      <?php
+        $portalBackUrl = $isStaffAdmin ? 'BSD/bsd/admin_dashboard.php' : 'BSD/bsd/employee_management/employee_dashboard.php';
+      ?>
+      <a href="<?= $portalBackUrl ?>" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);padding:5px 12px;border-radius:8px;color:#ffffff;font-size:12px;font-weight:700;text-decoration:none;backdrop-filter:blur(8px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>BSD Portal</span>
+      </a>
     </div>
   </div>
 </nav>
@@ -303,129 +360,10 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 ══════════════════════════════════════════ -->
 <div id="app-root">
 
-<!-- ─────────────────────────────────────────
-     1. HOME SECTION
-───────────────────────────────────────── -->
-<section id="section-home">
-  <!-- Large Prominent Blue Hero Banner (2-Column Layout) -->
-  <div class="hero-bg">
-    <div style="position:absolute;left:-40px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
-    <div style="position:relative;z-index:10;max-width:1440px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
-      
-      <!-- Left Column: User Profile Welcome Card -->
-      <div style="flex:1;min-width:320px;display:flex;align-items:center;gap:24px;">
-        <div style="position:relative;flex-shrink:0;">
-          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.18);border:2.5px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.15);backdrop-filter:blur(8px);overflow:hidden;">
-            <?php if (!empty($userAvatar)): ?>
-              <img id="user-profile-avatar" src="<?= htmlspecialchars($userAvatar) ?>" alt="<?= htmlspecialchars($userName) ?>" style="width:100%;height:100%;object-fit:cover;" />
-            <?php else: ?>
-              <svg viewBox="0 0 24 24" fill="currentColor" style="width:46px;height:46px;color:rgba(255,255,255,0.92);margin-top:6px;">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            <?php endif; ?>
-          </div>
-        </div>
-        <div>
-          <div style="color:rgba(255,255,255,0.85);font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">
-            TIKIMT 7, 2019
-          </div>
-          <h1 style="color:#ffffff;font-size:clamp(22px,2.6vw,32px);font-weight:800;margin:0 0 12px;line-height:1.2;letter-spacing:-0.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span>Welcome back, <span id="user-profile-name"><?= htmlspecialchars($userName) ?></span>!</span>
-            <span style="display:inline-block;">👋</span>
-          </h1>
-          <!-- Dynamic Training Status Badge (replaces static pills) -->
-          <div id="user-training-status-container" style="display:flex;gap:10px;align-items:center;">
-            <?php if (!empty($myProgress['overall_percent']) && $myProgress['overall_percent'] >= 100): ?>
-              <span id="user-training-status-badge" style="background:rgba(16,185,129,0.25);border:1px solid rgba(52,211,153,0.4);color:#ffffff;padding:5px 16px;border-radius:9999px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <span style="width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;box-shadow:0 0 6px #34d399;"></span> Finished
-              </span>
-            <?php else: ?>
-              <span id="user-training-status-badge" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.32);color:#ffffff;padding:5px 16px;border-radius:9999px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <span style="width:8px;height:8px;border-radius:50%;background:#fbbf24;display:inline-block;box-shadow:0 0 6px #fbbf24;"></span> Training
-              </span>
-            <?php endif; ?>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Portal Metrics Card Widget -->
-      <div style="background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);border-radius:20px;backdrop-filter:blur(14px);padding:18px 22px;box-shadow:0 8px 25px rgba(0,0,0,0.06);min-width:280px;flex-shrink:0;">
-        <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:800;letter-spacing:0.08em;margin-bottom:12px;text-align:center;">
-          <?= $isStaffAdmin ? 'PORTAL METRICS' : ($isTeamLeader ? 'TEAM SUMMARY' : 'MY TRAINING STATS') ?>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
-          <?php if ($isEmployee): ?>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-              <div id="stat-my-pct" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $myProgress['overall_percent'] ?>%</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Completed</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-              <div id="stat-my-done" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $myProgress['completed_count'] ?> / <?= $myProgress['total_assigned'] ?></div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Videos Done</div>
-            </div>
-          <?php else: ?>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-              <div style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Avg Progress</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-              <div style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= $analytics['total_employees'] ?? 0 ?></div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;"><?= $isTeamLeader ? 'Members' : 'Employees' ?></div>
-            </div>
-          <?php endif; ?>
-          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-            <div id="stat-videos-count" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;"><?= count($visibleVideos) ?></div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Videos</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;">
-            <div id="stat-files-count" style="font-size:22px;font-weight:900;color:#ffffff;line-height:1;">6</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Practice Files</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Featured Courses -->
-  <div style="background:#f4f7fc;padding:44px 24px;">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px;">
-        <div>
-          <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;letter-spacing:-0.02em;">Featured</h2>
-        </div>
-        <button onclick="showSection('courses')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1d4ed8;font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:10px;cursor:pointer;">
-          View All Courses →
-        </button>
-      </div>
-
-      <div id="home-featured-courses" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;"></div>
-    </div>
-  </div>
-</section>
 
 
-<!-- ─────────────────────────────────────────
-     2. COURSES CATALOG SECTION
-───────────────────────────────────────── -->
-<section id="section-courses" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:30px;font-weight:900;color:#0f172a;margin:0 0 10px;">Full BIM Curriculum Catalog</h2>
-      <p style="color:#64748b;font-size:15px;margin:0;">Interactive step-by-step tracks with modular lessons and progress checkpoints.</p>
-    </div>
 
-    <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
-      <button onclick="filterCoursesCatalog('all')"         id="cfilter-all"         style="background:#2563eb;color:#fff;border:none;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">All Programs</button>
-      <button onclick="filterCoursesCatalog('coordination')" id="cfilter-coordination" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Coordination</button>
-      <button onclick="filterCoursesCatalog('revit')"        id="cfilter-revit"        style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Revit</button>
-      <button onclick="filterCoursesCatalog('autocad')"      id="cfilter-autocad"      style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">AutoCAD</button>
-      <button onclick="filterCoursesCatalog('navisworks')"   id="cfilter-navisworks"   style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Navisworks</button>
-    </div>
 
-    <div id="catalog-courses-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;"></div>
-  </div>
-</section>
 
 
 <!-- ─────────────────────────────────────────
@@ -433,24 +371,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 ───────────────────────────────────────── -->
 <section id="section-videos" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:30px;flex-wrap:wrap;gap:16px;">
-      <div>
-        <h2 style="font-size:30px;font-weight:900;color:#0f172a;margin:0 0 10px;">Video Tutorials & Practical Walkthroughs</h2>
-        <p style="color:#64748b;font-size:15px;margin:0;">
-          <?php if ($isEmployee): ?>
-            Displaying lessons assigned to your station (<strong><?= htmlspecialchars(BIM_STATIONS[$userStation] ?? $userStation) ?></strong>).
-          <?php else: ?>
-            Video lessons repository with station assignments and Range streaming playback.
-          <?php endif; ?>
-        </p>
-      </div>
 
-      <?php if ($isStaffAdmin): ?>
-        <button onclick="showSection('upload')" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
-          ⚙️ Content Manager & Upload
-        </button>
-      <?php endif; ?>
-    </div>
 
     <!-- Category Tabs -->
     <div style="display:flex;gap:20px;border-bottom:2px solid #e2e8f0;margin-bottom:30px;overflow-x:auto;">
@@ -471,9 +392,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 ───────────────────────────────────────── -->
 <section id="section-files" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
-    <div style="margin-bottom:28px;">
-      <h2 style="font-size:30px;font-weight:900;color:#0f172a;margin:0;">Practice Datasets & BIM Templates</h2>
-    </div>
+
 
     <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
       <button onclick="filterPracticeFiles('all')" id="ffilter-all" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">All Types</button>
@@ -491,7 +410,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <!-- ─────────────────────────────────────────
      5. EMPLOYEE PERSONAL PROGRESS SECTION
 ───────────────────────────────────────── -->
-<?php if ($isEmployee): ?>
+<?php if ($isEmployee || $isTeamLeader): ?>
 <section id="section-my-progress" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1100px;margin:0 auto;">
     
@@ -532,18 +451,27 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <section id="section-team-progress" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
     
-    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:18px;padding:18px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:18px;padding:18px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="width:40px;height:40px;border-radius:12px;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:18px;">
           👥
         </div>
         <div>
-          <h3 style="font-size:18px;font-weight:900;color:#1e3a8a;margin:0;">Team Leader Progress Portal</h3>
+          <h3 style="font-size:18px;font-weight:900;color:#1e3a8a;margin:0;">Team Leader: <?= htmlspecialchars($userName) ?></h3>
           <div style="font-size:13px;color:#3b82f6;font-weight:600;">
-            Scoped exclusively to members of: <strong><?= htmlspecialchars($teamName) ?></strong> (You cannot view members of other teams).
+            Scoped exclusively to members of: <strong><?= htmlspecialchars($teamName) ?></strong> (<?= count($roster) ?> assigned member<?= count($roster) === 1 ? '' : 's' ?>).
           </div>
         </div>
       </div>
+
+      <?php if (!empty($user['is_demo'])): ?>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:12px;font-weight:700;color:#1e40af;">Switch Team Leader:</span>
+        <a href="?demo_role=team_leader&leader_id=27" style="background:<?= ($user['id'] == 27) ? '#1d4ed8' : '#ffffff' ?>;color:<?= ($user['id'] == 27) ? '#ffffff' : '#1e40af' ?>;border:1px solid #93c5fd;padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;text-decoration:none;">Tekle Ketema (A.D_DOR)</a>
+        <a href="?demo_role=team_leader&leader_id=8" style="background:<?= ($user['id'] == 8) ? '#1d4ed8' : '#ffffff' ?>;color:<?= ($user['id'] == 8) ? '#ffffff' : '#1e40af' ?>;border:1px solid #93c5fd;padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;text-decoration:none;">Bezawit Birhanu (ARCH)</a>
+        <a href="?demo_role=team_leader&leader_id=43" style="background:<?= ($user['id'] == 43) ? '#1d4ed8' : '#ffffff' ?>;color:<?= ($user['id'] == 43) ? '#ffffff' : '#1e40af' ?>;border:1px solid #93c5fd;padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:700;text-decoration:none;">Natan Derara (IT)</a>
+      </div>
+      <?php endif; ?>
     </div>
 
     <!-- Team Metrics -->
@@ -637,11 +565,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <section id="section-analytics" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
-    <div style="margin-bottom:30px;">
-      <span class="badge" style="background:#eff6ff;color:#1d4ed8;margin-bottom:8px;">ENTERPRISE WORKFORCE INTELLIGENCE</span>
-      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0 0 6px;">Company-Wide Training Analytics Board</h2>
-      <p style="color:#64748b;font-size:14.5px;margin:0;">Monitor progress, track video completion rates across all employee stations, and audit learning engagement.</p>
-    </div>
+
 
     <!-- KPI Row -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:20px;margin-bottom:32px;">
@@ -688,19 +612,38 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 
     <!-- Company-Wide Employee Roster Table -->
     <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-        <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Employee Training Progress Roster</h3>
+          <div style="font-size:12.5px;color:#64748b;margin-top:2px;">Filter employee progress by station navigation tabs or search by name</div>
+        </div>
         
         <div style="display:flex;gap:10px;align-items:center;">
-          <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;width:180px;" />
-          <select id="admin-roster-station-filter" onchange="filterAdminRosterStation(this.value)" style="padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;background:white;">
-            <option value="all">All Stations</option>
-            <option value="trainee">Trainees</option>
-            <option value="engineer">Engineers</option>
-            <option value="architect">Architects</option>
-            <option value="modeler">BIM Modelers</option>
-          </select>
+          <div style="position:relative;display:flex;align-items:center;">
+            <span style="position:absolute;left:12px;color:#94a3b8;font-size:13px;">🔍</span>
+            <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 14px 8px 34px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:13px;width:200px;outline:none;" />
+          </div>
         </div>
+      </div>
+
+      <!-- Station Filter Navigation (replacing dropdown) -->
+      <div id="roster-station-nav" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:20px;border-bottom:1.5px solid #f1f5f9;padding-bottom:14px;">
+        <button type="button" onclick="filterAdminRosterStation('all', this)" class="roster-station-btn" data-station="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;box-shadow:0 2px 6px rgba(37,99,235,0.3);">
+          <span>🌟 All Stations</span>
+          <span class="st-count" style="background:rgba(255,255,255,0.25);color:#ffffff;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= count($roster) ?></span>
+        </button>
+        <button type="button" onclick="filterAdminRosterStation('trainee', this)" class="roster-station-btn" data-station="trainee" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
+          <span>🎓 Trainees</span>
+          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['trainee'] ?? 0 ?></span>
+        </button>
+        <button type="button" onclick="filterAdminRosterStation('engineer', this)" class="roster-station-btn" data-station="engineer" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
+          <span>📐 Structural & MEP Engineers</span>
+          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['engineer'] ?? 0 ?></span>
+        </button>
+        <button type="button" onclick="filterAdminRosterStation('architect', this)" class="roster-station-btn" data-station="architect" style="background:#f8fafc;color:#475569;border:1.5px solid #e2e8f0;padding:7px 15px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
+          <span>🏛️ Architects & Designers</span>
+          <span class="st-count" style="background:#e2e8f0;color:#334155;padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:800;"><?= $stationCounts['architect'] ?? 0 ?></span>
+        </button>
       </div>
 
       <div style="overflow-x:auto;">
@@ -817,18 +760,109 @@ $myProgress = getEmployeeProgressSummary($user['id']);
           <input id="new-video-title" type="text" placeholder="e.g. Cross Rebar Placement & Splice Schedules" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
         </div>
 
-        <!-- TARGET STATION ASSIGNMENT DROPDOWN -->
-        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:14px;grid-column:1/-1;">
-          <label style="font-size:13px;font-weight:800;color:#1d4ed8;display:block;margin-bottom:6px;">🎯 Assign to Employee Station / Target Group *</label>
-          <select id="new-video-station" onchange="handleAdminStationSelectionChange(this.value)" style="width:100%;padding:11px 14px;border:1.5px solid #93c5fd;border-radius:10px;font-size:14px;background:white;font-weight:700;color:#1e3a8a;">
-            <option value="all">🌟 All Employees (General Curriculum)</option>
-            <option value="trainee">🎓 Trainees (Onboarding & Foundation)</option>
-            <option value="engineer">📐 Structural & MEP Engineers</option>
-            <option value="architect">🏛️ Architects & Designers</option>
-            <option value="modeler">🏗️ BIM Modelers & Detailers</option>
-            <option value="manager">📋 Project Managers & Supervisors</option>
-          </select>
-          <div style="font-size:12px;color:#2563eb;margin-top:6px;">When assigned to a station (e.g. Trainees), only employees of that station and administrators will see this video in their syllabus.</div>
+        <!-- TARGET STATION ASSIGNMENT WITH MULTI-SELECTION -->
+        <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:18px;grid-column:1/-1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <label style="font-size:13.5px;font-weight:800;color:#1d4ed8;margin:0;">🎯 Assign to Station(s) / Target Discipline(s) *</label>
+            <span style="font-size:11.5px;color:#2563eb;font-weight:600;">Click to select one or multiple stations</span>
+          </div>
+
+          <div id="station-picker-group" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" onclick="toggleUploadStation('all', this)" class="st-pick-btn active" data-st="all" style="background:#2563eb;color:#ffffff;border:none;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;box-shadow:0 2px 6px rgba(37,99,235,0.25);">
+              🌟 All Employees
+            </button>
+            <button type="button" onclick="toggleUploadStation('trainee', this)" class="st-pick-btn" data-st="trainee" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
+              🎓 Trainees
+            </button>
+            <button type="button" onclick="toggleUploadStation('engineer', this)" class="st-pick-btn" data-st="engineer" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
+              📐 Structural & MEP Engineers
+            </button>
+            <button type="button" onclick="toggleUploadStation('architect', this)" class="st-pick-btn" data-st="architect" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all 0.18s;">
+              🏛️ Architects & Designers
+            </button>
+            <button type="button" id="btn-choose-individually" onclick="toggleIndividualPicker()" class="st-pick-btn" data-st="individual" style="background:#ffffff;color:#4338ca;border:1.5px solid #a5b4fc;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:6px;">
+              <span>👤</span> Choose Individually <span id="indiv-count-badge" style="display:none;background:#4f46e5;color:white;border-radius:999px;font-size:10px;padding:2px 7px;font-weight:800;margin-left:4px;">0</span>
+            </button>
+          </div>
+          <input type="hidden" id="new-video-station" value="all" />
+          <input type="hidden" id="new-video-assigned-employees" value="" />
+          <div style="font-size:12px;color:#2563eb;margin-top:8px;" id="station-assignment-hint">Assigned to: <strong>All Employees (General Curriculum)</strong></div>
+
+          <!-- INDIVIDUAL EMPLOYEE PICKER PANEL (DRAWER) -->
+          <div id="individual-employee-picker-panel" style="display:none;margin-top:14px;background:#f8faff;border:2px solid #818cf8;border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(79,70,229,0.08);">
+            <!-- Panel Header -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <div>
+                <h5 style="margin:0;font-size:14px;font-weight:900;color:#312e81;display:flex;align-items:center;gap:6px;">
+                  <span>👥</span> Choose Specific Employees or Teams to Assign
+                </h5>
+                <p style="margin:2px 0 0;font-size:11.5px;color:#4f46e5;">Filter by station or team, assign whole teams at once, or hand-pick individual members.</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button type="button" onclick="clearAllIndividualEmployees()" style="background:#fee2e2;color:#b91c1c;border:none;padding:5px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                  Clear All
+                </button>
+                <button type="button" onclick="closeIndividualPicker()" style="background:#4f46e5;color:white;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;">
+                  Done Selecting
+                </button>
+              </div>
+            </div>
+
+            <!-- Filters Bar: Station Filter, Team Filter, and Search Name -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:12px;background:white;padding:12px;border-radius:10px;border:1px solid #e0e7ff;">
+              <!-- Station Filter Dropdown -->
+              <div>
+                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Filter by Station / Discipline:</label>
+                <select id="indiv-filter-station" onchange="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
+                  <option value="all">🌐 All Stations</option>
+                  <option value="trainee">🎓 Trainees</option>
+                  <option value="engineer">📐 Structural & MEP Engineers</option>
+                  <option value="architect">🏛️ Architects & Designers</option>
+                </select>
+              </div>
+
+              <!-- Team Filter Dropdown -->
+              <div>
+                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Filter by Team:</label>
+                <select id="indiv-filter-team" onchange="onIndivTeamFilterChange()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;font-weight:600;background:white;color:#1e293b;">
+                  <option value="all">🏢 All Teams</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Search Name -->
+              <div>
+                <label style="font-size:11.5px;font-weight:700;color:#4338ca;display:block;margin-bottom:4px;">Search Employee Name:</label>
+                <input id="indiv-search-name" type="text" placeholder="Type name or team..." oninput="renderIndividualEmployeeList()" style="width:100%;padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:12.5px;box-sizing:border-box;">
+              </div>
+            </div>
+
+            <!-- Quick Action Toolbar for Team / Bulk Selection -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <button type="button" id="btn-select-filtered-team" onclick="selectCurrentTeamEmployees()" style="background:#e0e7ff;color:#3730a3;border:1px solid #c7d2fe;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                  ⚡ Assign Entire Team / Filtered
+                </button>
+                <button type="button" id="btn-deselect-filtered-team" onclick="deselectCurrentTeamEmployees()" style="background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                  Deselect Filtered
+                </button>
+                <button type="button" onclick="selectAllFilteredEmployees()" style="background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;padding:5px 12px;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;">
+                  Select All Matching
+                </button>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:#4338ca;" id="indiv-selection-count-text">
+                0 employees selected
+              </div>
+            </div>
+
+            <!-- Selected Employees Chips Bar -->
+            <div id="indiv-selected-chips-bar" style="display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px;max-height:85px;overflow-y:auto;background:white;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;"></div>
+
+            <!-- Scrollable Employee Cards List -->
+            <div id="indiv-employee-card-list" style="max-height:280px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:8px;padding-right:4px;">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </div>
         </div>
 
         <!-- CURRICULUM TRACK ASSIGNMENT SELECTOR -->
@@ -849,12 +883,12 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 
             <label id="copt-label-new" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
               <input type="radio" name="video_curriculum_choice" value="new" onchange="toggleVideoCurriculumMode('new')">
-              <span>➕ Create New Curriculum with this Video</span>
+              <span>➕ Create New Curriculum with these Videos</span>
             </label>
 
             <label id="copt-label-none" style="display:flex;align-items:center;gap:8px;background:#ffffff;border:1.5px solid #cbd5e1;padding:9px 16px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#334155;">
               <input type="radio" name="video_curriculum_choice" value="none" onchange="toggleVideoCurriculumMode('none')">
-              <span>Standalone Video Only</span>
+              <span>Standalone Videos Only</span>
             </label>
           </div>
 
@@ -870,7 +904,7 @@ $myProgress = getEmployeeProgressSummary($user['id']);
           <!-- Mode 2: Create New Curriculum On The Fly -->
           <div id="curriculum-container-new" style="display:none;background:#ffffff;border:1.5px solid #93c5fd;border-radius:12px;padding:16px;">
             <div style="font-size:13.5px;font-weight:800;color:#1d4ed8;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
-              <span>✨</span> New Curriculum Information (This video will be Lesson #1)
+              <span>✨</span> New Curriculum Information (Uploaded videos will form the sequential syllabus)
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
               <div style="grid-column:1/-1;">
@@ -888,7 +922,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
               <div>
                 <label style="font-size:12.5px;font-weight:700;color:#334155;display:block;margin-bottom:4px;">Curriculum Badge Icon</label>
                 <select id="inline-curriculum-icon" style="width:100%;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;">
-                  <option value="🏗️">🏗️ Structure & Modeling</option>
+                  <option value="" selected>None (Clean Title)</option>
+                  <option value="📐">📐 Structure & Modeling</option>
                   <option value="🔩">🔩 Reinforcement & Rebar</option>
                   <option value="🔍">🔍 Coordination & Clash Detection</option>
                   <option value="✏️">✏️ AutoCAD 2D/3D Drafting</option>
@@ -902,24 +937,36 @@ $myProgress = getEmployeeProgressSummary($user['id']);
               </div>
             </div>
             <div style="font-size:12px;color:#1e40af;margin-top:10px;font-weight:600;background:#eff6ff;padding:8px 12px;border-radius:8px;">
-              💡 This video will be registered as Lesson #1 of the new curriculum track, and automatically placed in the Course Catalog!
+              💡 The uploaded videos will be registered in order as lessons in this new curriculum track!
             </div>
           </div>
 
           <!-- Mode 3: Standalone Notice -->
           <div id="curriculum-container-none" style="display:none;background:#f1f5f9;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#475569;">
-            ℹ️ This video will be published only in the general video list and assigned to the selected station, without belonging to a structured curriculum course.
+            ℹ️ These videos will be published in the general video list and assigned to the selected station(s), without belonging to a curriculum course.
           </div>
         </div>
 
-        <!-- Mode 1: Direct File -->
+        <!-- Mode 1: Direct File Upload (Multiple Supported) -->
         <div id="vinput-container-file" style="display:block;grid-column:1/-1;">
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Select Video File (.mp4, .webm, .mov) *</label>
-          <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:2px dashed #cbd5e1;border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;background:#f8fafc;">
-            <div style="font-size:36px;margin-bottom:8px;">🎬</div>
-            <div id="vfile-selected-name" style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Click to choose video from your computer</div>
-            <div style="font-size:12px;color:#64748b;">MP4, WEBM, MOV</div>
-            <input id="new-video-file-input" type="file" accept="video/*" style="display:none;" onchange="handleAdminVideoFilePick(this)" />
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Select Video File(s) (.mp4, .webm, .mov) * (Multiple Files Supported)</label>
+          <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:2px dashed #cbd5e1;border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:all 0.2s;" ondragover="event.preventDefault();this.style.borderColor='#2563eb';this.style.background='#eff6ff'" ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'" ondrop="handleAdminVideoDrop(event)">
+            <div style="font-size:38px;margin-bottom:8px;">🎬</div>
+            <div id="vfile-selected-name" style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:4px;">Click or drag to select one or multiple video files</div>
+            <div style="font-size:12px;color:#64748b;">MP4, WEBM, MOV • Select multiple files at once</div>
+            <input id="new-video-file-input" type="file" accept="video/*" multiple style="display:none;" onchange="handleAdminVideoFilePick(this)" />
+          </div>
+
+          <!-- Multiple Files Selected Queue Preview -->
+          <div id="vfiles-queue-container" style="display:none;margin-top:16px;background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:14px;padding:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+              <div>
+                <span style="font-size:14px;font-weight:900;color:#0f172a;" id="vfiles-queue-title">Selected Videos (0)</span>
+                <span style="font-size:12px;color:#64748b;margin-left:8px;" id="vfiles-queue-size"></span>
+              </div>
+              <button type="button" onclick="clearSelectedVideoFiles()" style="background:#fee2e2;color:#b91c1c;border:none;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">Clear Selection</button>
+            </div>
+            <div id="vfiles-queue-list" style="display:flex;flex-direction:column;gap:10px;max-height:280px;overflow-y:auto;"></div>
           </div>
         </div>
 
@@ -979,9 +1026,6 @@ $myProgress = getEmployeeProgressSummary($user['id']);
           <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 6px;">📚 Curricula Management & Creator</h3>
           <p style="color:#64748b;font-size:14px;margin:0;">Create comprehensive multi-lesson training curricula, set target stations, and organize course syllabi.</p>
         </div>
-        <button onclick="showSection('courses')" style="background:#f8fafc;border:1px solid #cbd5e1;color:#1e293b;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
-          👁️ Preview Public Catalog
-        </button>
       </div>
 
       <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:16px;padding:22px;margin-bottom:28px;">
@@ -1012,8 +1056,6 @@ $myProgress = getEmployeeProgressSummary($user['id']);
               <option value="trainee">🎓 Trainees (Onboarding & Foundation)</option>
               <option value="engineer">📐 Structural & MEP Engineers</option>
               <option value="architect">🏛️ Architects & Designers</option>
-              <option value="modeler">🏗️ BIM Modelers & Detailers</option>
-              <option value="manager">📋 Project Managers & Supervisors</option>
             </select>
           </div>
 
@@ -1029,7 +1071,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
           <div>
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Icon Badge</label>
             <select id="new-course-icon" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
-              <option value="🏗️">🏗️ Structure & Modeling</option>
+              <option value="" selected>None (Clean Title)</option>
+              <option value="📐">📐 Structure & Modeling</option>
               <option value="🔩">🔩 Reinforcement & Rebar</option>
               <option value="🔍">🔍 Coordination & Clash</option>
               <option value="✏️">✏️ AutoCAD 2D/3D</option>
@@ -1089,8 +1132,8 @@ $myProgress = getEmployeeProgressSummary($user['id']);
 <section id="section-classroom" style="display:none;background:#f4f7fc;padding:32px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <button onclick="showSection('courses')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1e293b;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
-        ← Back to Catalog
+      <button onclick="showSection('videos')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1e293b;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
+        ← Back to Videos
       </button>
       <div style="display:flex;align-items:center;gap:10px;">
         <span id="classroom-course-cat" class="badge" style="background:#eff6ff;color:#1d4ed8;">BIM</span>
@@ -1098,30 +1141,53 @@ $myProgress = getEmployeeProgressSummary($user['id']);
       </div>
     </div>
 
-    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:1fr 340px;gap:24px;">
+    <div id="classroom-restriction-banner" style="background:#eff6ff;border:1.5px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 18px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">🛡️</span>
+        <span style="font-size:13px;font-weight:600;"><strong>Curriculum Tracker Active:</strong> Lessons unlock in sequence. Fast-forwarding is restricted, rewinding is enabled, and your watch position is automatically preserved via cookies.</span>
+      </div>
+      <div id="classroom-cookie-indicator" style="font-size:11.5px;color:#1e40af;background:#dbeafe;padding:4px 12px;border-radius:9999px;font-weight:700;display:flex;align-items:center;gap:5px;">
+        <span>🍪</span> Cookie Auto-Resume Active
+      </div>
+    </div>
+
+    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:1fr 360px;gap:24px;">
       <div style="background:#ffffff;border:1px solid #eef2f6;border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:14px;overflow:hidden;margin-bottom:18px;min-height:360px;"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div class="yt-frame" id="classroom-player" style="background:#000000;border-radius:14px;overflow:hidden;margin-bottom:18px;min-height:380px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
           <div>
-            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0;">Lesson Overview</h3>
-            <div id="classroom-lesson-duration" style="display:none;"></div>
+            <h3 id="classroom-lesson-title" style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 4px;">Lesson Overview</h3>
+            <span id="classroom-lesson-resume-badge" style="display:none;background:#ecfdf5;color:#065f46;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;">⏱️ Resumed from cookie</span>
           </div>
-          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
+          <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#334155;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
             <span>○</span> Mark as Completed
+          </button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:14px;border-top:1px solid #f1f5f9;">
+          <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1.5px solid #cbd5e1;color:#334155;padding:8px 16px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;">
+            ← Previous Lesson
+          </button>
+          <div id="classroom-step-indicator" style="font-size:12px;color:#64748b;font-weight:700;">Lesson 1 of 1</div>
+          <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <span>Next Lesson</span> →
           </button>
         </div>
       </div>
 
       <div style="background:#ffffff;border:1px solid #eef2f6;border-radius:20px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,0.04);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <h4 style="font-size:15px;font-weight:900;color:#0f172a;margin:0;">Course Syllabus</h4>
-          <span id="classroom-playlist-count" style="font-size:12px;color:#64748b;font-weight:700;">Lessons</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div>
+            <h4 style="font-size:15px;font-weight:900;color:#0f172a;margin:0;">Course Syllabus</h4>
+            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Follow curriculum in sequence</div>
+          </div>
+          <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;">Lessons</span>
         </div>
         <div style="background:#f1f5f9;border-radius:9999px;height:8px;overflow:hidden;margin-bottom:6px;">
           <div id="classroom-progress-bar" style="background:linear-gradient(90deg,#2563eb,#06b6d4);width:0%;height:100%;transition:width 0.3s;"></div>
         </div>
-        <div id="classroom-progress-text" style="font-size:11px;color:#64748b;font-weight:700;text-align:right;margin-bottom:16px;">0%</div>
-        <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:460px;overflow-y:auto;"></div>
+        <div id="classroom-progress-text" style="font-size:11.5px;color:#475569;font-weight:700;text-align:right;margin-bottom:16px;">0% Completed</div>
+        <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:500px;overflow-y:auto;"></div>
       </div>
     </div>
   </div>
@@ -1168,47 +1234,15 @@ let videoProgressDebounceTimer = null;
 const STORAGE_KEY_COURSES = 'BSD_CUSTOM_COURSES';
 const STORAGE_KEY_PROGRESS = 'BSD_STUDENT_PROGRESS';
 
-const DEFAULT_COURSES = [
-  {
-    id: 'revit-struct', cat: 'revit', title: 'Revit Structure Modeling Mastery', icon: '🔩', level: 'Intermediate', duration: '22 hrs',
-    syllabus: [
-      { id: 'rs_l1', title: '1. Foundation Grids & Concrete Elements', duration: '14:20', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
-      { id: 'rs_l2', title: '2. Cross Rebar Modeling & Detailing', duration: '18:35', ytId: 'videos/X_rebar_modeling.mp4' },
-      { id: 'rs_l3', title: '3. Structural Framing & Column Layout', duration: '19:40', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' }
-    ]
-  },
-  {
-    id: 'bim-coord', cat: 'coordination', title: 'BIM Coordination & Advanced Workflows', icon: '🏗️', level: 'Advanced', duration: '28 hrs',
-    syllabus: [
-      { id: 'bc_l1', title: '1. Multi-discipline Model Federation', duration: '18:10', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
-      { id: 'bc_l2', title: '2. Clash Detection Matrix & Tolerances', duration: '22:45', ytId: 'videos/X_rebar_modeling.mp4' }
-    ]
-  },
-  {
-    id: 'navisworks', cat: 'navisworks', title: 'Navisworks Clash Detection & Review', icon: '🔍', level: 'Intermediate', duration: '14 hrs',
-    syllabus: [
-      { id: 'nw_l1', title: '1. Appending NWD & NWC Models', duration: '15:20', ytId: 'videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4' },
-      { id: 'nw_l2', title: '2. Clash Batches & Grouping Rules', duration: '20:15', ytId: 'videos/X_rebar_modeling.mp4' }
-    ]
-  }
-];
-
-const DEFAULT_PRACTICE_FILES = [
-  { id: 'pf_1', cat: 'rvt', name: 'Hospital_Structural_Rebar_Model.rvt', size: '42.5 MB', type: 'RVT', icon: '🏗️' },
-  { id: 'pf_2', cat: 'dwg', name: 'Foundation_Piles_Coordination_Grid.dwg', size: '14.2 MB', type: 'DWG', icon: '📐' },
-  { id: 'pf_3', cat: 'nwd', name: 'Multi_Discipline_Federated_Clash.nwd', size: '68.0 MB', type: 'NWD', icon: '🔍' },
-  { id: 'pf_4', cat: 'pdf', name: 'ISO_19650_BIM_Execution_Plan_Template.pdf', size: '3.8 MB', type: 'PDF', icon: '📄' }
-];
+const DEFAULT_COURSES = [];
+const DEFAULT_PRACTICE_FILES = [];
 
 function getAllCourses() {
-  if (Array.isArray(window.SERVER_INITIAL_COURSES) && window.SERVER_INITIAL_COURSES.length > 0) {
-    return window.SERVER_INITIAL_COURSES;
-  }
-  return DEFAULT_COURSES;
+  return window.SERVER_INITIAL_COURSES || [];
 }
 
 function getAllAdminCourses() {
-  if (Array.isArray(window.ALL_ADMIN_COURSES) && window.ALL_ADMIN_COURSES.length > 0) {
+  if (Array.isArray(window.ALL_ADMIN_COURSES)) {
     return window.ALL_ADMIN_COURSES;
   }
   return getAllCourses();
@@ -1222,21 +1256,107 @@ async function getAllVideos() {
   return window.SERVER_INITIAL_VIDEOS || [];
 }
 
+/* ── COOKIE PERSISTENCE HELPERS ── */
+function setBimCookie(name, value, days = 30) {
+  try {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + ";" + expires + ";path=/;SameSite=Lax";
+  } catch (e) {
+    console.error('Cookie set error:', e);
+  }
+}
+
+function getBimCookie(name) {
+  try {
+    const cname = encodeURIComponent(name) + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(cname) === 0) {
+        return c.substring(cname.length);
+      }
+    }
+  } catch (e) {
+    console.error('Cookie get error:', e);
+  }
+  return null;
+}
+
+/* ── CURRICULUM UNLOCK & PROGRESS LOGIC ── */
+function isLessonCompleted(lessonId) {
+  if (!lessonId) return false;
+  const progressData = window.INITIAL_PROGRESS || {};
+  const watchedMap = progressData.watched_videos || {};
+  const rec = watchedMap[lessonId];
+  return !!(rec && (rec.completed === true || rec.percent >= 90));
+}
+
+function isLessonUnlocked(course, lessonIdx) {
+  // Staff Admin has global access to all lessons for preview/auditing
+  if (typeof window.USER_ROLE !== 'undefined' && window.USER_ROLE === 'admin') return true;
+  // First video in sequence is always unlocked
+  if (lessonIdx <= 0) return true;
+  if (!course || !course.syllabus) return false;
+
+  // Video #N cannot be opened unless Video #(N-1) is finished!
+  const prevLesson = course.syllabus[lessonIdx - 1];
+  if (!prevLesson) return false;
+  const prevId = prevLesson.id || ('les_' + (lessonIdx - 1));
+  return isLessonCompleted(prevId);
+}
+
+function findVideoCurriculumContext(videoId) {
+  if (!videoId) return null;
+  const courses = getAllCourses();
+  for (const c of courses) {
+    if (c.syllabus && Array.isArray(c.syllabus)) {
+      const idx = c.syllabus.findIndex(l => l.id === videoId || l.ytId === videoId);
+      if (idx !== -1) {
+        return { course: c, index: idx, lesson: c.syllabus[idx] };
+      }
+    }
+  }
+  return null;
+}
+
+function getCurriculumProgressStats(course) {
+  if (!course || !course.syllabus || course.syllabus.length === 0) {
+    return { completedCount: 0, total: 0, percent: 0, isAllCompleted: false };
+  }
+  const total = course.syllabus.length;
+  let completedCount = 0;
+  course.syllabus.forEach((l, idx) => {
+    const lId = l.id || ('les_' + idx);
+    if (isLessonCompleted(lId)) completedCount++;
+  });
+  const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  return { completedCount, total, percent, isAllCompleted: completedCount >= total };
+}
+
 /* ── PROGRESS TRACKING REALTIME ENGINE ── */
-async function syncVideoProgress(videoId, percent, completed = false) {
+async function syncVideoProgress(videoId, percent, completed = false, position = 0) {
   if (!videoId) return;
   try {
     const res = await fetch('api/progress.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ video_id: videoId, percent: percent, completed: completed })
+      body: JSON.stringify({ 
+        video_id: videoId, 
+        percent: percent, 
+        completed: completed, 
+        position: position 
+      })
     });
     const json = await res.json();
     if (json.success && json.summary) {
       window.INITIAL_PROGRESS = json.summary;
       updateProgressDisplay(json.summary);
-      if (completed) {
-        showToast('🎉 Lesson completed! Progress saved.', '#10b981');
+      if (currentClassroomCourse) {
+        renderClassroomPlaylist();
+        updateClassroomNavButtons();
       }
     }
   } catch (err) {
@@ -1262,68 +1382,314 @@ function updateProgressDisplay(summary) {
   renderEmployeeProgressChecklist();
 }
 
-function attachVideoTracking(videoEl, videoId) {
+/* ── ANTI-SKIPPING & COOKIE RESUME VIDEO TRACKER ── */
+function attachVideoTracking(videoEl, videoId, courseContext = null) {
   if (!videoEl || !videoId) return;
   currentPlayingVideoId = videoId;
   currentPlayingVideoElement = videoEl;
 
-  let lastReportedTier = 0;
+  const currentUserId = (window.ACTIVE_USER && window.ACTIVE_USER.id) ? window.ACTIVE_USER.id : 'emp';
+  const cookieKey = `bim_video_resume_${currentUserId}_${videoId}`;
+  const localKey = `bim_video_resume_${currentUserId}_${videoId}`;
+
+  const alreadyDone = isLessonCompleted(videoId);
+  const isAdmin = (typeof window.USER_ROLE !== 'undefined' && window.USER_ROLE === 'admin');
+  
+  // Anti-skip is enforced for uncompleted videos of members/trainees/employees
+  const antiSkipStrict = !alreadyDone && !isAdmin;
+
+  // Read saved position from Cookie > LocalStorage > Backend
+  let savedPosition = 0;
+  try {
+    const fromCookie = getBimCookie(cookieKey);
+    const fromLocal = localStorage.getItem(localKey);
+    const fromServer = (window.INITIAL_PROGRESS?.watched_videos?.[videoId]?.position) || 0;
+    savedPosition = parseFloat(fromCookie || fromLocal || fromServer || 0);
+  } catch (e) {}
+
+  let maxWatchedSeconds = savedPosition > 0 ? savedPosition : 0;
+  let lastValidTime = maxWatchedSeconds;
+  let positionRestored = false;
+  let isResettingSeek = false;
+  let lastWarnToastMs = 0;
+
+  const performResume = () => {
+    if (positionRestored) return;
+    if (savedPosition > 2 && (!videoEl.duration || savedPosition < videoEl.duration - 4)) {
+      isResettingSeek = true;
+      videoEl.currentTime = savedPosition;
+      lastValidTime = savedPosition;
+      maxWatchedSeconds = Math.max(maxWatchedSeconds, savedPosition);
+      positionRestored = true;
+      const mins = Math.floor(savedPosition / 60);
+      const secs = Math.floor(savedPosition % 60).toString().padStart(2, '0');
+      
+      const badge = document.getElementById('classroom-lesson-resume-badge');
+      if (badge) {
+        badge.style.display = 'inline-block';
+        badge.textContent = `⏱️ Resumed from ${mins}:${secs} (via cookie)`;
+      }
+      showToast(`⏱️ Resumed from where you stopped (${mins}:${secs}) via cookie`, '#2563eb');
+    }
+  };
+
+  videoEl.addEventListener('loadedmetadata', performResume);
+  videoEl.addEventListener('canplay', () => {
+    if (!positionRestored && savedPosition > 2) performResume();
+  });
+
+  // 1. Anti-Skipping: Block forward seeking beyond watched content
+  videoEl.addEventListener('seeking', () => {
+    if (isResettingSeek) {
+      return;
+    }
+
+    if (!antiSkipStrict) {
+      lastValidTime = videoEl.currentTime;
+      return;
+    }
+
+    // Forward scrubbing past watched progress is rejected
+    if (videoEl.currentTime > maxWatchedSeconds + 1.2) {
+      isResettingSeek = true;
+      const targetTime = Math.min(lastValidTime, maxWatchedSeconds);
+      videoEl.currentTime = targetTime;
+
+      const now = Date.now();
+      if (now - lastWarnToastMs > 2500) {
+        lastWarnToastMs = now;
+        showToast('⚠️ Fast-forwarding is restricted. Please watch the video to progress. (Rewind is allowed)', '#ef4444');
+      }
+    } else {
+      // Rewinding or seeking within already-watched range is completely allowed
+      lastValidTime = videoEl.currentTime;
+    }
+  });
+
+  videoEl.addEventListener('seeked', () => {
+    isResettingSeek = false;
+    lastValidTime = videoEl.currentTime;
+  });
+
+  // 2. Continuous timeupdate: update max watched position, throttled cookie saving
+  let lastCookieSaveMs = 0;
+  let lastSyncPercentTier = 0;
+
   videoEl.addEventListener('timeupdate', () => {
     if (!videoEl.duration) return;
-    const pct = Math.round((videoEl.currentTime / videoEl.duration) * 100);
-    
-    // Status pill in modal
+    const curTime = videoEl.currentTime;
+
+    // During normal playback (not actively seeking forward)
+    if (!videoEl.seeking) {
+      if (curTime > maxWatchedSeconds) {
+        maxWatchedSeconds = curTime;
+      }
+      lastValidTime = curTime;
+    }
+
+    // Save exact second to Cookie & LocalStorage every 2.5 seconds
+    const now = Date.now();
+    if (now - lastCookieSaveMs > 2500 && curTime > 1) {
+      lastCookieSaveMs = now;
+      setBimCookie(cookieKey, Math.floor(curTime));
+      try { localStorage.setItem(localKey, Math.floor(curTime)); } catch (e) {}
+    }
+
+    const pct = Math.round((curTime / videoEl.duration) * 100);
+
+    // Update modal pill if visible
     const pill = document.getElementById('vmodal-status-pill');
     if (pill) {
-      pill.textContent = pct >= 90 ? '✓ Completed' : `Watching (${pct}%)`;
+      pill.textContent = pct >= 90 ? '✓ Completed' : `Watching (${pct}%) • Cookies Active`;
       pill.style.background = pct >= 90 ? '#ecfdf5' : '#eff6ff';
       pill.style.color = pct >= 90 ? '#059669' : '#1d4ed8';
     }
 
-    // Report milestones (25%, 50%, 75%, 90%)
-    if (pct >= 90 && lastReportedTier < 90) {
-      lastReportedTier = 90;
-      syncVideoProgress(videoId, pct, true);
-    } else if (pct >= 50 && lastReportedTier < 50) {
-      lastReportedTier = 50;
-      syncVideoProgress(videoId, pct, false);
+    // Milestones sync to backend with exact position
+    if (pct >= 90 && lastSyncPercentTier < 90) {
+      lastSyncPercentTier = 90;
+      onVideoLessonFinished(videoId, curTime, courseContext);
+    } else if (pct >= 50 && lastSyncPercentTier < 50) {
+      lastSyncPercentTier = 50;
+      syncVideoProgress(videoId, pct, false, curTime);
     }
   });
 
+  // 3. Pause & unload: immediate cookie & progress save
+  videoEl.addEventListener('pause', () => {
+    if (videoEl.currentTime > 1) {
+      setBimCookie(cookieKey, Math.floor(videoEl.currentTime));
+      try { localStorage.setItem(localKey, Math.floor(videoEl.currentTime)); } catch (e) {}
+      syncVideoProgress(videoId, Math.round((videoEl.currentTime / (videoEl.duration || 1)) * 100), isLessonCompleted(videoId), videoEl.currentTime);
+    }
+  });
+
+  // 4. Video ended: completion
   videoEl.addEventListener('ended', () => {
-    syncVideoProgress(videoId, 100, true);
+    onVideoLessonFinished(videoId, videoEl.duration || 0, courseContext);
   });
 }
 
+function onVideoLessonFinished(videoId, position = 0, courseContext = null) {
+  syncVideoProgress(videoId, 100, true, position);
+
+  if (currentClassroomCourse) {
+    const syllabus = currentClassroomCourse.syllabus || [];
+    const currentIdx = currentClassroomLessonIdx;
+    const nextIdx = currentIdx + 1;
+
+    renderClassroomPlaylist();
+    updateClassroomNavButtons();
+
+    if (nextIdx < syllabus.length) {
+      const nextL = syllabus[nextIdx];
+      showToast(`🎉 Lesson completed! Next video "${nextL.title}" is now unlocked!`, '#10b981');
+    } else {
+      showToast('🏆 Masterclass Completed! All videos in this curriculum track finished!', '#059669');
+    }
+  } else {
+    showToast('🎉 Video completed! Progress recorded.', '#10b981');
+  }
+}
+
+/* ── MY PROGRESS PAGE: CURRICULUM TRACKER & VIDEO CHECKLIST ── */
 function renderEmployeeProgressChecklist() {
   const container = document.getElementById('my-videos-checklist');
   if (!container) return;
 
+  const courses = getAllCourses();
   const videos = window.SERVER_INITIAL_VIDEOS || [];
   const progressData = window.INITIAL_PROGRESS || {};
   const watchedMap = progressData.watched_videos || {};
 
+  let html = '';
+
+  // 1. CURRICULUM TRACKS PROGRESS SECTION
+  if (courses.length > 0) {
+    html += `
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">Assigned Curricula Tracks</h4>
+            <div style="font-size:12px;color:#64748b;margin-top:2px;">Sequential learning paths. Videos must be completed in order.</div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;padding:4px 10px;border-radius:8px;">
+            ${courses.length} Active Tracks
+          </span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          ${courses.map(course => {
+            const stats = getCurriculumProgressStats(course);
+            const syllabus = course.syllabus || [];
+            
+            const hasValidIcon = course.icon && !['🏗️', '🏗', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(course.icon);
+            const iconMarkup = hasValidIcon ? `
+              <div style="width:42px;height:42px;border-radius:12px;background:#ffffff;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 4px rgba(0,0,0,0.04);">
+                ${course.icon}
+              </div>
+            ` : '';
+            
+            return `
+              <div style="background:#f8fafc;border:1.5px solid ${stats.isAllCompleted ? '#a7f3d0' : '#e2e8f0'};border-radius:18px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    ${iconMarkup}
+                    <div>
+                      <div style="font-size:15px;font-weight:900;color:#0f172a;">${course.title}</div>
+                      <div style="font-size:12px;color:#64748b;">
+                        ${course.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${(course.station || 'all').toUpperCase()}</strong> • ${syllabus.length} Sequential Lessons
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="display:flex;align-items:center;gap:14px;">
+                    <div style="text-align:right;">
+                      <div style="font-size:13px;font-weight:900;color:${stats.isAllCompleted ? '#059669' : '#1d4ed8'};">${stats.percent}% Completed</div>
+                      <div style="font-size:11.5px;color:#64748b;">${stats.completedCount} of ${stats.total} Lessons Done</div>
+                    </div>
+                    <button onclick="openClassroom('${course.id}')" style="background:${stats.isAllCompleted ? '#f1f5f9' : 'linear-gradient(135deg,#2563eb,#06b6d4)'};color:${stats.isAllCompleted ? '#1e293b' : '#ffffff'};border:none;padding:9px 18px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:${stats.isAllCompleted ? 'none' : '0 4px 12px rgba(37,99,235,0.25)'};">
+                      ${stats.isAllCompleted ? 'Rewatch Course' : 'Continue Curriculum →'}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Syllabus Step Pipeline -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:10px;margin-top:14px;padding-top:14px;border-top:1px dashed #cbd5e1;">
+                  ${syllabus.map((lesson, idx) => {
+                    const lId = lesson.id || ('les_' + idx);
+                    const done = isLessonCompleted(lId);
+                    const unlocked = isLessonUnlocked(course, idx);
+                    
+                    let statusBg = '#ffffff';
+                    let statusBorder = '#e2e8f0';
+                    let statusIcon = '🔒';
+                    let statusLabel = `Locked (Complete Part ${idx} first)`;
+                    let statusColor = '#94a3b8';
+
+                    if (done) {
+                      statusBg = '#ecfdf5';
+                      statusBorder = '#a7f3d0';
+                      statusIcon = '✓';
+                      statusLabel = 'Completed';
+                      statusColor = '#059669';
+                    } else if (unlocked) {
+                      statusBg = '#eff6ff';
+                      statusBorder = '#bfdbfe';
+                      statusIcon = '▶';
+                      statusLabel = 'Up Next / Unlocked';
+                      statusColor = '#1d4ed8';
+                    }
+
+                    return `
+                      <div onclick="${unlocked ? `openClassroom('${course.id}', ${idx})` : `showToast('🔒 Complete the previous lesson first to unlock!', '#ef4444')`}" style="background:${statusBg};border:1.5px solid ${statusBorder};border-radius:10px;padding:10px 12px;cursor:${unlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:10px;transition:transform 0.15s;">
+                        <span style="font-weight:900;color:${statusColor};font-size:14px;">${statusIcon}</span>
+                        <div style="overflow:hidden;flex:1;">
+                          <div style="font-size:12px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${lesson.title}</div>
+                          <div style="font-size:10.5px;font-weight:700;color:${statusColor};margin-top:1px;">${statusLabel}</div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. ASSIGNED VIDEOS CHECKLIST
+  html += `
+    <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0 0 14px;">All Assigned Training Videos</h4>
+  `;
+
   if (videos.length === 0) {
-    container.innerHTML = '<div style="color:#64748b;padding:20px;text-align:center;">No videos assigned to your station yet.</div>';
+    html += '<div style="color:#64748b;padding:20px;text-align:center;">No videos assigned to your station yet.</div>';
+    container.innerHTML = html;
     return;
   }
 
-  container.innerHTML = videos.map(v => {
+  html += videos.map(v => {
     const record = watchedMap[v.id] || {};
     const isDone = !!record.completed;
     const pct = record.percent || (isDone ? 100 : 0);
     const stationLabel = (v.station && v.station !== 'all') ? v.station.toUpperCase() : 'GENERAL';
+    const curCtx = findVideoCurriculumContext(v.id);
+    const isCurriculumLocked = curCtx && !isLessonUnlocked(curCtx.course, curCtx.index);
 
     return `
-      <div style="background:#f8fafc;border:1.5px solid ${isDone ? '#a7f3d0' : '#e2e8f0'};border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div style="background:#f8fafc;border:1.5px solid ${isDone ? '#a7f3d0' : (isCurriculumLocked ? '#f1f5f9' : '#e2e8f0')};border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;opacity:${isCurriculumLocked ? '0.75' : '1'};">
         <div style="display:flex;align-items:center;gap:14px;min-width:240px;flex:1;">
-          <div style="width:36px;height:36px;border-radius:50%;background:${isDone ? '#10b981' : '#e2e8f0'};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;">
-            ${isDone ? '✓' : '○'}
+          <div style="width:36px;height:36px;border-radius:50%;background:${isDone ? '#10b981' : (isCurriculumLocked ? '#cbd5e1' : '#e2e8f0')};color:${isDone ? 'white' : '#64748b'};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;">
+            ${isDone ? '✓' : (isCurriculumLocked ? '🔒' : '○')}
           </div>
           <div>
             <div style="font-size:15px;font-weight:800;color:#0f172a;">${v.title}</div>
             <div style="font-size:12px;color:#64748b;margin-top:2px;">
               ${v.cat.toUpperCase()} • Station: <strong style="color:#2563eb;">${stationLabel}</strong>
+              ${curCtx ? ` • <span style="color:#0284c7;font-weight:700;">Part of ${curCtx.course.title}</span>` : ''}
             </div>
           </div>
         </div>
@@ -1338,18 +1704,31 @@ function renderEmployeeProgressChecklist() {
             </div>
           </div>
 
-          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isDone ? '#f1f5f9' : '#2563eb'};color:${isDone ? '#1e293b' : '#ffffff'};border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
-            ${isDone ? 'Rewatch' : 'Watch Now →'}
+          <button onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="background:${isCurriculumLocked ? '#e2e8f0' : (isDone ? '#f1f5f9' : '#2563eb')};color:${isCurriculumLocked ? '#64748b' : (isDone ? '#1e293b' : '#ffffff')};border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:${isCurriculumLocked ? 'not-allowed' : 'pointer'};">
+            ${isCurriculumLocked ? '🔒 Locked' : (isDone ? 'Rewatch' : 'Watch Now →')}
           </button>
         </div>
       </div>
     `;
   }).join('');
+
+  container.innerHTML = html;
 }
 
 /* ── NAVIGATION ── */
 function showSection(name) {
-  ['home','courses','videos','files','classroom','my-progress','team-progress','analytics','upload'].forEach(s => {
+  if (name === 'home' || name === 'courses') {
+    name = getRoleLandingSection();
+  }
+  // Strict role authorization:
+  if ((name === 'analytics' || name === 'upload') && window.USER_ROLE !== 'admin') {
+    name = getRoleLandingSection();
+  }
+  if (name === 'team-progress' && window.USER_ROLE !== 'team_leader' && window.USER_ROLE !== 'admin') {
+    name = getRoleLandingSection();
+  }
+
+  ['videos','files','classroom','my-progress','team-progress','analytics','upload'].forEach(s => {
     const el = document.getElementById('section-' + s);
     if (el) el.style.display = (s === name) ? 'block' : 'none';
 
@@ -1360,8 +1739,6 @@ function showSection(name) {
     }
   });
 
-  if (name === 'home') renderHomeFeatured();
-  if (name === 'courses') renderCoursesCatalog('all');
   if (name === 'videos') renderVideosCategory('all_sims');
   if (name === 'files') renderPracticeFiles('all');
   if (name === 'my-progress') renderEmployeeProgressChecklist();
@@ -1377,6 +1754,16 @@ function showSection(name) {
 async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, videoId, station) {
   const title = decodeURIComponent(encodedTitle || '');
   const desc = decodeURIComponent(encodedDesc || '');
+
+  // If this video is part of a curriculum track, verify prerequisites
+  const curCtx = findVideoCurriculumContext(videoId);
+  if (curCtx && !isLessonUnlocked(curCtx.course, curCtx.index)) {
+    const prev = curCtx.course.syllabus[curCtx.index - 1];
+    const prevTitle = prev ? prev.title : 'the prerequisite video';
+    showToast(`🔒 Locked: This video is Part ${curCtx.index + 1} of "${curCtx.course.title}". You must finish "${prevTitle}" first!`, '#ef4444');
+    return;
+  }
+
   document.getElementById('vmodal-title').textContent = title;
   document.getElementById('vmodal-desc').textContent = desc;
 
@@ -1405,7 +1792,7 @@ async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, vide
 
     const vidEl = document.getElementById('active-bim-video');
     if (vidEl && videoId) {
-      attachVideoTracking(vidEl, videoId);
+      attachVideoTracking(vidEl, videoId, curCtx);
     }
   }
 }
@@ -1418,6 +1805,20 @@ async function renderVideosCategory(category) {
   let videos = await getAllVideos();
   if (category !== 'all_sims') {
     videos = videos.filter(v => v.cat === category);
+  }
+
+  const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
+
+  if (videos.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:54px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
+        <div style="font-size:42px;margin-bottom:12px;">🎬</div>
+        <h4 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">No Training Videos Uploaded Yet</h4>
+        <p style="color:#64748b;font-size:13.5px;max-width:480px;margin:0 auto 18px;">All dummy records have been removed. The video catalog is ready for real company training videos.</p>
+        ${isAdmin ? `<button onclick="showSection('upload')" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Upload First Video</button>` : ''}
+      </div>
+    `;
+    return;
   }
 
   const progressData = window.INITIAL_PROGRESS || {};
@@ -1471,6 +1872,19 @@ function renderHomeFeatured() {
   if (!container) return;
   const courses = getAllCourses().slice(0, 3);
   const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
+
+  if (courses.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:42px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
+        <div style="font-size:36px;margin-bottom:10px;">📚</div>
+        <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0 0 6px;">No Curricula Created Yet</h4>
+        <p style="color:#64748b;font-size:13px;margin:0 auto 14px;max-width:440px;">Publish curriculum tracks with structured video lessons to train employees.</p>
+        ${isAdmin ? `<button onclick="showSection('upload')" style="background:#2563eb;color:white;border:none;padding:9px 20px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">+ Create Curriculum</button>` : ''}
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = courses.map(c => `
     <div class="dashboard-card" onclick="openClassroom('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;">
       <div>
@@ -1492,6 +1906,19 @@ function renderCoursesCatalog(filterCat) {
   let list = getAllCourses();
   if (filterCat !== 'all') list = list.filter(c => c.cat === filterCat);
   const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:54px 20px;background:#ffffff;border:1.5px dashed #cbd5e1;border-radius:20px;">
+        <div style="font-size:42px;margin-bottom:12px;">🎓</div>
+        <h4 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;">Curricula Catalog is Empty</h4>
+        <p style="color:#64748b;font-size:13.5px;max-width:480px;margin:0 auto 18px;">All dummy tracks have been removed. Use <strong>Upload Material</strong> to create real curriculum tracks and attach videos in sequential order.</p>
+        ${isAdmin ? `<button onclick="showSection('upload')" style="background:linear-gradient(135deg,#2563eb,#06b6d4);color:white;border:none;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.25);">+ Create First Curriculum Track</button>` : ''}
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = list.map(c => `
     <div class="dashboard-card" onclick="openClassroom('${c.id}')" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:200px;">
       <div>
@@ -1518,53 +1945,242 @@ function filterCoursesCatalog(cat) {
   renderCoursesCatalog(cat);
 }
 
-/* ── CLASSROOM ── */
+/* ── CLASSROOM & SEQUENTIAL CURRICULUM CONTROLLER ── */
 let currentClassroomCourse = null;
 let currentClassroomLessonIdx = 0;
 
-function openClassroom(courseId, lessonIdx = 0) {
-  const course = getAllCourses().find(c => c.id === courseId) || DEFAULT_COURSES[0];
+function openClassroom(courseId, lessonIdx = null) {
+  const courses = getAllCourses();
+  if (courses.length === 0) {
+    showToast('ℹ️ No curriculum tracks created yet. Go to Upload Material to create one.', '#2563eb');
+    showSection('upload');
+    return;
+  }
+
+  const course = courses.find(c => c.id === courseId) || courses[0];
+  if (!course) return;
+
   currentClassroomCourse = course;
   document.getElementById('classroom-course-title').textContent = course.title;
-  renderClassroomPlaylist();
-  loadClassroomLesson(lessonIdx);
+  
+  const catEl = document.getElementById('classroom-course-cat');
+  if (catEl) catEl.textContent = (course.cat || 'BIM').toUpperCase();
+
+  // If lessonIdx is not explicitly passed or is locked, find the first incomplete unlocked lesson
+  const syllabus = course.syllabus || [];
+  let targetIdx = 0;
+  if (lessonIdx !== null && typeof lessonIdx === 'number' && isLessonUnlocked(course, lessonIdx)) {
+    targetIdx = lessonIdx;
+  } else {
+    // Find first unlocked incomplete lesson
+    for (let i = 0; i < syllabus.length; i++) {
+      const lId = syllabus[i].id || ('les_' + i);
+      if (isLessonUnlocked(course, i) && !isLessonCompleted(lId)) {
+        targetIdx = i;
+        break;
+      }
+    }
+  }
+
   showSection('classroom');
+  loadClassroomLesson(targetIdx);
 }
 
 function renderClassroomPlaylist() {
   const container = document.getElementById('classroom-playlist-items');
   if (!container || !currentClassroomCourse) return;
   const lessons = currentClassroomCourse.syllabus || [];
-  container.innerHTML = lessons.map((l, idx) => `
-    <div onclick="loadClassroomLesson(${idx})" style="padding:12px;border-radius:10px;background:${idx === currentClassroomLessonIdx ? '#eff6ff' : '#f8fafc'};border:1.5px solid ${idx === currentClassroomLessonIdx ? '#3b82f6' : '#e2e8f0'};cursor:pointer;">
-      <div style="font-size:13px;font-weight:700;color:#0f172a;">${l.title}</div>
-    </div>
-  `).join('');
+
+  const stats = getCurriculumProgressStats(currentClassroomCourse);
+  const countEl = document.getElementById('classroom-playlist-count');
+  if (countEl) countEl.textContent = `${stats.completedCount} / ${stats.total} Completed`;
+
+  const barEl = document.getElementById('classroom-progress-bar');
+  if (barEl) barEl.style.width = stats.percent + '%';
+
+  const textEl = document.getElementById('classroom-progress-text');
+  if (textEl) textEl.textContent = `${stats.percent}% Completed (${stats.completedCount} of ${stats.total})`;
+
+  container.innerHTML = lessons.map((l, idx) => {
+    const lId = l.id || ('les_' + idx);
+    const isCurrent = (idx === currentClassroomLessonIdx);
+    const isDone = isLessonCompleted(lId);
+    const isUnlocked = isLessonUnlocked(currentClassroomCourse, idx);
+
+    let border = '#e2e8f0';
+    let bg = '#ffffff';
+    let icon = '🔒';
+    let iconColor = '#94a3b8';
+    let badgeText = `Locked (Finish #${idx} first)`;
+    let badgeBg = '#f1f5f9';
+    let badgeColor = '#64748b';
+
+    if (isDone) {
+      bg = isCurrent ? '#eff6ff' : '#f8fafc';
+      border = isCurrent ? '#3b82f6' : '#a7f3d0';
+      icon = '✓';
+      iconColor = '#059669';
+      badgeText = 'Completed';
+      badgeBg = '#ecfdf5';
+      badgeColor = '#059669';
+    } else if (isUnlocked) {
+      bg = isCurrent ? '#eff6ff' : '#ffffff';
+      border = isCurrent ? '#2563eb' : '#bfdbfe';
+      icon = isCurrent ? '▶' : '○';
+      iconColor = '#2563eb';
+      badgeText = isCurrent ? 'Playing Now' : 'Unlocked';
+      badgeBg = '#dbeafe';
+      badgeColor = '#1e40af';
+    }
+
+    return `
+      <div onclick="loadClassroomLesson(${idx})" style="padding:12px 14px;border-radius:12px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};">
+        <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
+          <span style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${badgeBg};color:${iconColor};font-size:12px;font-weight:900;flex-shrink:0;">
+            ${icon}
+          </span>
+          <div style="overflow:hidden;">
+            <div style="font-size:13px;font-weight:${isCurrent ? '800' : '700'};color:${isCurrent ? '#1d4ed8' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${l.title}
+            </div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px;">
+              ${l.duration || '20:00'} • ${l.type === 'local' ? 'HD Direct Video' : 'Stream'}
+            </div>
+          </div>
+        </div>
+
+        <span style="font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;background:${badgeBg};color:${badgeColor};flex-shrink:0;">
+          ${badgeText}
+        </span>
+      </div>
+    `;
+  }).join('');
 }
 
 function loadClassroomLesson(idx) {
   if (!currentClassroomCourse) return;
-  currentClassroomLessonIdx = idx;
-  const l = currentClassroomCourse.syllabus[idx];
+  const syllabus = currentClassroomCourse.syllabus || [];
+  const l = syllabus[idx];
   if (!l) return;
+
+  const unlocked = isLessonUnlocked(currentClassroomCourse, idx);
+  if (!unlocked) {
+    const prev = syllabus[idx - 1];
+    const prevTitle = prev ? prev.title : 'the previous lesson';
+    showToast(`🔒 Lesson Locked! You must finish "${prevTitle}" before opening this video.`, '#ef4444');
+    return;
+  }
+
+  currentClassroomLessonIdx = idx;
   document.getElementById('classroom-lesson-title').textContent = l.title;
+
+  const resumeBadge = document.getElementById('classroom-lesson-resume-badge');
+  if (resumeBadge) resumeBadge.style.display = 'none';
 
   const player = document.getElementById('classroom-player');
   let cleanUrl = (l.ytId || '').replace(/^\.?\/?/, '');
   if (cleanUrl.startsWith('videos/')) {
     cleanUrl = 'api/stream.php?file=' + encodeURIComponent(cleanUrl);
   }
-  player.innerHTML = `<video id="classroom-vid-el" src="${cleanUrl}" controls autoplay playsinline style="width:100%;height:100%;background:#000;border-radius:12px;"></video>`;
+
+  player.innerHTML = `<video id="classroom-vid-el" src="${cleanUrl}" controls autoplay playsinline style="width:100%;height:100%;background:#000;border-radius:12px;outline:none;"></video>`;
   const vidEl = document.getElementById('classroom-vid-el');
-  if (vidEl) attachVideoTracking(vidEl, l.id || ('les_' + idx));
+  const lId = l.id || ('les_' + idx);
+  if (vidEl) {
+    attachVideoTracking(vidEl, lId, { course: currentClassroomCourse, index: idx });
+  }
+
+  updateClassroomNavButtons();
   renderClassroomPlaylist();
+}
+
+function updateClassroomNavButtons() {
+  if (!currentClassroomCourse) return;
+  const syllabus = currentClassroomCourse.syllabus || [];
+  const curIdx = currentClassroomLessonIdx;
+  const total = syllabus.length;
+
+  const prevBtn = document.getElementById('classroom-prev-btn');
+  const nextBtn = document.getElementById('classroom-next-btn');
+  const stepInd = document.getElementById('classroom-step-indicator');
+  const completeBtn = document.getElementById('classroom-complete-btn');
+
+  if (stepInd) {
+    stepInd.textContent = `Lesson ${curIdx + 1} of ${total}`;
+  }
+
+  if (prevBtn) {
+    prevBtn.style.display = curIdx > 0 ? 'inline-flex' : 'none';
+  }
+
+  if (nextBtn) {
+    const nextIdx = curIdx + 1;
+    if (nextIdx >= total) {
+      nextBtn.style.display = 'none';
+    } else {
+      nextBtn.style.display = 'inline-flex';
+      const isNextUnlocked = isLessonUnlocked(currentClassroomCourse, nextIdx);
+      if (isNextUnlocked) {
+        nextBtn.style.background = '#2563eb';
+        nextBtn.style.cursor = 'pointer';
+        nextBtn.innerHTML = '<span>Next Lesson</span> →';
+      } else {
+        nextBtn.style.background = '#94a3b8';
+        nextBtn.style.cursor = 'not-allowed';
+        nextBtn.innerHTML = '<span>🔒 Next Lesson Locked</span>';
+      }
+    }
+  }
+
+  if (completeBtn && syllabus[curIdx]) {
+    const lId = syllabus[curIdx].id || ('les_' + curIdx);
+    const done = isLessonCompleted(lId);
+    if (done) {
+      completeBtn.style.background = '#ecfdf5';
+      completeBtn.style.borderColor = '#a7f3d0';
+      completeBtn.style.color = '#059669';
+      completeBtn.innerHTML = '<span>✓</span> Completed';
+    } else {
+      completeBtn.style.background = '#ffffff';
+      completeBtn.style.borderColor = '#cbd5e1';
+      completeBtn.style.color = '#334155';
+      completeBtn.innerHTML = '<span>○</span> Mark as Completed';
+    }
+  }
+}
+
+function goToPrevClassroomLesson() {
+  if (!currentClassroomCourse || currentClassroomLessonIdx <= 0) return;
+  loadClassroomLesson(currentClassroomLessonIdx - 1);
+}
+
+function goToNextClassroomLesson() {
+  if (!currentClassroomCourse) return;
+  const nextIdx = currentClassroomLessonIdx + 1;
+  const syllabus = currentClassroomCourse.syllabus || [];
+  if (nextIdx >= syllabus.length) {
+    showToast('🎉 You have reached the end of this curriculum!', '#10b981');
+    return;
+  }
+  loadClassroomLesson(nextIdx);
 }
 
 function toggleCurrentLessonCompletion() {
   if (!currentClassroomCourse) return;
-  const l = currentClassroomCourse.syllabus[currentClassroomLessonIdx];
-  if (l) {
-    syncVideoProgress(l.id || ('les_' + currentClassroomLessonIdx), 100, true);
+  const syllabus = currentClassroomCourse.syllabus || [];
+  const l = syllabus[currentClassroomLessonIdx];
+  if (!l) return;
+  const lId = l.id || ('les_' + currentClassroomLessonIdx);
+  const isDone = isLessonCompleted(lId);
+
+  if (!isDone) {
+    syncVideoProgress(lId, 100, true, 0);
+    onVideoLessonFinished(lId, 0, { course: currentClassroomCourse, index: currentClassroomLessonIdx });
+  } else {
+    syncVideoProgress(lId, 0, false, 0);
+    renderClassroomPlaylist();
+    updateClassroomNavButtons();
+    showToast('Lesson marked as not completed.', '#64748b');
   }
 }
 
@@ -1593,8 +2209,11 @@ function filterPracticeFiles(cat) { renderPracticeFiles(cat); }
 
 /* ── ADMIN PUBLISHING, CURRICULA & STATION TARGETING ── */
 let currentVideoUploadMode = 'file';
-let selectedAdminVideoFile = null;
+let selectedAdminVideoFiles = [];
+let selectedUploadStations = ['all'];
 let currentVideoCurriculumMode = 'existing';
+let currentRosterStation = 'all';
+let currentRosterQuery = '';
 
 function switchAdminUploadTab(tab) {
   const tabs = ['video', 'course', 'files'];
@@ -1713,13 +2332,18 @@ function renderAdminCurriculaList() {
       `).join('')
       : '<div style="font-size:12px;color:#94a3b8;font-style:italic;padding:8px 0;">No lessons attached yet. Upload a video and assign it to this curriculum!</div>';
 
+    const hasCurriculumIcon = c.icon && !['🏗️', '🏗', '\ud83c\udfd7\ufe0f', '\ud83c\udfd7'].includes(c.icon);
+    const curriculumIconMarkup = hasCurriculumIcon ? `
+      <div style="width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:22px;">
+        ${c.icon}
+      </div>
+    ` : '';
+
     return `
       <div style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.03);">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
           <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:44px;height:44px;border-radius:12px;background:#eff6ff;color:#1d4ed8;display:flex;align-items:center;justify-content:center;font-size:22px;">
-              ${c.icon || '🏗️'}
-            </div>
+            ${curriculumIconMarkup}
             <div>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                 <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">${c.title}</h4>
@@ -1837,71 +2461,589 @@ function setVideoUploadMode(m) {
   });
 }
 
-function handleAdminVideoFilePick(input) {
-  if (input.files && input.files[0]) {
-    selectedAdminVideoFile = input.files[0];
-    const lbl = document.getElementById('vfile-selected-name');
-    if (lbl) lbl.textContent = selectedAdminVideoFile.name;
-    const titleInput = document.getElementById('new-video-title');
-    if (titleInput && !titleInput.value) {
-      titleInput.value = selectedAdminVideoFile.name.replace(/\.[^/.]+$/, '').replace(/[_.-]+/g, ' ').toUpperCase();
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+let selectedIndividualEmployeeIds = [];
+
+function toggleIndividualPicker() {
+  const panel = document.getElementById('individual-employee-picker-panel');
+  if (!panel) return;
+  const isHidden = (panel.style.display === 'none' || panel.style.display === '');
+  if (isHidden) {
+    panel.style.display = 'block';
+    initIndividualPickerUI();
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function closeIndividualPicker() {
+  const panel = document.getElementById('individual-employee-picker-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+function initIndividualPickerUI() {
+  const teamSelect = document.getElementById('indiv-filter-team');
+  if (teamSelect && teamSelect.options.length <= 1) {
+    const teams = window.ALL_AVAILABLE_TEAMS || [];
+    teams.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = '👥 ' + t;
+      teamSelect.appendChild(opt);
+    });
+  }
+  renderIndividualEmployeeList();
+}
+
+function onIndivTeamFilterChange() {
+  renderIndividualEmployeeList();
+}
+
+function getFilteredAssignableEmployees() {
+  const employees = window.ALL_ASSIGNABLE_EMPLOYEES || [];
+  const stationFilter = document.getElementById('indiv-filter-station')?.value || 'all';
+  const teamFilter = document.getElementById('indiv-filter-team')?.value || 'all';
+  const search = (document.getElementById('indiv-search-name')?.value || '').trim().toLowerCase();
+
+  return employees.filter(emp => {
+    // Station filter
+    if (stationFilter !== 'all') {
+      const empStation = (emp.station || 'all').toLowerCase();
+      if (empStation !== stationFilter.toLowerCase() && empStation !== 'all') {
+        return false;
+      }
     }
-    const inlineTitle = document.getElementById('inline-curriculum-title');
-    if (inlineTitle && !inlineTitle.value) {
-      inlineTitle.value = titleInput.value + ' Masterclass';
+    // Team filter
+    if (teamFilter !== 'all') {
+      const empTeam = (emp.team_name || '').toLowerCase();
+      if (empTeam !== teamFilter.toLowerCase()) {
+        return false;
+      }
+    }
+    // Search query
+    if (search) {
+      const empName = (emp.name || '').toLowerCase();
+      const empTeam = (emp.team_name || '').toLowerCase();
+      if (!empName.includes(search) && !empTeam.includes(search)) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function renderIndividualEmployeeList() {
+  const container = document.getElementById('indiv-employee-card-list');
+  if (!container) return;
+
+  const filtered = getFilteredAssignableEmployees();
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:24px;color:#64748b;font-size:13px;background:white;border-radius:10px;border:1px dashed #cbd5e1;">
+        🔍 No employees match the current filter or search criteria.
+      </div>
+    `;
+    updateIndividualAssignmentUI();
+    return;
+  }
+
+  const stationIcons = {
+    trainee: '🎓 Trainee',
+    engineer: '📐 Engineer',
+    architect: '🏛️ Architect',
+    modeler: 'Modeler',
+    all: '🌐 General'
+  };
+
+  container.innerHTML = filtered.map(emp => {
+    const isSelected = selectedIndividualEmployeeIds.includes(String(emp.id));
+    const empStationLabel = stationIcons[emp.station] || (emp.station ? (emp.station.charAt(0).toUpperCase() + emp.station.slice(1)) : 'General');
+    const borderCol = isSelected ? '#4f46e5' : '#e2e8f0';
+    const bgCol = isSelected ? '#eef2ff' : '#ffffff';
+
+    return `
+      <div onclick="toggleIndividualEmployeeSelection('${emp.id}')"
+           style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid ${borderCol};background:${bgCol};border-radius:10px;transition:all 0.15s;user-select:none;"
+           onmouseover="this.style.borderColor='#6366f1'"
+           onmouseout="this.style.borderColor='${borderCol}'">
+        <input type="checkbox"
+               ${isSelected ? 'checked' : ''}
+               onclick="event.stopPropagation();toggleIndividualEmployeeSelection('${emp.id}')"
+               style="cursor:pointer;accent-color:#4f46e5;width:16px;height:16px;margin:0;flex-shrink:0;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${escapeHtml(emp.name)}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:2px;font-size:11px;flex-wrap:wrap;">
+            <span style="background:#e0e7ff;color:#3730a3;padding:1px 6px;border-radius:4px;font-weight:600;">
+              👥 ${escapeHtml(emp.team_name || 'General Team')}
+            </span>
+            <span style="background:#f1f5f9;color:#475569;padding:1px 6px;border-radius:4px;font-weight:600;">
+              ${empStationLabel}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateIndividualAssignmentUI();
+}
+
+function toggleIndividualEmployeeSelection(empId) {
+  const idStr = String(empId);
+  if (selectedIndividualEmployeeIds.includes(idStr)) {
+    selectedIndividualEmployeeIds = selectedIndividualEmployeeIds.filter(id => id !== idStr);
+  } else {
+    selectedIndividualEmployeeIds.push(idStr);
+  }
+  syncIndividualSelectionWithUploadState();
+  renderIndividualEmployeeList();
+}
+
+function selectCurrentTeamEmployees() {
+  const filtered = getFilteredAssignableEmployees();
+  filtered.forEach(emp => {
+    const idStr = String(emp.id);
+    if (!selectedIndividualEmployeeIds.includes(idStr)) {
+      selectedIndividualEmployeeIds.push(idStr);
+    }
+  });
+  syncIndividualSelectionWithUploadState();
+  renderIndividualEmployeeList();
+}
+
+function deselectCurrentTeamEmployees() {
+  const filtered = getFilteredAssignableEmployees();
+  const removeIds = new Set(filtered.map(e => String(e.id)));
+  selectedIndividualEmployeeIds = selectedIndividualEmployeeIds.filter(id => !removeIds.has(id));
+  syncIndividualSelectionWithUploadState();
+  renderIndividualEmployeeList();
+}
+
+function selectAllFilteredEmployees() {
+  selectCurrentTeamEmployees();
+}
+
+function clearAllIndividualEmployees() {
+  selectedIndividualEmployeeIds = [];
+  syncIndividualSelectionWithUploadState();
+  renderIndividualEmployeeList();
+}
+
+function removeIndividualEmployee(empId) {
+  selectedIndividualEmployeeIds = selectedIndividualEmployeeIds.filter(id => id !== String(empId));
+  syncIndividualSelectionWithUploadState();
+  renderIndividualEmployeeList();
+}
+
+function syncIndividualSelectionWithUploadState() {
+  const hiddenStation = document.getElementById('new-video-station');
+  const hiddenAssigned = document.getElementById('new-video-assigned-employees');
+  const btnIndiv = document.getElementById('btn-choose-individually');
+  const badge = document.getElementById('indiv-count-badge');
+  const hint = document.getElementById('station-assignment-hint');
+
+  const count = selectedIndividualEmployeeIds.length;
+
+  if (hiddenAssigned) {
+    hiddenAssigned.value = count > 0 ? JSON.stringify(selectedIndividualEmployeeIds) : '';
+  }
+
+  if (count > 0) {
+    if (hiddenStation) hiddenStation.value = 'custom';
+    selectedUploadStations = ['custom'];
+
+    const stationButtons = document.querySelectorAll('#station-picker-group .st-pick-btn:not(#btn-choose-individually)');
+    stationButtons.forEach(b => {
+      b.style.background = '#ffffff';
+      b.style.color = '#334155';
+      b.style.border = '1.5px solid #cbd5e1';
+      b.style.boxShadow = 'none';
+      b.classList.remove('active');
+    });
+
+    if (btnIndiv) {
+      btnIndiv.style.background = '#4f46e5';
+      btnIndiv.style.color = '#ffffff';
+      btnIndiv.style.border = 'none';
+      btnIndiv.style.boxShadow = '0 2px 8px rgba(79,70,229,0.35)';
+      btnIndiv.classList.add('active');
+    }
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = 'inline-block';
+      badge.style.background = '#ffffff';
+      badge.style.color = '#4f46e5';
+    }
+
+    if (hint) {
+      hint.innerHTML = `Assigned individually to: <strong style="color:#4338ca;">${count} Selected Employee${count > 1 ? 's' : ''}</strong> (Custom Assignment)`;
+    }
+  } else {
+    if (hiddenStation && hiddenStation.value === 'custom') {
+      hiddenStation.value = 'all';
+      selectedUploadStations = ['all'];
+    }
+
+    if (btnIndiv) {
+      btnIndiv.style.background = '#ffffff';
+      btnIndiv.style.color = '#4338ca';
+      btnIndiv.style.border = '1.5px solid #a5b4fc';
+      btnIndiv.style.boxShadow = 'none';
+      btnIndiv.classList.remove('active');
+    }
+    if (badge) {
+      badge.style.display = 'none';
+    }
+
+    const buttons = document.querySelectorAll('#station-picker-group .st-pick-btn:not(#btn-choose-individually)');
+    buttons.forEach(b => {
+      const bSt = b.getAttribute('data-st');
+      const isAct = selectedUploadStations.includes(bSt);
+      if (isAct) {
+        b.style.background = '#2563eb';
+        b.style.color = '#ffffff';
+        b.style.border = 'none';
+        b.style.boxShadow = '0 2px 6px rgba(37,99,235,0.25)';
+      } else {
+        b.style.background = '#ffffff';
+        b.style.color = '#334155';
+        b.style.border = '1.5px solid #cbd5e1';
+        b.style.boxShadow = 'none';
+      }
+    });
+
+    if (hint && selectedUploadStations.includes('all')) {
+      hint.innerHTML = 'Assigned to: <strong>All Employees (General Curriculum)</strong>';
     }
   }
 }
 
-async function adminPublishVideo() {
-  const title = document.getElementById('new-video-title').value.trim();
-  const station = document.getElementById('new-video-station').value;
-  const cat = document.getElementById('new-video-cat').value;
-  const duration = document.getElementById('new-video-duration').value.trim() || '20:00';
-  const desc = document.getElementById('new-video-desc').value.trim() || 'Direct BIM demonstration.';
+function updateIndividualAssignmentUI() {
+  const countText = document.getElementById('indiv-selection-count-text');
+  const count = selectedIndividualEmployeeIds.length;
+  if (countText) {
+    countText.textContent = `${count} employee${count !== 1 ? 's' : ''} selected`;
+  }
 
-  if (!title) {
-    showToast('⚠️ Video Title is required', '#f59e0b');
+  const chipsBar = document.getElementById('indiv-selected-chips-bar');
+  if (chipsBar) {
+    if (count === 0) {
+      chipsBar.style.display = 'none';
+      chipsBar.innerHTML = '';
+    } else {
+      chipsBar.style.display = 'flex';
+      const allEmps = window.ALL_ASSIGNABLE_EMPLOYEES || [];
+      const empMap = {};
+      allEmps.forEach(e => { empMap[String(e.id)] = e; });
+
+      chipsBar.innerHTML = selectedIndividualEmployeeIds.map(id => {
+        const emp = empMap[id];
+        const name = emp ? emp.name : ('Employee #' + id);
+        return `
+          <span style="display:inline-flex;align-items:center;gap:4px;background:#e0e7ff;color:#3730a3;padding:3px 8px;border-radius:999px;font-size:11.5px;font-weight:700;">
+            ${escapeHtml(name)}
+            <button type="button" onclick="removeIndividualEmployee('${id}')" style="background:none;border:none;cursor:pointer;color:#4f46e5;font-weight:900;padding:0 2px;line-height:1;" title="Remove">✕</button>
+          </span>
+        `;
+      }).join('');
+    }
+  }
+}
+
+function toggleUploadStation(st, btn) {
+  // Clear individual employee selection when a standard station is chosen
+  selectedIndividualEmployeeIds = [];
+  const hiddenAssigned = document.getElementById('new-video-assigned-employees');
+  if (hiddenAssigned) hiddenAssigned.value = '';
+  const btnIndiv = document.getElementById('btn-choose-individually');
+  if (btnIndiv) {
+    btnIndiv.style.background = '#ffffff';
+    btnIndiv.style.color = '#4338ca';
+    btnIndiv.style.border = '1.5px solid #a5b4fc';
+    btnIndiv.style.boxShadow = 'none';
+    btnIndiv.classList.remove('active');
+  }
+  const badge = document.getElementById('indiv-count-badge');
+  if (badge) badge.style.display = 'none';
+  updateIndividualAssignmentUI();
+
+  if (st === 'all') {
+    selectedUploadStations = ['all'];
+  } else {
+    selectedUploadStations = selectedUploadStations.filter(s => s !== 'all' && s !== 'custom');
+    if (selectedUploadStations.includes(st)) {
+      selectedUploadStations = selectedUploadStations.filter(s => s !== st);
+      if (selectedUploadStations.length === 0) selectedUploadStations = ['all'];
+    } else {
+      selectedUploadStations.push(st);
+    }
+  }
+
+  const hiddenInput = document.getElementById('new-video-station');
+  if (hiddenInput) hiddenInput.value = selectedUploadStations.join(',');
+
+  const buttons = document.querySelectorAll('#station-picker-group .st-pick-btn:not(#btn-choose-individually)');
+  buttons.forEach(b => {
+    const bSt = b.getAttribute('data-st');
+    const isAct = selectedUploadStations.includes(bSt);
+    if (isAct) {
+      b.style.background = '#2563eb';
+      b.style.color = '#ffffff';
+      b.style.border = 'none';
+      b.style.boxShadow = '0 2px 6px rgba(37,99,235,0.25)';
+    } else {
+      b.style.background = '#ffffff';
+      b.style.color = '#334155';
+      b.style.border = '1.5px solid #cbd5e1';
+      b.style.boxShadow = 'none';
+    }
+  });
+
+  const hint = document.getElementById('station-assignment-hint');
+  if (hint) {
+    if (selectedUploadStations.includes('all')) {
+      hint.innerHTML = 'Assigned to: <strong>All Employees (General Curriculum)</strong>';
+    } else {
+      const labels = {
+        trainee: 'Trainees',
+        engineer: 'Structural & MEP Engineers',
+        architect: 'Architects & Designers'
+      };
+      const names = selectedUploadStations.map(s => labels[s] || s).join(', ');
+      hint.innerHTML = `Assigned to: <strong>${names}</strong> (${selectedUploadStations.length} station${selectedUploadStations.length > 1 ? 's' : ''})`;
+    }
+  }
+}
+
+function handleAdminVideoFilePick(input) {
+  if (input.files && input.files.length > 0) {
+    addFilesToVideoQueue(Array.from(input.files));
+  }
+}
+
+function handleAdminVideoDrop(e) {
+  e.preventDefault();
+  const zone = e.currentTarget;
+  if (zone) {
+    zone.style.borderColor = '#cbd5e1';
+    zone.style.background = '#f8fafc';
+  }
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('video/') || /\.(mp4|webm|mov|mkv|avi)$/i.test(f.name));
+    if (files.length > 0) {
+      addFilesToVideoQueue(files);
+    } else {
+      showToast('⚠️ Please drop video files (.mp4, .webm, .mov)', '#f59e0b');
+    }
+  }
+}
+
+function addFilesToVideoQueue(files) {
+  files.forEach(f => {
+    if (!selectedAdminVideoFiles.some(item => item.file.name === f.name && item.file.size === f.size)) {
+      const cleanTitle = f.name.replace(/\.[^/.]+$/, '').replace(/[_.-]+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+      selectedAdminVideoFiles.push({
+        file: f,
+        title: cleanTitle,
+        sizeMb: (f.size / (1024 * 1024)).toFixed(1)
+      });
+    }
+  });
+  renderSelectedVideoFilesQueue();
+}
+
+function renderSelectedVideoFilesQueue() {
+  const container = document.getElementById('vfiles-queue-container');
+  const list = document.getElementById('vfiles-queue-list');
+  const title = document.getElementById('vfiles-queue-title');
+  const sizeLbl = document.getElementById('vfiles-queue-size');
+  const dropLabel = document.getElementById('vfile-selected-name');
+
+  if (!container || !list) return;
+
+  if (selectedAdminVideoFiles.length === 0) {
+    container.style.display = 'none';
+    if (dropLabel) dropLabel.textContent = 'Click or drag to select one or multiple video files';
     return;
   }
 
+  container.style.display = 'block';
+  const totalSizeMb = selectedAdminVideoFiles.reduce((acc, item) => acc + (item.file.size / (1024 * 1024)), 0).toFixed(1);
+  if (title) title.textContent = `Selected Videos (${selectedAdminVideoFiles.length})`;
+  if (sizeLbl) sizeLbl.textContent = `• Total: ${totalSizeMb} MB`;
+  if (dropLabel) dropLabel.textContent = `🎬 ${selectedAdminVideoFiles.length} video file(s) selected (${totalSizeMb} MB)`;
+
+  const titleInput = document.getElementById('new-video-title');
+  if (titleInput && (!titleInput.value || selectedAdminVideoFiles.length === 1)) {
+    titleInput.value = selectedAdminVideoFiles[0].title;
+  }
+  const inlineTitle = document.getElementById('inline-curriculum-title');
+  if (inlineTitle && !inlineTitle.value) {
+    inlineTitle.value = selectedAdminVideoFiles[0].title + ' Course Series';
+  }
+
+  list.innerHTML = selectedAdminVideoFiles.map((item, idx) => `
+    <div style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+        <span style="font-size:12px;font-weight:900;color:#2563eb;background:#eff6ff;padding:4px 8px;border-radius:6px;flex-shrink:0;">#${idx + 1}</span>
+        <div style="flex:1;min-width:0;">
+          <input type="text" value="${item.title.replace(/"/g, '&quot;')}" onchange="updateVideoQueueTitle(${idx}, this.value)" style="width:100%;font-size:13px;font-weight:700;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;padding:4px 8px;box-sizing:border-box;" placeholder="Video title..." />
+          <div style="font-size:11.5px;color:#64748b;margin-top:3px;display:flex;gap:8px;">
+            <span>📁 ${item.file.name}</span>
+            <span>(${item.sizeMb} MB)</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="removeSelectedVideoFile(${idx})" style="background:#fee2e2;color:#b91c1c;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Remove this video">✕</button>
+    </div>
+  `).join('');
+}
+
+function updateVideoQueueTitle(index, newTitle) {
+  if (selectedAdminVideoFiles[index]) {
+    selectedAdminVideoFiles[index].title = newTitle.trim() || selectedAdminVideoFiles[index].title;
+  }
+}
+
+function removeSelectedVideoFile(index) {
+  selectedAdminVideoFiles.splice(index, 1);
+  renderSelectedVideoFilesQueue();
+}
+
+function clearSelectedVideoFiles() {
+  selectedAdminVideoFiles = [];
+  const input = document.getElementById('new-video-file-input');
+  if (input) input.value = '';
+  renderSelectedVideoFilesQueue();
+}
+
+async function adminPublishVideo() {
+  const isIndividualMode = (selectedIndividualEmployeeIds && selectedIndividualEmployeeIds.length > 0);
+  const station = isIndividualMode ? 'custom' : (document.getElementById('new-video-station')?.value || 'all');
+  const assignedEmployeesJson = document.getElementById('new-video-assigned-employees')?.value || (isIndividualMode ? JSON.stringify(selectedIndividualEmployeeIds) : '');
+  const cat = document.getElementById('new-video-cat')?.value || 'revit';
+  const defaultDuration = document.getElementById('new-video-duration')?.value.trim() || '20:00';
+  const defaultDesc = document.getElementById('new-video-desc')?.value.trim() || 'Direct BIM demonstration.';
+
   const curriculumMode = currentVideoCurriculumMode; // 'existing', 'new', 'none'
-  const curriculumId = document.getElementById('new-video-curriculum-id')?.value || '';
+  let curriculumId = document.getElementById('new-video-curriculum-id')?.value || '';
   const newCurriculumTitle = document.getElementById('inline-curriculum-title')?.value.trim() || '';
   const newCurriculumLevel = document.getElementById('inline-curriculum-level')?.value || 'Intermediate';
-  const newCurriculumIcon = document.getElementById('inline-curriculum-icon')?.value || '🏗️';
-  const newCurriculumDesc = document.getElementById('inline-curriculum-desc')?.value.trim() || desc;
+  const newCurriculumIcon = document.getElementById('inline-curriculum-icon')?.value || '';
+  const newCurriculumDesc = document.getElementById('inline-curriculum-desc')?.value.trim() || defaultDesc;
 
   if (curriculumMode === 'new' && !newCurriculumTitle) {
     showToast('⚠️ Please enter a Title for the new Curriculum Track', '#f59e0b');
     return;
   }
 
-  showToast('⏳ Uploading video & assigning curriculum...', '#2563eb');
+  const publishBtn = document.getElementById('admin-publish-video-btn');
+  const originalBtnText = publishBtn ? publishBtn.innerHTML : 'Publish';
 
-  try {
-    let newVideoEntry = null;
+  if (currentVideoUploadMode === 'file') {
+    if (!selectedAdminVideoFiles || selectedAdminVideoFiles.length === 0) {
+      showToast('⚠️ Please choose at least one video file to upload', '#f59e0b');
+      return;
+    }
 
-    if (currentVideoUploadMode === 'file' && selectedAdminVideoFile) {
-      const formData = new FormData();
-      formData.append('video_file', selectedAdminVideoFile);
-      formData.append('title', title);
-      formData.append('category', cat);
-      formData.append('station', station);
-      formData.append('duration', duration);
-      formData.append('description', desc);
-      formData.append('curriculum_mode', curriculumMode);
-      formData.append('curriculum_id', curriculumId);
-      formData.append('new_curriculum_title', newCurriculumTitle);
-      formData.append('new_curriculum_level', newCurriculumLevel);
-      formData.append('new_curriculum_icon', newCurriculumIcon);
-      formData.append('new_curriculum_desc', newCurriculumDesc);
+    if (publishBtn) {
+      publishBtn.disabled = true;
+      publishBtn.style.opacity = '0.7';
+    }
 
-      const res = await fetch('api/upload-video.php', { method: 'POST', body: formData });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'Upload failed');
-      newVideoEntry = json.video;
-    } else {
+    const total = selectedAdminVideoFiles.length;
+    let successCount = 0;
+
+    try {
+      for (let i = 0; i < total; i++) {
+        const item = selectedAdminVideoFiles[i];
+        const vTitle = item.title || item.file.name;
+        const progressPct = Math.round(((i) / total) * 100);
+
+        if (publishBtn) {
+          publishBtn.innerHTML = `⏳ Uploading ${i + 1} of ${total} (${progressPct}%)...`;
+        }
+        showToast(`⏳ Uploading video ${i + 1}/${total}: "${vTitle}"...`, '#2563eb');
+
+        const formData = new FormData();
+        formData.append('video_file', item.file);
+        formData.append('title', vTitle);
+        formData.append('category', cat);
+        formData.append('station', station);
+        if (isIndividualMode) {
+          formData.append('assigned_employees', assignedEmployeesJson);
+        }
+        formData.append('duration', defaultDuration);
+        formData.append('description', defaultDesc);
+
+        if (curriculumMode === 'new') {
+          if (i === 0) {
+            formData.append('curriculum_mode', 'new');
+            formData.append('new_curriculum_title', newCurriculumTitle);
+            formData.append('new_curriculum_level', newCurriculumLevel);
+            formData.append('new_curriculum_icon', newCurriculumIcon);
+            formData.append('new_curriculum_desc', newCurriculumDesc);
+          } else {
+            formData.append('curriculum_mode', 'existing');
+            formData.append('curriculum_id', curriculumId);
+          }
+        } else if (curriculumMode === 'existing') {
+          formData.append('curriculum_mode', 'existing');
+          formData.append('curriculum_id', curriculumId);
+        } else {
+          formData.append('curriculum_mode', 'none');
+        }
+
+        const res = await fetch('api/upload-video.php', { method: 'POST', body: formData });
+        const json = await res.json();
+        if (!json.success) {
+          throw new Error(`Video #${i + 1} (${vTitle}) failed: ${json.error || 'Server error'}`);
+        }
+
+        if (i === 0 && curriculumMode === 'new' && json.curriculum_id) {
+          curriculumId = json.curriculum_id;
+        }
+
+        successCount++;
+      }
+
+      showToast(`🎉 Successfully uploaded and published ${successCount} video(s)!`, '#10b981');
+      if (publishBtn) publishBtn.innerHTML = `✅ All ${successCount} Videos Published!`;
+      setTimeout(() => location.reload(), 1400);
+
+    } catch (err) {
+      console.error(err);
+      showToast('❌ Upload stopped: ' + err.message, '#ef4444');
+      if (publishBtn) {
+        publishBtn.disabled = false;
+        publishBtn.style.opacity = '1';
+        publishBtn.innerHTML = originalBtnText;
+      }
+    }
+
+  } else {
+    // Mode is 'yt' (YouTube/Link) or 'folder'
+    const mainTitle = document.getElementById('new-video-title')?.value.trim();
+    if (!mainTitle) {
+      showToast('⚠️ Video Title is required', '#f59e0b');
+      return;
+    }
+
+    showToast('⏳ Registering video link...', '#2563eb');
+
+    try {
       let ytId = '';
       if (currentVideoUploadMode === 'folder') {
         const fn = document.getElementById('new-video-folder-file').value.trim();
@@ -1910,15 +3052,21 @@ async function adminPublishVideo() {
         ytId = document.getElementById('new-video-url').value.trim();
       }
 
-      newVideoEntry = {
+      if (!ytId) {
+        showToast('⚠️ Video URL or filename is required', '#f59e0b');
+        return;
+      }
+
+      const newVideoEntry = {
         id: 'vid_' + Date.now(),
         cat,
         station,
-        title,
-        desc,
+        title: mainTitle,
+        desc: defaultDesc,
         ytId,
-        duration,
-        type: ytId.includes('videos/') ? 'local' : 'yt'
+        duration: defaultDuration,
+        type: ytId.includes('videos/') ? 'local' : 'yt',
+        assigned_employees: isIndividualMode ? selectedIndividualEmployeeIds : []
       };
 
       const current = await getAllVideos();
@@ -1948,22 +3096,23 @@ async function adminPublishVideo() {
             title: newCurriculumTitle,
             cat,
             station,
+            assigned_employees: isIndividualMode ? selectedIndividualEmployeeIds : [],
             level: newCurriculumLevel,
             icon: newCurriculumIcon,
-            duration: '1 lesson • ' + duration,
+            duration: '1 lesson • ' + defaultDuration,
             desc: newCurriculumDesc,
             initial_video: newVideoEntry
           })
         });
       }
+
+      showToast(`✅ Video published successfully!`, '#10b981');
+      setTimeout(() => location.reload(), 1200);
+
+    } catch (err) {
+      console.error(err);
+      showToast('❌ Failed: ' + err.message, '#ef4444');
     }
-
-    showToast(`✅ Video published and assigned to curriculum!`, '#10b981');
-    setTimeout(() => location.reload(), 1200);
-
-  } catch (err) {
-    console.error(err);
-    showToast('❌ Failed: ' + err.message, '#ef4444');
   }
 }
 
@@ -1971,6 +3120,16 @@ async function renderAdminVideosList() {
   const container = document.getElementById('admin-video-manage-list');
   if (!container) return;
   const videos = await getAllVideos();
+  if (!videos || videos.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:28px 20px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;color:#64748b;">
+        <i class="fa-solid fa-film" style="font-size:24px;color:#94a3b8;margin-bottom:8px;display:block;"></i>
+        <div style="font-weight:700;font-size:14px;color:#334155;">No videos uploaded yet</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:2px;">Use the upload form above to add your first training video.</div>
+      </div>
+    `;
+    return;
+  }
   container.innerHTML = videos.map(v => `
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div>
@@ -1984,21 +3143,49 @@ async function renderAdminVideosList() {
   `).join('');
 }
 
-function filterAdminRoster(query) {
-  const q = (query || '').toLowerCase().trim();
+function applyRosterFilters() {
   const rows = document.querySelectorAll('#admin-roster-table .roster-row');
   rows.forEach(r => {
-    const name = r.getAttribute('data-name') || '';
-    r.style.display = (!q || name.includes(q)) ? '' : 'none';
+    const name = (r.getAttribute('data-name') || '').toLowerCase();
+    const st = r.getAttribute('data-station') || '';
+    const matchName = !currentRosterQuery || name.includes(currentRosterQuery);
+    const matchStation = (currentRosterStation === 'all' || st === currentRosterStation);
+    r.style.display = (matchName && matchStation) ? '' : 'none';
   });
 }
 
-function filterAdminRosterStation(station) {
-  const rows = document.querySelectorAll('#admin-roster-table .roster-row');
-  rows.forEach(r => {
-    const st = r.getAttribute('data-station') || '';
-    r.style.display = (station === 'all' || st === station) ? '' : 'none';
+function filterAdminRoster(query) {
+  currentRosterQuery = (query || '').toLowerCase().trim();
+  applyRosterFilters();
+}
+
+function filterAdminRosterStation(station, btn) {
+  currentRosterStation = station || 'all';
+  document.querySelectorAll('.roster-station-btn').forEach(b => {
+    const isAct = (b === btn) || (b.getAttribute('data-station') === currentRosterStation);
+    if (isAct) {
+      b.style.background = '#2563eb';
+      b.style.color = '#ffffff';
+      b.style.border = 'none';
+      b.style.boxShadow = '0 2px 6px rgba(37,99,235,0.3)';
+      const badge = b.querySelector('.st-count');
+      if (badge) {
+        badge.style.background = 'rgba(255,255,255,0.25)';
+        badge.style.color = '#ffffff';
+      }
+    } else {
+      b.style.background = '#f8fafc';
+      b.style.color = '#475569';
+      b.style.border = '1.5px solid #e2e8f0';
+      b.style.boxShadow = 'none';
+      const badge = b.querySelector('.st-count');
+      if (badge) {
+        badge.style.background = '#e2e8f0';
+        badge.style.color = '#334155';
+      }
+    }
   });
+  applyRosterFilters();
 }
 
 /* ── MODALS & TOAST ── */
@@ -2016,16 +3203,22 @@ function closeModal() {
   if (p) p.innerHTML = '';
 }
 
+let activeToastTimer = null;
 function showToast(msg, bg) {
+  // Clear any existing toasts to prevent DOM flood and UI freezing
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  if (activeToastTimer) clearTimeout(activeToastTimer);
+
   const t = document.createElement('div');
   t.className = 'toast';
   t.style.background = bg || '#2563eb';
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => {
+
+  activeToastTimer = setTimeout(() => {
     t.style.opacity = '0';
     setTimeout(() => t.remove(), 300);
-  }, 3500);
+  }, 3200);
 }
 
 function spawnHeroParticles() {
@@ -2063,6 +3256,7 @@ document.addEventListener('DOMContentLoaded', () => {
   showSection(getRoleLandingSection());
   populateCurriculumDropdown();
   renderAdminCurriculaList();
+  renderAdminVideosList();
 });
 </script>
 

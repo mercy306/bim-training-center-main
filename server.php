@@ -23,6 +23,11 @@ if ($uri === '/api/auth') {
     return true;
 }
 
+if ($uri === '/api/users' || strpos($uri, '/api/users.php') === 0) {
+    require __DIR__ . '/api/users.php';
+    return true;
+}
+
 if ($uri === '/api/progress' || strpos($uri, '/api/progress.php') === 0) {
     require __DIR__ . '/api/progress.php';
     return true;
@@ -51,9 +56,20 @@ if (in_array($ext, ['mp4', 'webm', 'ogg', 'mov'])) {
     return true;
 }
 
-// 3. Static files: CSS, JS, Images, Fonts, JSON
-if ($uri !== '/' && file_exists($fullPath) && is_file($fullPath)) {
-    return false; // Let built-in PHP server serve static asset
+// 3. Static files: CSS, JS, Images, Fonts, JSON, and PHP scripts
+if ($uri !== '/' && file_exists($fullPath)) {
+    if (is_dir($fullPath)) {
+        if (file_exists($fullPath . '/index.php')) {
+            require $fullPath . '/index.php';
+            return true;
+        }
+    } elseif (is_file($fullPath)) {
+        if (pathinfo($fullPath, PATHINFO_EXTENSION) === 'php') {
+            require $fullPath;
+            return true;
+        }
+        return false; // Let built-in PHP server serve static asset
+    }
 }
 
 // 4. Default entry point: index.php
