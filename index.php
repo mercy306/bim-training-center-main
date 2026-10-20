@@ -333,6 +333,80 @@ sort($allAvailableTeams);
       50% { transform: translateY(-4px); }
     }
 
+    /* ── ADMIN WORKSPACE ──────────────────────────────────────────────── */
+    #section-analytics, #section-upload { background: transparent !important; }
+    #section-analytics > div, #section-upload > div { position: relative; }
+    #section-analytics > div::before, #section-upload > div::before {
+      content: '';
+      position: absolute;
+      width: 340px; height: 340px; right: -140px; top: -120px;
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.18), transparent 68%);
+      filter: blur(4px);
+    }
+    #section-analytics > div > div:first-child > div {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.77), rgba(239, 246, 255, 0.55)) !important;
+      border-color: rgba(255, 255, 255, 0.76) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 14px 30px rgba(30, 64, 175, 0.08), inset 0 1px rgba(255,255,255,.74);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    #section-analytics > div > div:first-child > div::after {
+      content: ''; position: absolute; inset: auto 0 0; height: 3px;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      opacity: .75;
+    }
+    #section-analytics > div > div:first-child > div:nth-child(2) div:last-child,
+    #section-analytics > div > div:first-child > div:nth-child(3) div:last-child { color: #2563eb !important; }
+    #section-analytics > div > div:nth-child(2) {
+      background: rgba(255, 255, 255, 0.62) !important;
+      border-color: rgba(255, 255, 255, 0.76) !important;
+      border-radius: 18px !important;
+      box-shadow: 0 16px 36px rgba(30, 64, 175, 0.08), inset 0 1px rgba(255,255,255,.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    #admin-roster-table thead tr { background: rgba(219, 234, 254, 0.44); }
+    #admin-roster-table thead th:first-child { border-radius: 9px 0 0 9px; }
+    #admin-roster-table thead th:last-child { border-radius: 0 9px 9px 0; }
+    #admin-roster-table tbody tr { transition: background-color 160ms ease, transform 160ms var(--ease-out); }
+    #admin-roster-table tbody tr:hover { background: rgba(239, 246, 255, 0.72); transform: translateX(3px); }
+
+    #section-upload > div > div:first-child h2 {
+      font-size: 28px !important; letter-spacing: -0.03em;
+    }
+    #section-upload [id^="atab-"] { transition: transform 160ms var(--ease-out), box-shadow 160ms ease, background-color 160ms ease !important; }
+    #section-upload [id^="atab-"]:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(30, 64, 175, 0.12); }
+    #section-upload [id^="admin-panel-"] {
+      background: rgba(255, 255, 255, 0.48) !important;
+      border: 1px solid rgba(255, 255, 255, 0.72) !important;
+      border-radius: 18px !important;
+      padding: 24px !important;
+      box-shadow: 0 16px 36px rgba(30, 64, 175, 0.07), inset 0 1px rgba(255,255,255,.7) !important;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    #section-upload .drop-zone {
+      background: rgba(239, 246, 255, 0.5) !important;
+      border-color: rgba(96, 165, 250, 0.54) !important;
+      transition: transform 180ms var(--ease-out), background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease !important;
+    }
+    #section-upload .drop-zone:hover {
+      background: rgba(219, 234, 254, 0.58) !important;
+      border-color: #2563eb !important;
+      box-shadow: 0 12px 26px rgba(37, 99, 235, 0.12);
+      transform: translateY(-2px);
+    }
+    #vfiles-queue-container, #admin-curricula-list > div {
+      background: rgba(255, 255, 255, 0.46) !important;
+      border-color: rgba(255, 255, 255, 0.68) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
     @media (max-width: 720px) {
       body > nav > div { min-height: auto !important; padding: 12px 16px 14px !important; gap: 12px !important; }
       body > nav img { height: 40px !important; }
@@ -791,7 +865,7 @@ sort($allAvailableTeams);
     <div id="admin-panel-course" style="display:none;background:transparent;border:none;padding:0;box-shadow:none;">
       <div style="margin-bottom:20px;">
         <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 6px;">Curricula Management</h3>
-        <p style="color:#64748b;font-size:13.5px;margin:0;">Create comprehensive multi-lesson training curricula, set target stations, and organize course syllabi.</p>
+
       </div>
 
       <div style="margin-bottom:28px;">
@@ -857,16 +931,7 @@ sort($allAvailableTeams);
         </div>
       </div>
 
-      <!-- Published Curricula & Syllabus Inspector -->
-      <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <h4 style="font-size:16px;font-weight:900;color:#0f172a;margin:0;">
-            Active Curricula Tracks (<span id="admin-curricula-count">0</span>)
-          </h4>
-          <span style="font-size:12px;color:#64748b;">Videos can be added to any of these tracks during video upload</span>
-        </div>
-        <div id="admin-curricula-list" style="display:flex;flex-direction:column;gap:14px;"></div>
-      </div>
+
     </div>
 
     <!-- TAB 3: PRACTICE FILES -->
