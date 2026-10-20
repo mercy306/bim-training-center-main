@@ -407,17 +407,7 @@ sort($allAvailableTeams);
       -webkit-backdrop-filter: blur(12px);
     }
 
-    /* Make the admin dashboard feel like a focused command centre. */
-    #section-analytics > div, #section-upload > div { padding-top: 76px; }
-    #section-analytics > div::after, #section-upload > div::after {
-      position: absolute; left: 0; top: 8px; z-index: 1;
-      color: #0f172a; font-size: clamp(22px, 3vw, 30px); font-weight: 900;
-      letter-spacing: -0.045em;
-    }
-    #section-analytics > div::after { content: 'Training Command Center'; }
-    #section-upload > div::after { content: 'Content Studio'; }
-    #section-analytics > div::before, #section-upload > div::before { z-index: 0; }
-    #section-analytics > div > *, #section-upload > div > * { position: relative; z-index: 1; }
+
     #section-analytics > div > div:first-child > div {
       min-height: 128px;
       display: flex; flex-direction: column; justify-content: center;
@@ -894,9 +884,7 @@ sort($allAvailableTeams);
 <section id="section-upload" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
-    <div style="margin-bottom:24px;">
-      <h2 style="font-size:24px;font-weight:800;color:#0f172a;margin:0;">Upload Training Material</h2>
-    </div>
+
 
     <!-- Admin Subtabs -->
     <div style="display:flex;gap:10px;margin-bottom:28px;border-bottom:1px solid #e2e8f0;padding-bottom:14px;">
