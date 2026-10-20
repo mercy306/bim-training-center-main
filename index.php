@@ -655,35 +655,28 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:#f4f7fc;padding:48px 24px 80px;">
+<section id="section-upload" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;">
-      <div>
-        <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:0;">BIM Portal Content & Material Upload</h2>
-      </div>
-
-      <button onclick="showSection('analytics')" style="background:#ffffff;border:1.5px solid #cbd5e1;color:#1d4ed8;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">
-        View Analytics Board
-      </button>
+    <div style="margin-bottom:24px;">
+      <h2 style="font-size:24px;font-weight:800;color:#0f172a;margin:0;">Upload Training Material</h2>
     </div>
 
     <!-- Admin Subtabs -->
-    <div style="display:flex;gap:10px;margin-bottom:24px;">
-      <button id="atab-video" onclick="switchAdminUploadTab('video')" style="background:#2563eb;color:#ffffff;border:none;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;">
+    <div style="display:flex;gap:10px;margin-bottom:28px;border-bottom:1px solid #e2e8f0;padding-bottom:14px;">
+      <button id="atab-video" onclick="switchAdminUploadTab('video')" style="background:#2563eb;color:#ffffff;border:none;padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;">
         Video Lessons
       </button>
-      <button id="atab-course" onclick="switchAdminUploadTab('course')" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">
+      <button id="atab-course" onclick="switchAdminUploadTab('course')" style="background:#f8fafc;color:#475569;border:1px solid #cbd5e1;padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;">
         Curricula Management
       </button>
-      <button id="atab-files" onclick="switchAdminUploadTab('files')" style="background:#ffffff;color:#334155;border:1.5px solid #e2e8f0;padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;">
+      <button id="atab-files" onclick="switchAdminUploadTab('files')" style="background:#f8fafc;color:#475569;border:1px solid #cbd5e1;padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;">
         Practice Datasets
       </button>
     </div>
 
     <!-- TAB 1: VIDEO UPLOAD (Single Layer, Flat Clean UI) -->
-    <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:28px;">
-      <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 20px;">Upload Training Video</h3>
+    <div id="admin-panel-video" style="background:transparent;border:none;border-radius:0;padding:0;box-shadow:none;">
 
       <!-- Mode Selector -->
       <div style="display:flex;gap:8px;margin-bottom:20px;max-width:540px;">
@@ -803,15 +796,13 @@ sort($allAvailableTeams);
     </div>
 
     <!-- TAB 2: CURRICULA MANAGEMENT & CREATOR -->
-    <div id="admin-panel-course" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-        <div>
-          <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 6px;">Curricula Management & Creator</h3>
-          <p style="color:#64748b;font-size:14px;margin:0;">Create comprehensive multi-lesson training curricula, set target stations, and organize course syllabi.</p>
-        </div>
+    <div id="admin-panel-course" style="display:none;background:transparent;border:none;padding:0;box-shadow:none;">
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 6px;">Curricula Management</h3>
+        <p style="color:#64748b;font-size:13.5px;margin:0;">Create comprehensive multi-lesson training curricula, set target stations, and organize course syllabi.</p>
       </div>
 
-      <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:16px;padding:22px;margin-bottom:28px;">
+      <div style="margin-bottom:28px;">
         <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
           Create New Curriculum Track
         </div>
@@ -895,10 +886,10 @@ sort($allAvailableTeams);
     </div>
 
     <!-- TAB 3: PRACTICE FILES -->
-    <div id="admin-panel-files" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:34px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-      <h3 style="font-size:20px;font-weight:900;color:#0f172a;margin:0 0 8px;">Upload Practice Datasets</h3>
-      <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" style="border:2px dashed #cbd5e1;border-radius:16px;padding:48px 24px;text-align:center;cursor:pointer;background:#f8fafc;">
-        <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:4px;">Upload RVT, DWG, NWD Datasets</div>
+    <div id="admin-panel-files" style="display:none;background:transparent;border:none;padding:0;box-shadow:none;">
+      <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 12px;">Upload Practice Datasets</h3>
+      <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" style="border:1.5px dashed #cbd5e1;border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;background:#f8fafc;">
+        <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Upload RVT, DWG, NWD Datasets</div>
         <input id="admin-file-picker" type="file" multiple style="display:none;" onchange="handleAdminPracticeFilesUpload(this)" />
       </div>
     </div>
@@ -2000,9 +1991,9 @@ function switchAdminUploadTab(tab) {
         btn.style.border = 'none';
         btn.style.fontWeight = '700';
       } else {
-        btn.style.background = '#ffffff';
-        btn.style.color = '#334155';
-        btn.style.border = '1.5px solid #e2e8f0';
+        btn.style.background = '#f8fafc';
+        btn.style.color = '#475569';
+        btn.style.border = '1px solid #cbd5e1';
         btn.style.fontWeight = '600';
       }
     }

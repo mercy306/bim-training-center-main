@@ -50,6 +50,13 @@
                 "duration": "20:00",
                 "type": "local",
                 "ytId": "videos/View_Template_Deng_Rebar_Color_________.mkv"
+            },
+            {
+                "id": "vid_1792503804098",
+                "title": "7. YouTube video",
+                "duration": "20:00",
+                "type": "yt",
+                "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0&list=RDUSsso5DCNts&index=27"
             }
         ]
     },
