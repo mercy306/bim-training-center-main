@@ -1343,9 +1343,6 @@ function renderEmployeeProgressChecklist() {
                 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
                   <div>
                     <div style="font-size:16px;font-weight:800;color:#0f172a;">${course.title}</div>
-                    <div style="font-size:12px;color:#64748b;margin-top:2px;">
-                      ${stats.completedCount} of ${stats.total} Lessons Completed (${stats.percent}%)
-                    </div>
                   </div>
 
                   <button onclick="openClassroom('${course.id}')" style="background:#2563eb;color:#ffffff;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;">
