@@ -26,13 +26,11 @@ define('PROGRESS_JSON_FILE', BASE_PATH . DIRECTORY_SEPARATOR . 'progress.json');
 define('DEFAULT_ADMIN_PASSWORD', 'admin123');
 
 // ============================================================================
-// EMPLOYEE STATIONS / DISCIPLINES
+// EMPLOYEE STATIONS / DISCIPLINES (System is for Trainees Only)
 // ============================================================================
 define('BIM_STATIONS', [
-    'all'        => 'All Employees',
-    'trainee'    => 'Trainees',
-    'engineer'   => 'Structural & MEP Engineers',
-    'architect'  => 'Architects & Designers'
+    'all'     => 'All Trainees',
+    'trainee' => 'Trainees'
 ]);
 
 // ============================================================================
@@ -100,19 +98,7 @@ function getActiveBimUser(): array {
 
                     $dept = strtolower((string)($empRow['department'] ?? ''));
                     $pos = strtolower((string)($empRow['position'] ?? ''));
-                    if (!empty($empRow['is_trainee'])) {
-                        $station = 'trainee';
-                    } elseif (strpos($dept, 'architect') !== false || strpos($pos, 'architect') !== false) {
-                        $station = 'architect';
-                    } elseif (strpos($dept, 'civil') !== false || strpos($dept, 'sanitory') !== false || strpos($pos, 'engineer') !== false) {
-                        $station = 'engineer';
-                    } elseif (strpos($dept, 'model') !== false || strpos($pos, 'model') !== false || strpos($pos, 'draft') !== false) {
-                        $station = 'modeler';
-                    } elseif (strpos($pos, 'manager') !== false || strpos($pos, 'supervisor') !== false) {
-                        $station = 'manager';
-                    } else {
-                        $station = 'all';
-                    }
+                    $station = 'trainee';
 
                     if (!empty($empRow['team'])) {
                         $teamName = $empRow['team'];
@@ -239,16 +225,7 @@ function getActiveBimUser(): array {
             'team_name' => 'General Team',
             'is_demo' => true
         ];
-    } elseif ($demoRole === 'employee_engineer') {
-        return [
-            'id' => 29,
-            'name' => 'Wondifraw Shituneh (Civil Engineer)',
-            'role' => 'employee',
-            'station' => 'engineer',
-            'team_id' => 4,
-            'team_name' => 'A.D_DOR',
-            'is_demo' => true
-        ];
+
     }
 
     // 3. Standalone mode fallback

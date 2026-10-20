@@ -267,14 +267,14 @@ sort($allAvailableTeams);
         <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:56px;width:auto;display:block;object-fit:contain;" />
       </div>
 
-      <!-- Right Controls: Switch View (Admin & Trainer Only) -->
+      <!-- Right Controls: Switch View (Admin & Trainee) -->
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
 
         <!-- Demo Switcher in-line with the top controls (Single Layer) -->
         <?php if (!empty($user['is_demo'])): ?>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Admin</a>
-          <a href="?demo_role=employee_trainee" style="background:<?= !$isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Trainer</a>
+          <a href="?demo_role=employee_trainee" style="background:<?= !$isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Trainee</a>
         </div>
         <?php endif; ?>
 
@@ -516,7 +516,7 @@ sort($allAvailableTeams);
     <!-- Metrics Row -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Total Enrolled</div>
+        <div style="font-size:13px;color:#64748b;font-weight:600;">Total Trainees Enrolled</div>
         <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
       </div>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">
@@ -533,21 +533,15 @@ sort($allAvailableTeams);
       </div>
     </div>
 
-    <!-- Company-Wide Employee Roster Table -->
+    <!-- Company-Wide Trainee Roster Table -->
     <div style="border:1px solid #e2e8f0;border-radius:8px;padding:20px;background:#ffffff;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
         <div>
-          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0;">Employee Training Progress</h3>
+          <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0;">Trainee Training Progress</h3>
         </div>
         
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <select id="admin-roster-station-select" onchange="filterAdminRosterStation(this.value)" style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;color:#0f172a;background:#ffffff;outline:none;">
-            <option value="all">All Stations (<?= count($roster) ?>)</option>
-            <option value="trainee">Trainees (<?= $stationCounts['trainee'] ?? 0 ?>)</option>
-            <option value="engineer">Structural & MEP Engineers (<?= $stationCounts['engineer'] ?? 0 ?>)</option>
-            <option value="architect">Architects & Designers (<?= $stationCounts['architect'] ?? 0 ?>)</option>
-          </select>
-          <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search employee..." style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;width:180px;outline:none;" />
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="admin-roster-search" oninput="filterAdminRoster(this.value)" placeholder="Search trainee..." style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;width:220px;outline:none;" />
         </div>
       </div>
 
@@ -555,8 +549,7 @@ sort($allAvailableTeams);
         <table id="admin-roster-table" style="width:100%;border-collapse:collapse;text-align:left;font-size:13.5px;">
           <thead>
             <tr style="border-bottom:1px solid #e2e8f0;color:#64748b;">
-              <th style="padding:10px 14px;font-weight:600;">Employee Name</th>
-              <th style="padding:10px 14px;font-weight:600;">Station</th>
+              <th style="padding:10px 14px;font-weight:600;">Trainee Name</th>
               <th style="padding:10px 14px;font-weight:600;">Team</th>
               <th style="padding:10px 14px;font-weight:600;">Videos</th>
               <th style="padding:10px 14px;font-weight:600;">Progress</th>
@@ -569,9 +562,6 @@ sort($allAvailableTeams);
               <tr class="roster-row" data-name="<?= strtolower(htmlspecialchars($emp['name'])) ?>" data-station="<?= $emp['station'] ?>" style="border-bottom:1px solid #f1f5f9;">
                 <td style="padding:12px 14px;font-weight:700;color:#0f172a;">
                   <?= htmlspecialchars($emp['name']) ?>
-                </td>
-                <td style="padding:12px 14px;color:#475569;">
-                  <?= htmlspecialchars(BIM_STATIONS[$emp['station']] ?? $emp['station']) ?>
                 </td>
                 <td style="padding:12px 14px;color:#64748b;">
                   <?= htmlspecialchars($emp['team_name']) ?>
@@ -702,12 +692,9 @@ sort($allAvailableTeams);
         </div>
 
         <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Station *</label>
+          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Audience *</label>
           <select id="new-video-station" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
-            <option value="all">All Employees</option>
-            <option value="trainee">Trainees</option>
-            <option value="engineer">Structural & MEP Engineers</option>
-            <option value="architect">Architects & Designers</option>
+            <option value="trainee" selected>All Trainees</option>
           </select>
           <input type="hidden" id="new-video-assigned-employees" value="" />
         </div>
@@ -772,12 +759,9 @@ sort($allAvailableTeams);
           </div>
 
           <div>
-            <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Station Group *</label>
+            <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Target Audience *</label>
             <select id="new-course-station" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
-              <option value="all">All Employees (General Curriculum)</option>
-              <option value="trainee">Trainees (Onboarding & Foundation)</option>
-              <option value="engineer">Structural & MEP Engineers</option>
-              <option value="architect">️ Architects & Designers</option>
+              <option value="trainee" selected>All Trainees (Onboarding & Foundation)</option>
             </select>
           </div>
 

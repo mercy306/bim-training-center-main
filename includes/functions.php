@@ -207,7 +207,8 @@ function getRealEmployeesRoster(): array {
                 FROM employees e
                 LEFT JOIN team_members tm ON e.id = tm.employee_id AND (tm.status != 'inactive' OR tm.status IS NULL)
                 LEFT JOIN teams t ON tm.team_id = t.id AND t.status = 'active'
-                WHERE e.employment_status = 'active' OR e.employment_status IS NULL
+                WHERE (e.employment_status = 'active' OR e.employment_status IS NULL)
+                  AND (e.is_trainee = true OR e.is_trainee = 1)
                 ORDER BY e.id ASC
             ");
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -218,23 +219,7 @@ function getRealEmployeesRoster(): array {
                 if (!isset($employees[$id])) {
                     $name = !empty($r['full_name_english']) ? trim($r['full_name_english']) : (!empty($r['full_name_hebrew']) ? trim($r['full_name_hebrew']) : ('Employee #' . $id));
 
-                    $isTrainee = !empty($r['is_trainee']);
-                    $dept = strtolower((string)($r['department'] ?? ''));
-                    $pos = strtolower((string)($r['position'] ?? ''));
-
-                    if ($isTrainee) {
-                        $station = 'trainee';
-                    } elseif (strpos($dept, 'architect') !== false || strpos($pos, 'architect') !== false) {
-                        $station = 'architect';
-                    } elseif (strpos($dept, 'civil') !== false || strpos($dept, 'sanitory') !== false || strpos($pos, 'engineer') !== false) {
-                        $station = 'engineer';
-                    } elseif (strpos($dept, 'model') !== false || strpos($pos, 'model') !== false || strpos($pos, 'draft') !== false) {
-                        $station = 'modeler';
-                    } elseif (strpos($pos, 'manager') !== false || strpos($pos, 'supervisor') !== false) {
-                        $station = 'manager';
-                    } else {
-                        $station = 'all';
-                    }
+                    $station = 'trainee';
 
                     $teamName = !empty($r['team_name']) ? $r['team_name'] : (!empty($r['emp_team']) ? $r['emp_team'] : 'General Team');
                     $tId = !empty($r['team_id']) ? (int)$r['team_id'] : null;
