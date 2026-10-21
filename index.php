@@ -1759,7 +1759,7 @@ async function renderVideosCategory(category) {
     const pct = watchedMap[v.id]?.percent || 0;
     const thumbUrl = getVideoThumbnailUrl(v);
     const thumbHtml = thumbUrl 
-      ? `<img src="${thumbUrl}" alt="${encodeURIComponent(v.title)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML=\x27<div style=\x22width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;align-items:center;justify-content:center;color:white;\x22><span style=\x22font-size:10px;font-weight:900;\x22>HD VIDEO</span></div>\x27;" />`
+      ? `<img src="${thumbUrl}" alt="${encodeURIComponent(v.title)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\x22width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;align-items:center;justify-content:center;color:white;\x22><span style=\x22font-size:10px;font-weight:900;\x22>HD VIDEO</span></div>';" />`
       : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:10px;font-weight:900;margin-top:4px;">HD VIDEO</span></div>`;
 
     return `
@@ -2017,11 +2017,11 @@ function renderClassroomPlaylist() {
 
     const thumbUrl = getVideoThumbnailUrl(l);
     let thumbHtml = thumbUrl
-      ? `<img src="${thumbUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML=\x27<div style=\\\x27width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#93c5fd;font-size:14px;\\\x27>▶</div>\x27;" />`
+      ? `<img src="${thumbUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#93c5fd;font-size:14px;\\'>▶</div>';" />`
       : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#ffffff;font-size:13px;font-weight:700;"><span style="color:#2563eb;">▶</span></div>`;
 
     return `
-      <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:8px;background:${bg};border:1px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 2px 8px rgba(37,99,235,0.18)' : '0 1px 3px rgba(15,23,42,0.04)'};">
+      <div onclick="loadClassroomLesson(${idx})" class="playlist-lesson-item" style="padding:10px 12px;border-radius:6px;background:${isCurrent ? '#eff6ff' : 'transparent'};border:none;border-bottom:1px solid #f1f5f9;box-shadow:none;cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};" onmouseover="if(${isUnlocked} && !${isCurrent})this.style.background='#f8fafc';" onmouseout="if(!${isCurrent})this.style.background='transparent';">
         <!-- Thumbnail -->
         <div style="width:68px;height:44px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;">
           ${thumbHtml}
@@ -2067,7 +2067,7 @@ function renderClassroomChapters(chapters) {
   if (countEl) countEl.textContent = `${currentClassroomChapters.length}`;
   if (listContainer) {
     listContainer.innerHTML = currentClassroomChapters.map((c, i) => `
-      <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:9px 12px;border-radius:8px;background:${i === 0 ? '#eff6ff' : '#ffffff'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:${i === 0 ? '0 2px 8px rgba(37,99,235,0.15)' : '0 1px 3px rgba(15,23,42,0.04)'};transition:all 0.15s;">
+      <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:9px 12px;border-radius:6px;background:${i === 0 ? '#eff6ff' : 'transparent'};border:none;border-bottom:1px solid #f1f5f9;box-shadow:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;" onmouseover="if(this.getAttribute('data-active')!=='true')this.style.background='#f8fafc';" onmouseout="if(this.getAttribute('data-active')!=='true')this.style.background='transparent';">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
           <span style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 6px;border-radius:4px;flex-shrink:0;">${c.timestamp}</span>
           <span class="chapter-title-text" style="font-size:12.5px;font-weight:600;color:${i === 0 ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
@@ -2110,16 +2110,16 @@ function updateActiveChapterHighlight(currentTime) {
   document.querySelectorAll('.chapter-sidebar-item').forEach((item, i) => {
     if (i === activeIdx) {
       item.style.background = '#eff6ff';
-      item.style.borderColor = '#2563eb';
-      item.style.boxShadow = '0 3px 10px rgba(37,99,235,0.14)';
+      item.style.border = 'none';
+      item.style.boxShadow = 'none';
       const titleEl = item.querySelector('.chapter-title-text');
       if (titleEl) titleEl.style.color = '#2563eb';
       const badgeEl = item.querySelector('.chapter-now-badge');
       if (badgeEl) badgeEl.style.display = 'inline-block';
     } else {
-      item.style.background = '#ffffff';
-      item.style.borderColor = '#e2e8f0';
-      item.style.boxShadow = '0 2px 6px rgba(15,23,42,0.04)';
+      item.style.background = 'transparent';
+      item.style.border = 'none';
+      item.style.boxShadow = 'none';
       const titleEl = item.querySelector('.chapter-title-text');
       if (titleEl) titleEl.style.color = '#0f172a';
       const badgeEl = item.querySelector('.chapter-now-badge');
@@ -2533,7 +2533,7 @@ function renderAdminCurriculaList() {
 
     const lessonsHtml = syllabus.length > 0 
       ? syllabus.map((l, idx) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:transparent;border-bottom:1px solid #f1f5f9;font-size:13px;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span style="font-weight:800;color:#2563eb;font-size:12px;">#${idx + 1}</span>
             <span style="font-weight:700;color:#0f172a;">${l.title}</span>
