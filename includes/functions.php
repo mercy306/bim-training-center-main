@@ -18,11 +18,25 @@ function getBimVideos(?string $station = null, $employeeId = null): array {
     $data = json_decode($content, true);
     if (!is_array($data)) return [];
 
-    // Ensure all items have a default station if missing
+    // Ensure all records are ready for the current player experience.
+    // Older videos receive a useful default chapter automatically.
+    $changed = false;
     foreach ($data as &$item) {
         if (empty($item['station'])) {
             $item['station'] = 'all';
+            $changed = true;
         }
+        if (empty($item['chapters']) || !is_array($item['chapters'])) {
+            $item['chapters'] = [[
+                'time' => '00:00',
+                'title' => 'Full lesson'
+            ]];
+            $changed = true;
+        }
+    }
+    unset($item);
+    if ($changed) {
+        saveBimVideos($data);
     }
 
     if ($employeeId !== null) {

@@ -14,21 +14,41 @@
                 "title": "1. Linking Revit Models from Cloud",
                 "duration": "15:20",
                 "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4",
+                "chapters": [
+                    { "time": 0, "timestamp": "00:00", "title": "Introduction & Cloud Project Setup" },
+                    { "time": 165, "timestamp": "02:45", "title": "Desktop Connector & Hub Navigation" },
+                    { "time": 370, "timestamp": "06:10", "title": "Linking Architectural & Structural Models" },
+                    { "time": 630, "timestamp": "10:30", "title": "Shared Coordinates & Level Alignment" },
+                    { "time": 795, "timestamp": "13:15", "title": "Reloading & Cloud Worksharing Practices" }
+                ]
             },
             {
                 "id": "vid_1792419059_0fb5",
                 "title": "2. Structural Rebar Modeling & Detailing",
                 "duration": "28:45",
                 "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
+                "ytId": "videos/X_rebar_modeling.mp4",
+                "chapters": [
+                    { "time": 0, "timestamp": "00:00", "title": "Rebar Fundamentals & Standards" },
+                    { "time": 320, "timestamp": "05:20", "title": "Column Ties & Main Bars Setup" },
+                    { "time": 735, "timestamp": "12:15", "title": "Beam Stirrups & Reinforcement" },
+                    { "time": 1180, "timestamp": "19:40", "title": "Slab Mesh & Edge Bar Placement" },
+                    { "time": 1490, "timestamp": "24:50", "title": "Rebar Schedules & 3D Detailing" }
+                ]
             },
             {
                 "id": "vid_1792503804098",
                 "title": "3. YouTube BIM Video Tutorial",
                 "duration": "20:00",
                 "type": "yt",
-                "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0"
+                "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0",
+                "chapters": [
+                    { "time": 0, "timestamp": "00:00", "title": "Overview of BIM Coordination" },
+                    { "time": 220, "timestamp": "03:40", "title": "Clash Detection & Interference Check" },
+                    { "time": 495, "timestamp": "08:15", "title": "Issue Tracking & Collaboration" },
+                    { "time": 860, "timestamp": "14:20", "title": "BIM Export & Final Review" }
+                ]
             }
         ]
     },
@@ -47,14 +67,26 @@
                 "title": "1. Rebar Modeling in Structural BIM",
                 "duration": "28:45",
                 "type": "local",
-                "ytId": "videos/X_rebar_modeling.mp4"
+                "ytId": "videos/X_rebar_modeling.mp4",
+                "chapters": [
+                    { "time": 0, "timestamp": "00:00", "title": "Rebar Rules & Cover Settings" },
+                    { "time": 320, "timestamp": "05:20", "title": "Modeling Primary Reinforcement" },
+                    { "time": 735, "timestamp": "12:15", "title": "Stirrups & Secondary Detailing" },
+                    { "time": 1180, "timestamp": "19:40", "title": "Bar Bending & Schedule Generation" }
+                ]
             },
             {
                 "id": "vid_1792410355_cloud",
                 "title": "2. Cloud Model Linking Workflow",
                 "duration": "15:20",
                 "type": "local",
-                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4"
+                "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4",
+                "chapters": [
+                    { "time": 0, "timestamp": "00:00", "title": "Cloud Hub Connection" },
+                    { "time": 240, "timestamp": "04:00", "title": "Linking Multi-Disciplinary Models" },
+                    { "time": 540, "timestamp": "09:00", "title": "Coordination & Collision Checking" },
+                    { "time": 780, "timestamp": "13:00", "title": "Publishing & Verification" }
+                ]
             }
         ]
     }

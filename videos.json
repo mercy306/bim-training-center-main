@@ -8,6 +8,12 @@
         "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0&list=RDUSsso5DCNts&index=27",
         "duration": "20:00",
         "type": "yt",
-        "assigned_employees": []
+        "assigned_employees": [],
+        "chapters": [
+            {
+                "time": "00:00",
+                "title": "Full lesson"
+            }
+        ]
     }
 ]

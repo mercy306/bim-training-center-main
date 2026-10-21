@@ -62,6 +62,22 @@ $title = trim($_POST['title'] ?? pathinfo($origName, PATHINFO_FILENAME));
 $cat = trim($_POST['category'] ?? 'revit');
 $duration = trim($_POST['duration'] ?? '15:00');
 $desc = trim($_POST['description'] ?? 'Direct BIM modeling tutorial.');
+$chaptersRaw = trim($_POST['chapters'] ?? '');
+$chapters = json_decode($chaptersRaw, true);
+if (!is_array($chapters) || count($chapters) === 0) {
+    $chapters = [['time' => '00:00', 'title' => 'Full lesson']];
+} else {
+    $chapters = array_values(array_filter(array_map(function ($chapter) {
+        if (!is_array($chapter)) return null;
+        $time = trim((string)($chapter['time'] ?? ''));
+        $title = trim((string)($chapter['title'] ?? ''));
+        if ($time === '' || $title === '') return null;
+        return ['time' => $time, 'title' => $title];
+    }, $chapters)));
+    if (count($chapters) === 0) {
+        $chapters = [['time' => '00:00', 'title' => 'Full lesson']];
+    }
+}
 
 $station = trim($_POST['station'] ?? 'all');
 $assignedEmployeesRaw = trim($_POST['assigned_employees'] ?? '');
@@ -88,6 +104,7 @@ $newEntry = [
     'desc'               => $desc,
     'ytId'               => $relativePath,
     'duration'           => $duration,
+    'chapters'           => $chapters,
     'type'               => 'local'
 ];
 

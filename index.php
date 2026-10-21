@@ -981,6 +981,15 @@ sort($allAvailableTeams);
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Description</label>
           <textarea id="new-video-desc" rows="3" placeholder="Learning outcomes..." style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
+
+        <div style="grid-column:1/-1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
+            <label style="font-size:13px;font-weight:700;color:#334155;">Video Chapters <span style="font-weight:600;color:#64748b;">(optional)</span></label>
+            <button type="button" onclick="addVideoChapter()" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;">+ Add Chapter</button>
+          </div>
+          <div id="new-video-chapter-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <div style="font-size:11.5px;color:#64748b;margin-top:7px;">Add timestamps such as 00:00 and a chapter title. Videos without chapters use “Full lesson” automatically.</div>
+        </div>
       </div>
 
       <input type="hidden" id="inline-curriculum-title" value="" />
@@ -1109,9 +1118,21 @@ sort($allAvailableTeams);
       
       <!-- LEFT COLUMN: Main Video Player & Metadata -->
       <div>
-        <!-- 16:9 Aspect Ratio Video Viewport -->
+        <!-- 16:9 Aspect Ratio Video Viewport with Live Chapter Overlay -->
         <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.1);border:1px solid #e2e8f0;">
           <div id="classroom-player" style="width:100%;height:100%;"></div>
+          <!-- Live Chapter Overlay -->
+          <div id="classroom-active-chapter-pill" style="position:absolute;top:16px;left:16px;z-index:5;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);color:#ffffff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;pointer-events:none;transition:all 0.25s;box-shadow:0 4px 14px rgba(0,0,0,0.35);">
+            <span style="color:#60a5fa;">📍 Chapter:</span> <span id="classroom-active-chapter-name">Introduction</span>
+          </div>
+        </div>
+
+        <!-- Video Chapters Timeline Chips (Directly Below Player) -->
+        <div id="classroom-chapters-bar" style="margin-top:14px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;overflow-x:auto;">
+          <span style="font-size:12px;font-weight:800;color:#0f172a;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;">
+            <span style="color:#2563eb;">⚡</span> Chapters:
+          </span>
+          <div id="classroom-chapters-chips" style="display:flex;align-items:center;gap:8px;overflow-x:auto;padding-bottom:2px;flex:1;"></div>
         </div>
 
         <!-- Video Metadata, Tags, Title & Instructor Actions -->
@@ -1176,6 +1197,18 @@ sort($allAvailableTeams);
           <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:450px;overflow-y:auto;padding-right:2px;"></div>
         </div>
 
+        <!-- Video Chapters Sidebar Card -->
+        <div id="classroom-chapters-card" style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 20px rgba(15,23,42,0.03);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div>
+              <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0;">Video Chapters</h4>
+              <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Jump to key topics inside this lesson</div>
+            </div>
+            <span id="classroom-chapters-count" style="font-size:11.5px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;">Chapters</span>
+          </div>
+          <div id="classroom-chapters-list" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:2px;"></div>
+        </div>
+
         <!-- Suggested Courses Card -->
         <div style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 20px rgba(15,23,42,0.03);">
           <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 12px;">Other Curricula</h4>
@@ -1211,6 +1244,7 @@ sort($allAvailableTeams);
       <p id="vmodal-desc" style="color:#64748b;font-size:13px;line-height:1.4;margin:0;flex:1;"></p>
       <div id="vmodal-status-pill" style="color:#64748b;font-size:12px;font-weight:600;"></div>
     </div>
+    <div id="vmodal-chapters" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid #e2e8f0;"></div>
   </div>
 </div>
 
@@ -1804,6 +1838,9 @@ async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, vide
   if (stBadge) stBadge.textContent = 'STATION: ' + (station || 'ALL EMPLOYEES').toUpperCase();
 
   const playerContainer = document.getElementById('vmodal-player');
+  const allVideos = await getAllVideos();
+  const videoMeta = allVideos.find(v => v.id === videoId || v.ytId === videoRef) || {};
+  renderVideoChapters(videoMeta.chapters);
   playerContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;background:#000;">Loading Video...</div>';
   openModal('video');
 
@@ -1827,6 +1864,47 @@ async function launchVideoPlayer(videoRef, encodedTitle, encodedDesc, type, vide
     if (vidEl && videoId) {
       attachVideoTracking(vidEl, videoId, curCtx);
     }
+  }
+}
+
+function chapterTimeToSeconds(time) {
+  const parts = String(time || '').split(':').map(Number);
+  if (parts.some(part => !Number.isFinite(part) || part < 0)) return 0;
+  return parts.reduce((total, part) => total * 60 + part, 0);
+}
+
+function renderVideoChapters(chapters) {
+  const container = document.getElementById('vmodal-chapters');
+  if (!container) return;
+  const chapterList = Array.isArray(chapters) && chapters.length
+    ? chapters
+    : [{ time: '00:00', title: 'Full lesson' }];
+  container.innerHTML = '<div style="font-size:12px;font-weight:900;color:#334155;letter-spacing:.06em;margin-bottom:9px;">CHAPTERS</div>';
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;';
+  chapterList.forEach(chapter => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = `${chapter.time || '00:00'}  ${chapter.title || 'Full lesson'}`;
+    button.style.cssText = 'background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:700;cursor:pointer;';
+    button.addEventListener('click', () => jumpToVideoChapter(chapterTimeToSeconds(chapter.time)));
+    list.appendChild(button);
+  });
+  container.appendChild(list);
+  container.style.display = 'block';
+}
+
+function jumpToVideoChapter(seconds) {
+  const localVideo = document.getElementById('active-bim-video');
+  if (localVideo) {
+    localVideo.currentTime = seconds;
+    localVideo.play().catch(() => {});
+    return;
+  }
+  const frame = document.querySelector('#vmodal-player iframe');
+  if (frame) {
+    const base = frame.src.split('?')[0];
+    frame.src = `${base}?autoplay=1&start=${seconds}`;
   }
 }
 
@@ -2113,6 +2191,123 @@ function renderClassroomPlaylist() {
   renderClassroomSuggestedCourses();
 }
 
+let currentClassroomChapters = [];
+
+function getVideoChapters(lesson) {
+  if (lesson.chapters && Array.isArray(lesson.chapters) && lesson.chapters.length > 0) {
+    return lesson.chapters;
+  }
+  return [
+    { time: 0, timestamp: '00:00', title: '1. Introduction & Setup' },
+    { time: 180, timestamp: '03:00', title: '2. Core BIM Workflow' },
+    { time: 420, timestamp: '07:00', title: '3. Technical Detailing' },
+    { time: 720, timestamp: '12:00', title: '4. Verification & QA' }
+  ];
+}
+
+function renderClassroomChapters(chapters) {
+  currentClassroomChapters = chapters || [];
+  
+  // 1. Horizontal Timeline Chips (Directly below player)
+  const chipsContainer = document.getElementById('classroom-chapters-chips');
+  if (chipsContainer) {
+    chipsContainer.innerHTML = currentClassroomChapters.map((c, i) => `
+      <button type="button" onclick="seekToChapter(${c.time})" class="chapter-chip" data-idx="${i}" style="background:${i === 0 ? '#2563eb' : '#f8fafc'};color:${i === 0 ? '#ffffff' : '#334155'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
+        <span style="opacity:0.75;font-size:11px;">${c.timestamp}</span>
+        <span>${c.title}</span>
+      </button>
+    `).join('');
+  }
+
+  // 2. Sidebar Chapters List Card
+  const listContainer = document.getElementById('classroom-chapters-list');
+  const countEl = document.getElementById('classroom-chapters-count');
+  if (countEl) countEl.textContent = `${currentClassroomChapters.length} Chapters`;
+  if (listContainer) {
+    listContainer.innerHTML = currentClassroomChapters.map((c, i) => `
+      <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:9px 12px;border-radius:10px;background:${i === 0 ? '#eff6ff' : '#ffffff'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          <span style="font-size:11.5px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 6px;border-radius:4px;flex-shrink:0;">${c.timestamp}</span>
+          <span class="chapter-title-text" style="font-size:12.5px;font-weight:700;color:${i === 0 ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
+        </div>
+        <span class="chapter-now-badge" style="display:${i === 0 ? 'inline-block' : 'none'};font-size:10.5px;font-weight:800;color:#2563eb;">Playing</span>
+      </div>
+    `).join('');
+  }
+
+  // Update active chapter overlay name
+  const nameEl = document.getElementById('classroom-active-chapter-name');
+  if (nameEl && currentClassroomChapters[0]) {
+    nameEl.textContent = currentClassroomChapters[0].title;
+  }
+}
+
+function seekToChapter(seconds) {
+  const vidEl = document.getElementById('classroom-vid-el');
+  if (vidEl) {
+    vidEl.currentTime = seconds;
+    vidEl.play().catch(() => {});
+    updateActiveChapterHighlight(seconds);
+    return;
+  }
+  const iframe = document.getElementById('classroom-yt-frame');
+  if (iframe) {
+    iframe.contentWindow.postMessage(JSON.stringify({
+      event: 'command',
+      func: 'seekTo',
+      args: [seconds, true]
+    }), '*');
+    updateActiveChapterHighlight(seconds);
+  }
+}
+
+function updateActiveChapterHighlight(currentTime) {
+  if (!currentClassroomChapters || currentClassroomChapters.length === 0) return;
+
+  let activeIdx = 0;
+  for (let i = 0; i < currentClassroomChapters.length; i++) {
+    if (currentTime >= currentClassroomChapters[i].time) {
+      activeIdx = i;
+    }
+  }
+
+  const activeChap = currentClassroomChapters[activeIdx];
+  const nameEl = document.getElementById('classroom-active-chapter-name');
+  if (nameEl && activeChap) {
+    nameEl.textContent = activeChap.title;
+  }
+
+  document.querySelectorAll('.chapter-chip').forEach((chip, i) => {
+    if (i === activeIdx) {
+      chip.style.background = '#2563eb';
+      chip.style.color = '#ffffff';
+      chip.style.borderColor = '#2563eb';
+    } else {
+      chip.style.background = '#f8fafc';
+      chip.style.color = '#334155';
+      chip.style.borderColor = '#e2e8f0';
+    }
+  });
+
+  document.querySelectorAll('.chapter-sidebar-item').forEach((item, i) => {
+    if (i === activeIdx) {
+      item.style.background = '#eff6ff';
+      item.style.borderColor = '#2563eb';
+      const titleEl = item.querySelector('.chapter-title-text');
+      if (titleEl) titleEl.style.color = '#2563eb';
+      const badgeEl = item.querySelector('.chapter-now-badge');
+      if (badgeEl) badgeEl.style.display = 'inline-block';
+    } else {
+      item.style.background = '#ffffff';
+      item.style.borderColor = '#e2e8f0';
+      const titleEl = item.querySelector('.chapter-title-text');
+      if (titleEl) titleEl.style.color = '#0f172a';
+      const badgeEl = item.querySelector('.chapter-now-badge');
+      if (badgeEl) badgeEl.style.display = 'none';
+    }
+  });
+}
+
 function loadClassroomLesson(idx) {
   if (!currentClassroomCourse) return;
   const syllabus = currentClassroomCourse.syllabus || [];
@@ -2138,6 +2333,10 @@ function loadClassroomLesson(idx) {
   const resumeBadge = document.getElementById('classroom-lesson-resume-badge');
   if (resumeBadge) resumeBadge.style.display = 'none';
 
+  // Load and render video chapters
+  const chapters = getVideoChapters(l);
+  renderClassroomChapters(chapters);
+
   const player = document.getElementById('classroom-player');
   let cleanUrl = (l.ytId || '').replace(/^\.?\/?/, '');
   const isYt = l.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
@@ -2155,6 +2354,9 @@ function loadClassroomLesson(idx) {
     const lId = l.id || ('les_' + idx);
     if (vidEl) {
       attachVideoTracking(vidEl, lId, { course: currentClassroomCourse, index: idx });
+      vidEl.addEventListener('timeupdate', () => {
+        updateActiveChapterHighlight(vidEl.currentTime);
+      });
     }
   }
 
@@ -3063,6 +3265,28 @@ function clearSelectedVideoFiles() {
   renderSelectedVideoFilesQueue();
 }
 
+function addVideoChapter(time = '', title = '') {
+  const list = document.getElementById('new-video-chapter-list');
+  if (!list) return;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:110px 1fr auto;gap:8px;align-items:center;background:rgba(239,246,255,.58);border:1px solid #bfdbfe;border-radius:10px;padding:8px;';
+  row.innerHTML = `
+    <input class="chapter-time-input" type="text" value="${String(time).replace(/"/g, '&quot;')}" placeholder="00:00" aria-label="Chapter time" style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:12.5px;box-sizing:border-box;" />
+    <input class="chapter-title-input" type="text" value="${String(title).replace(/"/g, '&quot;')}" placeholder="Chapter title, e.g. Model setup" aria-label="Chapter title" style="width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:7px;font-size:12.5px;box-sizing:border-box;" />
+    <button type="button" aria-label="Remove chapter" onclick="this.parentElement.remove()" style="width:32px;height:32px;background:#fff1f2;color:#e11d48;border:1px solid #fecdd3;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;">×</button>`;
+  list.appendChild(row);
+}
+
+function getVideoChaptersFromEditor() {
+  const rows = document.querySelectorAll('#new-video-chapter-list > div');
+  const chapters = Array.from(rows).map(row => {
+    const time = row.querySelector('.chapter-time-input')?.value.trim();
+    const title = row.querySelector('.chapter-title-input')?.value.trim();
+    return time && title ? { time, title } : null;
+  }).filter(Boolean);
+  return chapters.length ? chapters : [{ time: '00:00', title: 'Full lesson' }];
+}
+
 async function adminPublishVideo() {
   const isIndividualMode = (selectedIndividualEmployeeIds && selectedIndividualEmployeeIds.length > 0);
   const station = isIndividualMode ? 'custom' : (document.getElementById('new-video-station')?.value || 'all');
@@ -3070,6 +3294,7 @@ async function adminPublishVideo() {
   const cat = document.getElementById('new-video-cat')?.value || 'revit';
   const defaultDuration = document.getElementById('new-video-duration')?.value.trim() || '00:00';
   const defaultDesc = document.getElementById('new-video-desc')?.value.trim() || 'Direct BIM demonstration.';
+  const chapters = getVideoChaptersFromEditor();
 
   const curriculumMode = currentVideoCurriculumMode; // 'existing', 'new', 'none'
   let curriculumId = document.getElementById('new-video-curriculum-id')?.value || '';
@@ -3121,6 +3346,7 @@ async function adminPublishVideo() {
         }
         formData.append('duration', item.duration || defaultDuration);
         formData.append('description', defaultDesc);
+        formData.append('chapters', JSON.stringify(chapters));
 
         if (curriculumMode === 'new') {
           if (i === 0) {
@@ -3199,6 +3425,7 @@ async function adminPublishVideo() {
         desc: defaultDesc,
         ytId,
         duration: defaultDuration,
+        chapters,
         type: ytId.includes('videos/') ? 'local' : 'yt',
         assigned_employees: isIndividualMode ? selectedIndividualEmployeeIds : []
       };
