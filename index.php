@@ -271,9 +271,9 @@ sort($allAvailableTeams);
     .dashboard-card:hover, .course-card:hover { transform: translateY(-3px); }
     .video-thumb .play-icon { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
 
-    /* ── WARM WHITE CREAM BACKGROUND ───────────────────────────────────── */
+    /* ── REFINED SILVER BACKGROUND ───────────────────────────────────── */
     body {
-      background: #faf8f5 !important;
+      background: #e5e7eb !important;
     }
     body > nav {
       position: relative !important;
@@ -585,7 +585,7 @@ sort($allAvailableTeams);
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
   </script>
 </head>
-<body style="background:#faf8f5;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
+<body style="background:#e5e7eb;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
@@ -657,7 +657,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
+<section id="section-files" style="display:none;background:#e5e7eb;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <!-- Practice File Type Filter Dropdown -->
@@ -684,7 +684,7 @@ sort($allAvailableTeams);
      6. TEAM LEADER SCOPED VIEW (TEAM ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isTeamLeader): ?>
-<section id="section-team-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-team-progress" style="display:none;background:#e5e7eb;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
     
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
@@ -795,7 +795,7 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#e5e7eb;padding:40px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
@@ -888,7 +888,7 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:#faf8f5;padding:40px 24px 80px;">
+<section id="section-upload" style="display:none;background:#e5e7eb;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
 
@@ -1120,7 +1120,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#faf8f5;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#e5e7eb;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation -->
