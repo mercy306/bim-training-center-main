@@ -327,38 +327,15 @@ sort($allAvailableTeams);
       box-shadow: 0 16px 36px -4px rgba(2, 6, 23, 0.28) !important;
     }
 
-    /* Retro Computer Stage & Classroom Styles */
-    .imac-computer-stage {
+    #classroom-player-viewport {
       position: relative;
       width: 100%;
-      max-width: 880px;
-      margin: 0 auto 16px;
-      aspect-ratio: 575/432;
-      filter: drop-shadow(0 20px 35px rgba(0,0,0,0.35));
-      user-select: none;
-    }
-    .imac-computer-stage #classroom-player-viewport {
-      position: absolute !important;
-      left: 31.48% !important;
-      top: 21.3% !important;
-      width: 35.83% !important;
-      height: 33.33% !important;
-      background: #000000 !important;
-      border-radius: 6px !important;
+      aspect-ratio: 16/9;
+      background: #000000;
+      border-radius: 14px !important;
       overflow: hidden !important;
-      z-index: 2 !important;
-      box-shadow: inset 0 0 16px rgba(0,0,0,0.9) !important;
-      border: none !important;
-    }
-    .imac-computer-stage .imac-frame-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      z-index: 3;
+      box-shadow: 0 16px 36px -4px rgba(2, 6, 23, 0.35) !important;
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
     }
 
     #classroom-details-card,
@@ -976,14 +953,11 @@ sort($allAvailableTeams);
     <!-- Main Two-Column Player & Playlist Layout Grid -->
     <div id="classroom-layout-grid" style="display:grid;grid-template-columns:minmax(0, 1fr) 380px;gap:24px;align-items:start;">
       
-      <!-- LEFT COLUMN: Main Video Player Inside Retro iMac G3 -->
+      <!-- LEFT COLUMN: Main Video Player & Metadata -->
       <div>
-        <!-- Retro iMac G3 Stage -->
-        <div class="imac-computer-stage">
-          <div id="classroom-player-viewport">
-            <div id="classroom-player" style="width:100%;height:100%;"></div>
-          </div>
-          <img src="imac-retro-cutout.png" alt="Retro Bondi Blue iMac G3" class="imac-frame-overlay" />
+        <!-- 16:9 Aspect Ratio Video Viewport -->
+        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:12px;overflow:hidden;box-shadow:0 12px 30px -4px rgba(2,6,23,0.3);border:1px solid rgba(255,255,255,0.4);">
+          <div id="classroom-player" style="width:100%;height:100%;"></div>
         </div>
 
         <!-- Video Details & Actions Bar -->
