@@ -1196,14 +1196,20 @@ sort($allAvailableTeams);
           </div>
           <div id="classroom-chapters-list" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:2px;"></div>
         </div>
+      </div><!-- End RIGHT COLUMN -->
 
-        <!-- Suggested Courses Card -->
-        <div style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 20px rgba(15,23,42,0.03);">
-          <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 12px;">Other Curricula</h4>
-          <div id="classroom-suggested-courses" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div><!-- End classroom-layout-grid -->
+
+    <!-- OTHER CURRICULA: Minimized and relocated to bottom shelf below player & sidebar -->
+    <div id="classroom-suggested-section" style="margin-top:28px;padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 4px 16px rgba(15,23,42,0.02);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:14px;">📚</span>
+          <h4 style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0;">Other Curricula</h4>
+          <span style="font-size:11.5px;color:#64748b;font-weight:500;">• Explore additional BIM tracks</span>
         </div>
       </div>
-
+      <div id="classroom-suggested-courses" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:10px;"></div>
     </div>
   </div>
 </section>
@@ -2082,22 +2088,25 @@ function openClassroom(courseId, lessonIdx = null) {
 
 function renderClassroomSuggestedCourses() {
   const container = document.getElementById('classroom-suggested-courses');
+  const sectionEl = document.getElementById('classroom-suggested-section');
   if (!container) return;
   const all = getAllCourses();
   const others = all.filter(c => !currentClassroomCourse || c.id !== currentClassroomCourse.id);
   if (others.length === 0) {
-    container.innerHTML = '<div style="font-size:12px;color:#94a3b8;padding:8px 0;">No other curricula available.</div>';
+    if (sectionEl) sectionEl.style.display = 'none';
     return;
   }
-  container.innerHTML = others.slice(0, 3).map(c => {
+  if (sectionEl) sectionEl.style.display = 'block';
+
+  container.innerHTML = others.map(c => {
     const lessonCount = (c.syllabus || []).length;
     return `
-      <div onclick="openClassroom('${c.id}')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0'">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:#0f172a;line-height:1.3;">${c.title}</div>
-          <div style="font-size:11.5px;color:#64748b;margin-top:2px;">${lessonCount} lesson${lessonCount === 1 ? '' : 's'} • ${(c.cat || 'BIM').toUpperCase()}</div>
+      <div onclick="openClassroom('${c.id}')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:all 0.15s;min-width:0;" onmouseover="this.style.borderColor='#2563eb';this.style.background='#eff6ff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'">
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;font-weight:500;">${lessonCount} lesson${lessonCount === 1 ? '' : 's'} • <span style="color:#2563eb;font-weight:700;">${(c.cat || 'BIM').toUpperCase()}</span></div>
         </div>
-        <span style="color:#2563eb;font-weight:800;font-size:12px;white-space:nowrap;">Start →</span>
+        <span style="color:#2563eb;font-weight:800;font-size:11.5px;white-space:nowrap;padding:3px 8px;background:#ffffff;border:1px solid #bfdbfe;border-radius:6px;flex-shrink:0;">Start →</span>
       </div>
     `;
   }).join('');
