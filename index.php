@@ -271,25 +271,22 @@ sort($allAvailableTeams);
     .dashboard-card:hover, .course-card:hover { transform: translateY(-3px); }
     .video-thumb .play-icon { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
 
-    /* ── SOFT CLAYMORPHISM & AMBIENT GLASS STYLING (MATCHING MOCKUP) ── */
+    /* ── SHARP, COMPACT, MODERN CARD THEME ON SILVER BACKGROUND ── */
     :root {
-      --clay-bg: #dbe4ee;
-      --clay-card-bg: #ffffff;
-      --clay-radius-lg: 24px;
-      --clay-radius-md: 16px;
-      --clay-radius-sm: 12px;
-      --clay-shadow-lg: 0 18px 40px -8px rgba(100, 116, 139, 0.20), 0 6px 14px -3px rgba(100, 116, 139, 0.08);
-      --clay-shadow-md: 0 8px 22px -4px rgba(148, 163, 184, 0.20), 0 3px 8px -2px rgba(148, 163, 184, 0.10);
-      --clay-shadow-sm: 0 4px 12px rgba(148, 163, 184, 0.14), 0 1px 3px rgba(148, 163, 184, 0.06);
-      --clay-border: 1px solid rgba(255, 255, 255, 0.95);
+      --silver-bg: #e5e7eb;
+      --card-bg: #ffffff;
+      --card-radius: 10px;
+      --card-radius-sm: 8px;
+      --card-border: 1px solid #e2e8f0;
+      --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     body {
-      background: var(--clay-bg) !important;
+      background: var(--silver-bg) !important;
     }
 
     section[id^="section-"] {
-      background: var(--clay-bg) !important;
+      background: var(--silver-bg) !important;
     }
 
     /* Top Royal Blue Bar - PRESERVED INTACT WITHOUT REMOVAL */
@@ -306,62 +303,64 @@ sort($allAvailableTeams);
       box-shadow: inset 0 1px rgba(255, 255, 255, 0.22);
     }
 
-    /* Claymorphism Cards (Mockup Style) */
+    /* Sharp, Compact, Modern Cards */
     .dashboard-card, .course-card, .modal-box, .clay-card {
-      background: var(--clay-card-bg) !important;
-      border-radius: var(--clay-radius-lg) !important;
-      border: var(--clay-border) !important;
-      box-shadow: var(--clay-shadow-lg) !important;
-      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      background: var(--card-bg) !important;
+      border-radius: var(--card-radius) !important;
+      border: var(--card-border) !important;
+      box-shadow: var(--card-shadow) !important;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
     .dashboard-card:hover, .course-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 24px 48px -10px rgba(100, 116, 139, 0.25), 0 10px 20px -4px rgba(100, 116, 139, 0.12) !important;
+      transform: translateY(-2px);
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
     }
 
-    /* Classroom Specific Claymorphism Styles */
+    /* Classroom Specific Sharp & Modern Styles */
     #classroom-details-card,
     #classroom-chapters-card,
     #classroom-layout-grid > div > div:first-child {
       background: #ffffff !important;
-      border-radius: 24px !important;
-      border: 1px solid rgba(255, 255, 255, 0.95) !important;
-      box-shadow: 0 18px 40px -8px rgba(100, 116, 139, 0.20), 0 6px 14px -3px rgba(100, 116, 139, 0.08) !important;
+      border-radius: var(--card-radius) !important;
+      border: var(--card-border) !important;
+      box-shadow: var(--card-shadow) !important;
     }
     #classroom-player-viewport {
-      border-radius: 24px !important;
-      box-shadow: 0 22px 48px -8px rgba(15, 23, 42, 0.26) !important;
-      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.2) !important;
+      border: 1px solid #cbd5e1 !important;
     }
 
     input, textarea, select {
-      background: #f8fafc !important;
-      border-radius: 14px !important;
-      border: 1.5px solid #e2e8f0 !important;
-      padding: 12px 16px !important;
-      font-size: 14px !important;
+      background: #ffffff !important;
+      border-radius: var(--card-radius-sm) !important;
+      border: 1px solid #cbd5e1 !important;
+      padding: 9px 14px !important;
+      font-size: 13.5px !important;
       color: #0f172a !important;
-      box-shadow: 0 1px 3px rgba(148, 163, 184, 0.04) !important;
-      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      box-shadow: none !important;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
     }
     input:focus, textarea:focus, select:focus {
       background: #ffffff !important;
       border-color: #2563eb !important;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(37, 99, 235, 0.06) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
       outline: none !important;
     }
     select option { background: #ffffff; color: #0f172a; }
     .modal-overlay { background: rgba(15, 23, 42, 0.5); }
-    /* ── SINGLE-LAYER WORKSPACE & ELEVATED CLAY CARDS ── */
+
+    /* ── SINGLE-LAYER WORKSPACE & SHARP CARDS ── */
     #section-analytics, #section-upload, #section-team-progress, #section-files, #section-classroom {
-      background: var(--clay-bg) !important;
+      background: var(--silver-bg) !important;
     }
     #section-upload [id^="admin-panel-"] {
       background: #ffffff !important;
-      border: 1px solid rgba(255, 255, 255, 0.95) !important;
-      border-radius: 24px !important;
-      padding: 32px !important;
-      box-shadow: 0 18px 40px -8px rgba(100, 116, 139, 0.20), 0 6px 14px -3px rgba(100, 116, 139, 0.08) !important;
+      border: var(--card-border) !important;
+      border-radius: var(--card-radius) !important;
+      padding: 24px 28px !important;
+      box-shadow: var(--card-shadow) !important;
     }
     #admin-roster-table thead tr { background: #f8fafc; }
     #admin-roster-table tbody tr { transition: background-color 160ms ease; }
@@ -521,23 +520,23 @@ sort($allAvailableTeams);
     </div>
 
     <!-- Team Metrics -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:18px;margin-bottom:24px;">
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Team Average Completion</div>
-        <div style="font-size:26px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:20px;">
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Team Average Completion</div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Assigned Members</div>
-        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Assigned Members</div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= count($roster) ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
-        <div style="font-size:26px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Fully Certified</div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
     </div>
 
     <!-- Scoped Team Member Roster -->
-    <div style="border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:24px;background:#ffffff;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:20px 24px;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
       <h3 style="font-size:17px;font-weight:800;color:#0f172a;margin:0 0 16px;">Team Member Progress Details</h3>
       
       <div style="overflow-x:auto;">
@@ -605,33 +604,33 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#e5e7eb;padding:36px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
 
     <!-- Metrics Row -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:18px;margin-bottom:24px;">
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Total Trainees Enrolled</div>
-        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:20px;">
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Total Trainees Enrolled</div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['total_employees'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Completion Rate</div>
-        <div style="font-size:26px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Completion Rate</div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['avg_completion'] ?? 0 ?>%</div>
       </div>
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">Fully Certified</div>
-        <div style="font-size:26px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">Fully Certified</div>
+        <div style="font-size:24px;font-weight:800;color:#2563eb;margin-top:4px;"><?= $analytics['fully_completed'] ?? 0 ?></div>
       </div>
-      <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:20px;padding:20px 24px;box-shadow:0 12px 30px -6px rgba(100,116,139,0.18), 0 4px 10px -2px rgba(100,116,139,0.06);">
-        <div style="font-size:13px;color:#64748b;font-weight:600;">In Progress</div>
-        <div style="font-size:26px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
+        <div style="font-size:12.5px;color:#64748b;font-weight:600;">In Progress</div>
+        <div style="font-size:24px;font-weight:800;color:#0f172a;margin-top:4px;"><?= $analytics['in_progress'] ?? 0 ?></div>
       </div>
     </div>
 
     <!-- Company-Wide Trainee Roster Table -->
-    <div style="border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:24px 28px;background:#ffffff;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div style="border:1px solid #e2e8f0;border-radius:10px;padding:20px 24px;background:#ffffff;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
         <div>
           <h3 style="font-size:16px;font-weight:800;color:#0f172a;margin:0;">Trainee Training Progress</h3>
@@ -918,11 +917,11 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#dbe4ee;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#e5e7eb;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
       <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#64748b;font-weight:600;flex-wrap:wrap;">
         <span style="color:#0f172a;font-weight:800;">Curriculum</span>
         <span style="color:#cbd5e1;">/</span>
@@ -933,29 +932,29 @@ sort($allAvailableTeams);
     </div>
 
     <!-- Main Two-Column Player & Playlist Layout Grid -->
-    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:minmax(0, 1fr) 380px;gap:28px;align-items:start;">
+    <div id="classroom-layout-grid" style="display:grid;grid-template-columns:minmax(0, 1fr) 380px;gap:24px;align-items:start;">
       
       <!-- LEFT COLUMN: Main Video Player & Metadata -->
       <div>
         <!-- 16:9 Aspect Ratio Video Viewport -->
-        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:24px;overflow:hidden;box-shadow:0 22px 48px -8px rgba(15,23,42,0.26);border:1px solid rgba(255,255,255,0.8);">
+        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:12px;overflow:hidden;box-shadow:0 10px 25px -4px rgba(15,23,42,0.2);border:1px solid #cbd5e1;">
           <div id="classroom-player" style="width:100%;height:100%;"></div>
         </div>
 
         <!-- Video Details & Actions Bar -->
-        <div id="classroom-details-card" style="margin-top:18px;background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:20px 24px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div id="classroom-details-card" style="margin-top:16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
           <!-- Video Lesson Title -->
           <h1 id="classroom-lesson-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0;line-height:1.35;flex:1;min-width:240px;">Lesson Overview</h1>
 
           <!-- Action Controls -->
           <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:8px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(148,163,184,0.12);transition:all 0.18s;">
+            <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1px solid #cbd5e1;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:all 0.15s;">
               <span id="classroom-complete-icon">○</span> Mark Completed
             </button>
-            <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 14px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(148,163,184,0.12);">
+            <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,0.04);">
               ← Prev
             </button>
-            <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+            <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,99,235,0.28);">
               <span>Next</span> →
             </button>
           </div>
@@ -965,7 +964,7 @@ sort($allAvailableTeams);
       <!-- RIGHT COLUMN: Playlist Sidebar with Thumbnails + Suggested Courses -->
       <div>
         <!-- Course Lessons Playlist Card Layer -->
-        <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:22px 24px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
             <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
             
@@ -978,12 +977,12 @@ sort($allAvailableTeams);
                 </button>
                 
                 <!-- Floating Popup Card Menu -->
-                <div id="classroom-curricula-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:240px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 28px -4px rgba(15,23,42,0.18), 0 4px 8px -2px rgba(15,23,42,0.06);padding:6px;z-index:100;">
+                <div id="classroom-curricula-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:240px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 8px 20px -4px rgba(15,23,42,0.14);padding:6px;z-index:100;">
                   <div id="classroom-curricula-items" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;"></div>
                 </div>
               </div>
 
-              <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0 / 0</span>
+              <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;box-shadow:0 1px 2px rgba(37,99,235,0.08);">0 / 0</span>
             </div>
           </div>
 
@@ -995,7 +994,7 @@ sort($allAvailableTeams);
         </div>
 
         <!-- Video Chapters Sidebar Card Layer -->
-        <div id="classroom-chapters-card" style="margin-top:20px;background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:22px 24px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+        <div id="classroom-chapters-card" style="margin-top:16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0;">Video Chapters</h4>
             <span id="classroom-chapters-count" style="font-size:11.5px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0</span>
@@ -1996,19 +1995,19 @@ function renderClassroomPlaylist() {
     }
 
     return `
-      <div onclick="loadClassroomLesson(${idx})" style="padding:11px 14px;border-radius:16px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.18s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 8px 20px rgba(37,99,235,0.22)' : '0 4px 12px rgba(148,163,184,0.14)'};">
+      <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:8px;background:${bg};border:1px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 2px 8px rgba(37,99,235,0.18)' : '0 1px 3px rgba(15,23,42,0.04)'};">
         <!-- Thumbnail -->
-        <div style="width:72px;height:48px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+        <div style="width:68px;height:44px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;">
           ${thumbHtml}
         </div>
 
         <!-- Info -->
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
-            <span style="font-size:11.5px;font-weight:700;color:${isCurrent ? '#2563eb' : '#64748b'};">${l.duration || '20:00'}</span>
-            <span style="font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;background:${badgeBg};color:${badgeColor};">${badgeText}</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px;">
+            <span style="font-size:11px;font-weight:700;color:${isCurrent ? '#2563eb' : '#64748b'};">${l.duration || '20:00'}</span>
+            <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;background:${badgeBg};color:${badgeColor};">${badgeText}</span>
           </div>
-          <div style="font-size:13px;font-weight:${isCurrent ? '800' : '700'};color:${isCurrent ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          <div style="font-size:13px;font-weight:${isCurrent ? '800' : '600'};color:${isCurrent ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
             ${l.title}
           </div>
         </div>
@@ -2042,12 +2041,12 @@ function renderClassroomChapters(chapters) {
   if (countEl) countEl.textContent = `${currentClassroomChapters.length}`;
   if (listContainer) {
     listContainer.innerHTML = currentClassroomChapters.map((c, i) => `
-      <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:10px 14px;border-radius:14px;background:${i === 0 ? '#eff6ff' : '#ffffff'};border:1px solid ${i === 0 ? '#2563eb' : 'rgba(255,255,255,0.95)'};cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:${i === 0 ? '0 4px 14px rgba(37,99,235,0.18)' : '0 2px 8px rgba(148,163,184,0.12)'};transition:all 0.18s;">
+      <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:9px 12px;border-radius:8px;background:${i === 0 ? '#eff6ff' : '#ffffff'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:${i === 0 ? '0 2px 8px rgba(37,99,235,0.15)' : '0 1px 3px rgba(15,23,42,0.04)'};transition:all 0.15s;">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-          <span style="font-size:11.5px;font-weight:800;color:#2563eb;background:#eff6ff;padding:3px 8px;border-radius:6px;flex-shrink:0;">${c.timestamp}</span>
-          <span class="chapter-title-text" style="font-size:12.5px;font-weight:700;color:${i === 0 ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
+          <span style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 6px;border-radius:4px;flex-shrink:0;">${c.timestamp}</span>
+          <span class="chapter-title-text" style="font-size:12.5px;font-weight:600;color:${i === 0 ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
         </div>
-        <span class="chapter-now-badge" style="display:${i === 0 ? 'inline-block' : 'none'};font-size:10.5px;font-weight:800;color:#2563eb;">Playing</span>
+        <span class="chapter-now-badge" style="display:${i === 0 ? 'inline-block' : 'none'};font-size:10px;font-weight:800;color:#2563eb;">Playing</span>
       </div>
     `).join('');
   }
@@ -2271,7 +2270,7 @@ function renderPracticeFiles(filterCat = 'all') {
   }
 
   container.innerHTML = list.map(f => `
-    <div class="dashboard-card" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.07), 0 4px 6px -2px rgba(15,23,42,0.03);">
+    <div class="dashboard-card" style="padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;min-height:160px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
       <div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
           <span style="font-size:11.5px;font-weight:800;color:#2563eb;background:#eff6ff;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">${f.type || 'FILE'}</span>
