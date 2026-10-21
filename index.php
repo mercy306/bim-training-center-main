@@ -42,6 +42,12 @@ $analytics = ($isStaffAdmin || $isTeamLeader) ? getTrainingAnalytics($isTeamLead
 $roster = ($isStaffAdmin || $isTeamLeader) ? getEmployeeRosterWithStats($isTeamLeader ? (int)$teamId : null, null, $isTeamLeader ? (int)$user['id'] : null) : [];
 $myProgress = getEmployeeProgressSummary($user['id']);
 
+$datasetsFile = defined('DATASETS_JSON_FILE') ? DATASETS_JSON_FILE : (__DIR__ . '/datasets.json');
+$visibleDatasets = [];
+if (file_exists($datasetsFile)) {
+    $visibleDatasets = json_decode(file_get_contents($datasetsFile), true) ?: [];
+}
+
 $stationCounts = [];
 foreach ($roster as $rEmp) {
     $stKey = $rEmp['station'] ?? 'trainee';
@@ -571,6 +577,7 @@ sort($allAvailableTeams);
     window.SERVER_INITIAL_VIDEOS = <?= json_encode($visibleVideos, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.SERVER_INITIAL_COURSES = <?= json_encode($visibleCourses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.ALL_ADMIN_COURSES = <?= json_encode($allCourses, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+    window.SERVER_INITIAL_DATASETS = <?= json_encode($visibleDatasets, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.ALL_ASSIGNABLE_EMPLOYEES = <?= json_encode($allAssignableEmployees, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.ALL_AVAILABLE_TEAMS = <?= json_encode($allAvailableTeams, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
     window.USER_ROLE = '<?= $role ?>';
@@ -1085,9 +1092,23 @@ sort($allAvailableTeams);
     <!-- TAB 3: PRACTICE FILES -->
     <div id="admin-panel-files" style="display:none;background:transparent;border:none;padding:0;box-shadow:none;">
       <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 12px;">Upload Practice Datasets</h3>
-      <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" style="border:1.5px dashed #cbd5e1;border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;background:#f8fafc;">
-        <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Upload RVT, DWG, NWD Datasets</div>
-        <input id="admin-file-picker" type="file" multiple style="display:none;" onchange="handleAdminPracticeFilesUpload(this)" />
+      <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" 
+           ondragover="event.preventDefault();this.style.borderColor='#2563eb';this.style.background='#eff6ff';" 
+           ondragleave="event.preventDefault();this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';" 
+           ondrop="event.preventDefault();this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';if(event.dataTransfer&&event.dataTransfer.files)handleAdminPracticeFilesUpload({files:event.dataTransfer.files});"
+           style="border:2px dashed #cbd5e1;border-radius:12px;padding:36px 24px;text-align:center;cursor:pointer;background:#f8fafc;transition:all 0.2s;">
+        <div style="font-size:28px;margin-bottom:6px;">📁</div>
+        <div style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:4px;">Upload RVT, DWG, NWD Datasets</div>
+        <div style="font-size:12px;color:#64748b;">Click or drag & drop Revit (.rvt, .rfa), AutoCAD (.dwg), Navisworks (.nwd), IFC, or PDF datasets</div>
+        <input id="admin-file-picker" type="file" multiple accept=".rvt,.rfa,.dwg,.dxf,.nwd,.nwc,.ifc,.pdf,.zip,.rar" style="display:none;" onchange="handleAdminPracticeFilesUpload(this)" />
+      </div>
+
+      <!-- Uploaded Datasets List in Admin View -->
+      <div style="margin-top:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Uploaded Datasets (<span id="admin-datasets-count">0</span>)</h4>
+        </div>
+        <div id="admin-datasets-list" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
     </div>
 
@@ -1248,7 +1269,10 @@ function getAllAdminCourses() {
 }
 
 function getAllPracticeFiles() {
-  return DEFAULT_PRACTICE_FILES;
+  if (Array.isArray(window.SERVER_INITIAL_DATASETS)) {
+    return window.SERVER_INITIAL_DATASETS;
+  }
+  return [];
 }
 
 async function getAllVideos() {
@@ -2427,28 +2451,146 @@ function toggleCurrentLessonCompletion() {
   }
 }
 
-/* ── PRACTICE FILES ── */
+/* ── PRACTICE FILES & DATASETS ENGINE ── */
 function renderPracticeFiles(filterCat = 'all') {
   const container = document.getElementById('practice-files-grid');
   if (!container) return;
-  const list = getAllPracticeFiles();
+  let list = getAllPracticeFiles();
+  if (filterCat && filterCat !== 'all') {
+    list = list.filter(f => (f.category || '').toLowerCase() === filterCat.toLowerCase() || (f.type || '').toLowerCase() === filterCat.toLowerCase());
+  }
   const isAdmin = (typeof IS_STAFF_ADMIN !== 'undefined' && IS_STAFF_ADMIN);
-  container.innerHTML = list.map(f => `
-    <div class="dashboard-card" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:160px;">
-      <div>
-        <div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:10px;">
-          <span class="badge" style="background:#eff6ff;color:#1d4ed8;">${f.type}</span>
-        </div>
-        <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0 0 4px;">${f.name}</h4>
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;color:#64748b;box-shadow:0 10px 25px -4px rgba(15,23,42,0.06);">
+        <div style="font-size:36px;margin-bottom:10px;">📁</div>
+        <div style="font-size:16px;font-weight:800;color:#0f172a;">No Practice Datasets Available</div>
+        <div style="font-size:13px;margin-top:4px;">${isAdmin ? 'Upload your first RVT, DWG, or NWD dataset in the Upload Material tab!' : 'Check back later for training datasets.'}</div>
       </div>
-      <button onclick="showToast('Downloading ${f.name}...', '#2563eb')" style="background:linear-gradient(135deg,#1d4ed8,#0284c7);color:white;border:none;padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:12px;">
-        ⤓ Download Dataset
-      </button>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(f => `
+    <div class="dashboard-card" style="padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.07), 0 4px 6px -2px rgba(15,23,42,0.03);">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-size:11.5px;font-weight:800;color:#2563eb;background:#eff6ff;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">${f.type || 'FILE'}</span>
+          <span style="font-size:11.5px;color:#64748b;font-weight:600;">${f.size || ''}</span>
+        </div>
+        <h4 style="font-size:15px;font-weight:800;color:#0f172a;margin:0 0 6px;line-height:1.35;">${f.name}</h4>
+        <div style="font-size:11.5px;color:#94a3b8;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.filename || ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:16px;">
+        <a href="${f.url}" download="${f.filename || f.name}" style="flex:1;background:#2563eb;color:#ffffff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;font-size:12.5px;font-weight:700;transition:all 0.15s;box-shadow:0 2px 6px rgba(37,99,235,0.25);" onmouseover="this.style.background='#1d4ed8';" onmouseout="this.style.background='#2563eb';">
+          ⤓ Download Dataset
+        </a>
+        ${isAdmin ? `<button type="button" onclick="deleteAdminDataset('${f.id}')" style="background:#fee2e2;color:#dc2626;border:1px solid #fecaca;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;" title="Delete dataset">🗑️</button>` : ''}
+      </div>
     </div>
   `).join('');
 }
 
 function filterPracticeFiles(cat) { renderPracticeFiles(cat); }
+
+async function handleAdminPracticeFilesUpload(input) {
+  if (!input || !input.files || input.files.length === 0) return;
+  const files = Array.from(input.files);
+  const total = files.length;
+  showToast(`⏳ Uploading ${total} practice dataset(s)...`, '#2563eb');
+
+  let successCount = 0;
+  for (let i = 0; i < total; i++) {
+    const f = files[i];
+    const formData = new FormData();
+    formData.append('dataset_file', f);
+    formData.append('name', f.name.replace(/\.[^/.]+$/, ''));
+
+    try {
+      const res = await fetch('api/upload-dataset.php', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        successCount++;
+        if (!Array.isArray(window.SERVER_INITIAL_DATASETS)) {
+          window.SERVER_INITIAL_DATASETS = [];
+        }
+        window.SERVER_INITIAL_DATASETS.unshift(data.dataset);
+      } else {
+        showToast(`Failed: ${f.name} - ${data.error || 'Server error'}`, '#ef4444');
+      }
+    } catch (err) {
+      showToast(`Error uploading ${f.name}`, '#ef4444');
+    }
+  }
+
+  if (input.value !== undefined) input.value = '';
+  if (successCount > 0) {
+    showToast(`Successfully uploaded ${successCount} dataset(s)!`, '#10b981');
+    renderPracticeFiles();
+    renderAdminDatasetsQueue();
+  }
+}
+
+function renderAdminDatasetsQueue() {
+  const container = document.getElementById('admin-datasets-list');
+  const countEl = document.getElementById('admin-datasets-count');
+  if (!container) return;
+  const list = getAllPracticeFiles();
+  if (countEl) countEl.textContent = list.length;
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="color:#64748b;font-size:13px;padding:12px 0;">No practice datasets uploaded yet. Click or drop files above to upload your first dataset.</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(f => `
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 2px 6px rgba(15,23,42,0.03);">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+        <span style="font-size:12px;font-weight:800;color:#2563eb;background:#eff6ff;padding:4px 8px;border-radius:6px;border:1px solid #bfdbfe;flex-shrink:0;">${f.type || 'FILE'}</span>
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:13.5px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+          <div style="font-size:11.5px;color:#64748b;margin-top:2px;">${f.filename} • ${f.size} • Uploaded ${f.uploaded_at || ''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <a href="${f.url}" download="${f.filename || f.name}" style="background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb;text-decoration:none;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;">
+          Download
+        </a>
+        <button type="button" onclick="deleteAdminDataset('${f.id}')" style="background:#fee2e2;border:1px solid #fecaca;color:#dc2626;padding:6px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">
+          Delete
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function deleteAdminDataset(id) {
+  if (!confirm('Are you sure you want to delete this practice dataset?')) return;
+  try {
+    const res = await fetch('api/datasets.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', id })
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (Array.isArray(window.SERVER_INITIAL_DATASETS)) {
+        window.SERVER_INITIAL_DATASETS = window.SERVER_INITIAL_DATASETS.filter(d => d.id !== id);
+      }
+      renderPracticeFiles();
+      renderAdminDatasetsQueue();
+      showToast('Dataset deleted successfully.', '#2563eb');
+    } else {
+      showToast('Failed to delete: ' + (data.error || 'Server error'), '#ef4444');
+    }
+  } catch (e) {
+    showToast('Error deleting dataset', '#ef4444');
+  }
+}
 
 /* ── ADMIN PUBLISHING, CURRICULA & STATION TARGETING ── */
 let currentVideoUploadMode = 'file';
@@ -2481,6 +2623,8 @@ function switchAdminUploadTab(tab) {
 
   if (tab === 'course') {
     renderAdminCurriculaList();
+  } else if (tab === 'files') {
+    renderAdminDatasetsQueue();
   }
 }
 

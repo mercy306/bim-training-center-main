@@ -18,6 +18,16 @@ if ($uri === '/api/upload-video') {
     return true;
 }
 
+if ($uri === '/api/upload-dataset') {
+    require __DIR__ . '/api/upload-dataset.php';
+    return true;
+}
+
+if ($uri === '/api/datasets') {
+    require __DIR__ . '/api/datasets.php';
+    return true;
+}
+
 if ($uri === '/api/auth') {
     require __DIR__ . '/api/auth.php';
     return true;

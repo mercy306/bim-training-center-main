@@ -18,8 +18,10 @@ date_default_timezone_set(APP_TIMEZONE);
 // Paths
 define('BASE_PATH', __DIR__);
 define('VIDEOS_DIR', BASE_PATH . DIRECTORY_SEPARATOR . 'videos');
+define('DATASETS_DIR', BASE_PATH . DIRECTORY_SEPARATOR . 'datasets');
 define('VIDEOS_JSON_FILE', BASE_PATH . DIRECTORY_SEPARATOR . 'videos.json');
 define('COURSES_JSON_FILE', BASE_PATH . DIRECTORY_SEPARATOR . 'courses.json');
+define('DATASETS_JSON_FILE', BASE_PATH . DIRECTORY_SEPARATOR . 'datasets.json');
 define('PROGRESS_JSON_FILE', BASE_PATH . DIRECTORY_SEPARATOR . 'progress.json');
 
 // Admin Access Settings
