@@ -1124,40 +1124,35 @@ sort($allAvailableTeams);
         </div>
 
         <!-- Video Metadata, Tags, Title & Instructor Actions Layer Card -->
-        <div id="classroom-details-card" style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:22px 24px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
+        <div id="classroom-details-card" style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 24px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
           <!-- Category / Tags Row -->
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;">BIM Training</span>
-            <span id="classroom-badge-software" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;">Revit Structure</span>
+            <span id="classroom-badge-software" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;">Revit Structure</span>
             <span id="classroom-lesson-resume-badge" style="display:none;background:#eff6ff;color:#2563eb;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">⏱️ Resumed</span>
           </div>
 
           <!-- Video Lesson Title -->
-          <h1 id="classroom-lesson-title" style="font-size:24px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">Lesson Overview</h1>
+          <h1 id="classroom-lesson-title" style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">Lesson Overview</h1>
 
           <!-- Author & Controls Bar -->
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding-top:14px;border-top:1px solid #f1f5f9;">
             <!-- Author Info -->
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div style="width:42px;height:42px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 2px 6px rgba(37,99,235,0.15);">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;box-shadow:0 2px 6px rgba(37,99,235,0.15);">
                 BSD
               </div>
-              <div>
-                <div style="font-size:14px;font-weight:700;color:#0f172a;">BSD BIM Department</div>
-                <div style="font-size:12px;color:#64748b;font-weight:500;">Training Center Instructor</div>
-              </div>
+              <div style="font-size:13.5px;font-weight:700;color:#0f172a;">BSD BIM Department</div>
             </div>
 
             <!-- Action Controls -->
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,23,42,0.05);transition:all 0.18s;">
-                <span id="classroom-complete-icon">○</span> Mark as Completed
+              <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,23,42,0.05);transition:all 0.18s;">
+                <span id="classroom-complete-icon">○</span> Mark Completed
               </button>
-              <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,0.04);">
+              <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,0.04);">
                 ← Prev
               </button>
-              <div id="classroom-step-indicator" style="font-size:12px;color:#64748b;font-weight:700;">Lesson 1 of 1</div>
-              <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(37,99,235,0.35);">
+              <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(37,99,235,0.35);">
                 <span>Next</span> →
               </button>
             </div>
@@ -1168,24 +1163,20 @@ sort($allAvailableTeams);
       <!-- RIGHT COLUMN: Playlist Sidebar with Thumbnails + Suggested Courses -->
       <div>
         <!-- Course Lessons Playlist Card Layer -->
-        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap;">
-            <div>
-              <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
-              <div style="font-size:12px;color:#64748b;margin-top:2px;">Step-by-step curriculum</div>
-            </div>
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
+            <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
+            
             <div style="display:flex;align-items:center;gap:8px;">
-              <!-- Beautiful Custom Curricula Dropdown -->
+              <!-- Curricula Dropdown -->
               <div id="classroom-curricula-dropdown-wrap" style="display:none;position:relative;">
-                <button type="button" id="classroom-curricula-btn" onclick="toggleCurriculaMenu(event)" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:4px 9px;cursor:pointer;transition:all 0.18s;box-shadow:0 1px 3px rgba(37,99,235,0.08);" onmouseover="this.style.background='#dbeafe';this.style.borderColor='#93c5fd';" onmouseout="this.style.background='#eff6ff';this.style.borderColor='#bfdbfe';">
-                  <span style="font-size:12px;">📚</span>
-                  <span id="classroom-curricula-btn-label">Other Tracks</span>
-                  <span style="font-size:10px;margin-left:2px;">▼</span>
+                <button type="button" id="classroom-curricula-btn" onclick="toggleCurriculaMenu(event)" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:4px 9px;cursor:pointer;transition:all 0.18s;box-shadow:0 1px 3px rgba(37,99,235,0.08);" onmouseover="this.style.background='#dbeafe';this.style.borderColor='#93c5fd';" onmouseout="this.style.background='#eff6ff';this.style.borderColor='#bfdbfe';">
+                  <span id="classroom-curricula-btn-label">Tracks</span>
+                  <span style="font-size:9px;margin-left:2px;">▼</span>
                 </button>
                 
                 <!-- Floating Popup Card Menu -->
-                <div id="classroom-curricula-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:260px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 28px -4px rgba(15,23,42,0.18), 0 4px 8px -2px rgba(15,23,42,0.06);padding:6px;z-index:100;">
-                  <div style="font-size:10.5px;font-weight:800;color:#64748b;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:0.04em;">Switch Curriculum</div>
+                <div id="classroom-curricula-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:240px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 28px -4px rgba(15,23,42,0.18), 0 4px 8px -2px rgba(15,23,42,0.06);padding:6px;z-index:100;">
                   <div id="classroom-curricula-items" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;"></div>
                 </div>
               </div>
@@ -1194,25 +1185,18 @@ sort($allAvailableTeams);
             </div>
           </div>
 
-          <div style="background:#f1f5f9;border-radius:9999px;height:6px;overflow:hidden;margin-bottom:6px;">
+          <div style="background:#f1f5f9;border-radius:9999px;height:5px;overflow:hidden;margin-bottom:14px;">
             <div id="classroom-progress-bar" style="background:#2563eb;width:0%;height:100%;transition:width 0.3s;"></div>
           </div>
-          <div id="classroom-progress-text" style="font-size:11.5px;color:#64748b;font-weight:700;text-align:right;margin-bottom:16px;">0% Completed</div>
 
           <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:450px;overflow-y:auto;padding-right:2px;"></div>
-
-          <!-- Short single-line inside the card footer -->
-          <div id="classroom-suggested-courses" style="margin-top:14px;padding-top:12px;border-top:1px solid #f1f5f9;"></div>
         </div>
 
         <!-- Video Chapters Sidebar Card Layer -->
-        <div id="classroom-chapters-card" style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
+        <div id="classroom-chapters-card" style="margin-top:18px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px 20px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <div>
-              <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0;">Video Chapters</h4>
-              <div style="font-size:11.5px;color:#64748b;margin-top:2px;">Jump to key topics inside this lesson</div>
-            </div>
-            <span id="classroom-chapters-count" style="font-size:11.5px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">Chapters</span>
+            <h4 style="font-size:14px;font-weight:800;color:#0f172a;margin:0;">Video Chapters</h4>
+            <span id="classroom-chapters-count" style="font-size:11.5px;color:#2563eb;font-weight:800;background:#eff6ff;padding:3px 8px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0</span>
           </div>
           <div id="classroom-chapters-list" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;padding-right:2px;"></div>
         </div>
@@ -2140,39 +2124,14 @@ function renderClassroomSuggestedCourses() {
       wrap.style.display = 'none';
     } else {
       wrap.style.display = 'block';
-      btnLabel.textContent = `Other Tracks (${others.length})`;
-      itemsContainer.innerHTML = others.map(c => {
-        const count = (c.syllabus || []).length;
-        return `
-          <div onclick="switchCurriculumTrack('${c.id}', event)" 
-               style="padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;" 
-               onmouseover="this.style.background='#eff6ff';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#2563eb';" 
-               onmouseout="this.style.background='transparent';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#0f172a';">
-            <div style="min-width:0;flex:1;">
-              <div class="track-opt-title" style="font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</div>
-              <div style="font-size:11px;color:#64748b;margin-top:2px;">${count} lesson${count === 1 ? '' : 's'} • <span style="font-weight:700;color:#2563eb;">${(c.cat || 'BIM').toUpperCase()}</span></div>
-            </div>
-            <span style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 7px;border-radius:4px;border:1px solid #bfdbfe;flex-shrink:0;">Start →</span>
-          </div>
-        `;
-      }).join('');
-    }
-  }
-
-  // 2. Short 1-Line Footer inside Course Lessons Card
-  const container = document.getElementById('classroom-suggested-courses');
-  if (container) {
-    if (others.length === 0) {
-      container.style.display = 'none';
-    } else {
-      container.style.display = 'block';
-      container.innerHTML = others.map(c => `
-        <div onclick="switchCurriculumTrack('${c.id}', event)" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;box-shadow:0 1px 3px rgba(15,23,42,0.03);" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
-          <div style="font-size:11.5px;color:#334155;display:flex;align-items:center;gap:6px;min-width:0;">
-            <span style="font-size:12px;">📚</span>
-            <span style="font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
-          </div>
-          <span style="font-size:11px;font-weight:800;color:#2563eb;white-space:nowrap;flex-shrink:0;">Start →</span>
+      btnLabel.textContent = `Tracks (${others.length})`;
+      itemsContainer.innerHTML = others.map(c => `
+        <div onclick="switchCurriculumTrack('${c.id}', event)" 
+             style="padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;" 
+             onmouseover="this.style.background='#eff6ff';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#2563eb';" 
+             onmouseout="this.style.background='transparent';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#0f172a';">
+          <span class="track-opt-title" style="font-size:12.5px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;">${c.title}</span>
+          <span style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 7px;border-radius:4px;border:1px solid #bfdbfe;flex-shrink:0;">Start →</span>
         </div>
       `).join('');
     }
@@ -2275,7 +2234,7 @@ function renderClassroomChapters(chapters) {
   // Single Unified Location: Sidebar Chapters List Card
   const listContainer = document.getElementById('classroom-chapters-list');
   const countEl = document.getElementById('classroom-chapters-count');
-  if (countEl) countEl.textContent = `${currentClassroomChapters.length} Chapters`;
+  if (countEl) countEl.textContent = `${currentClassroomChapters.length}`;
   if (listContainer) {
     listContainer.innerHTML = currentClassroomChapters.map((c, i) => `
       <div onclick="seekToChapter(${c.time})" class="chapter-sidebar-item" data-idx="${i}" style="padding:9px 12px;border-radius:10px;background:${i === 0 ? '#eff6ff' : '#ffffff'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:${i === 0 ? '0 3px 10px rgba(37,99,235,0.14)' : '0 2px 6px rgba(15,23,42,0.04)'};transition:all 0.15s;">
