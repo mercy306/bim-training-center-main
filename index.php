@@ -731,7 +731,6 @@ sort($allAvailableTeams);
       <div id="vinput-container-file" style="display:block;margin-bottom:20px;">
         <div class="drop-zone" onclick="document.getElementById('new-video-file-input').click()" style="border:1.5px dashed #cbd5e1;border-radius:10px;padding:28px 20px;text-align:center;cursor:pointer;background:#f8fafc;transition:border-color 0.2s;" ondragover="event.preventDefault();this.style.borderColor='#2563eb';" ondragleave="this.style.borderColor='#cbd5e1';" ondrop="handleAdminVideoDrop(event)">
           <div id="vfile-selected-name" style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">Click or drag to select video file (.mp4, .webm, .mov)</div>
-          <div style="font-size:12px;color:#64748b;">Multiple files supported • Click to preview fullscreen</div>
           <input id="new-video-file-input" type="file" accept="video/*" multiple style="display:none;" onchange="handleAdminVideoFilePick(this)" />
         </div>
 
@@ -794,14 +793,7 @@ sort($allAvailableTeams);
           <textarea id="new-video-desc" rows="3" placeholder="Learning outcomes..." style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
 
-        <div style="grid-column:1/-1;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
-            <label style="font-size:13px;font-weight:700;color:#334155;">Video Chapters <span style="font-weight:600;color:#64748b;">(optional)</span></label>
-            <button type="button" onclick="addVideoChapter()" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;">+ Add Chapter</button>
-          </div>
-          <div id="new-video-chapter-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-          <div style="font-size:11.5px;color:#64748b;margin-top:7px;">Add timestamps such as 00:00 and a chapter title. Videos without chapters use “Full lesson” automatically.</div>
-        </div>
+        <div id="new-video-chapter-list" style="display:none;"></div>
       </div>
 
       <input type="hidden" id="inline-curriculum-title" value="" />
