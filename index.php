@@ -1169,12 +1169,17 @@ sort($allAvailableTeams);
       <div>
         <!-- Course Lessons Playlist Card Layer -->
         <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap;">
             <div>
               <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
               <div style="font-size:12px;color:#64748b;margin-top:2px;">Step-by-step curriculum</div>
             </div>
-            <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0 / 0</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <!-- Short Curricula Switcher Dropdown (Right at the arrow) -->
+              <select id="classroom-curricula-dropdown" onchange="if(this.value)openClassroom(this.value)" style="display:none;font-size:11.5px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:3px 6px;cursor:pointer;outline:none;">
+              </select>
+              <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0 / 0</span>
+            </div>
           </div>
 
           <div style="background:#f1f5f9;border-radius:9999px;height:6px;overflow:hidden;margin-bottom:6px;">
@@ -1183,6 +1188,9 @@ sort($allAvailableTeams);
           <div id="classroom-progress-text" style="font-size:11.5px;color:#64748b;font-weight:700;text-align:right;margin-bottom:16px;">0% Completed</div>
 
           <div id="classroom-playlist-items" style="display:flex;flex-direction:column;gap:10px;max-height:450px;overflow-y:auto;padding-right:2px;"></div>
+
+          <!-- Short single-line inside the card footer -->
+          <div id="classroom-suggested-courses" style="margin-top:14px;padding-top:12px;border-top:1px solid #f1f5f9;"></div>
         </div>
 
         <!-- Video Chapters Sidebar Card Layer -->
@@ -1199,18 +1207,6 @@ sort($allAvailableTeams);
       </div><!-- End RIGHT COLUMN -->
 
     </div><!-- End classroom-layout-grid -->
-
-    <!-- OTHER CURRICULA: Minimized and relocated to bottom shelf below player & sidebar -->
-    <div id="classroom-suggested-section" style="margin-top:28px;padding:18px 22px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:14px;">📚</span>
-          <h4 style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0;">Other Curricula</h4>
-          <span style="font-size:11.5px;color:#64748b;font-weight:500;">• Explore additional BIM tracks</span>
-        </div>
-      </div>
-      <div id="classroom-suggested-courses" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:10px;"></div>
-    </div>
   </div>
 </section>
 
@@ -2087,29 +2083,41 @@ function openClassroom(courseId, lessonIdx = null) {
 }
 
 function renderClassroomSuggestedCourses() {
-  const container = document.getElementById('classroom-suggested-courses');
-  const sectionEl = document.getElementById('classroom-suggested-section');
-  if (!container) return;
   const all = getAllCourses();
   const others = all.filter(c => !currentClassroomCourse || c.id !== currentClassroomCourse.id);
-  if (others.length === 0) {
-    if (sectionEl) sectionEl.style.display = 'none';
-    return;
-  }
-  if (sectionEl) sectionEl.style.display = 'block';
 
-  container.innerHTML = others.map(c => {
-    const lessonCount = (c.syllabus || []).length;
-    return `
-      <div onclick="openClassroom('${c.id}')" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;transition:all 0.15s;min-width:0;box-shadow:0 2px 6px rgba(15,23,42,0.04);" onmouseover="this.style.borderColor='#2563eb';this.style.background='#eff6ff';this.style.boxShadow='0 4px 12px rgba(37,99,235,0.12)';" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';this.style.boxShadow='0 2px 6px rgba(15,23,42,0.04)';">
-        <div style="min-width:0;flex:1;">
-          <div style="font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</div>
-          <div style="font-size:11px;color:#64748b;margin-top:2px;font-weight:500;">${lessonCount} lesson${lessonCount === 1 ? '' : 's'} • <span style="color:#2563eb;font-weight:700;">${(c.cat || 'BIM').toUpperCase()}</span></div>
+  // 1. Compact Dropdown Switcher in Course Lessons Header
+  const dropdown = document.getElementById('classroom-curricula-dropdown');
+  if (dropdown) {
+    if (others.length === 0) {
+      dropdown.style.display = 'none';
+    } else {
+      dropdown.style.display = 'inline-block';
+      dropdown.innerHTML = `
+        <option value="" disabled selected>Other Tracks (${others.length}) ▾</option>
+        ${others.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+      `;
+    }
+  }
+
+  // 2. Short 1-Line Footer inside Course Lessons Card
+  const container = document.getElementById('classroom-suggested-courses');
+  if (container) {
+    if (others.length === 0) {
+      container.style.display = 'none';
+    } else {
+      container.style.display = 'block';
+      container.innerHTML = others.map(c => `
+        <div onclick="openClassroom('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+          <div style="font-size:11.5px;color:#334155;display:flex;align-items:center;gap:6px;min-width:0;">
+            <span style="font-size:12px;">📚</span>
+            <span style="font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
+          </div>
+          <span style="font-size:11px;font-weight:800;color:#2563eb;white-space:nowrap;flex-shrink:0;">Start →</span>
         </div>
-        <span style="color:#2563eb;font-weight:800;font-size:11.5px;white-space:nowrap;padding:3px 8px;background:#ffffff;border:1px solid #bfdbfe;border-radius:6px;flex-shrink:0;">Start →</span>
-      </div>
-    `;
-  }).join('');
+      `).join('');
+    }
+  }
 }
 
 function renderClassroomPlaylist() {
