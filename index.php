@@ -335,15 +335,20 @@ sort($allAvailableTeams);
     }
 
     input, textarea, select {
-      background: #ffffff !important;
-      border-radius: var(--clay-radius-sm) !important;
-      border: 1.5px solid #cbd5e1 !important;
-      box-shadow: 0 2px 6px rgba(148, 163, 184, 0.08) inset !important;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #f8fafc !important;
+      border-radius: 14px !important;
+      border: 1.5px solid #e2e8f0 !important;
+      padding: 12px 16px !important;
+      font-size: 14px !important;
+      color: #0f172a !important;
+      box-shadow: 0 1px 3px rgba(148, 163, 184, 0.04) !important;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
     input:focus, textarea:focus, select:focus {
+      background: #ffffff !important;
       border-color: #2563eb !important;
-      box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.14) !important;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(37, 99, 235, 0.06) !important;
+      outline: none !important;
     }
     select option { background: #ffffff; color: #0f172a; }
     .modal-overlay { background: rgba(15, 23, 42, 0.5); }
@@ -764,15 +769,15 @@ sort($allAvailableTeams);
       </div>
 
       <!-- Form Grid (Single Flat Layer) -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
-        <div style="grid-column:1/-1;">
+      <div style="display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:20px;">
+        <div>
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Title *</label>
-          <input id="new-video-title" type="text" placeholder="e.g. Structural Modeling & Detailing" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;"/>
+          <input id="new-video-title" type="text" placeholder="e.g. Structural Modeling & Detailing" style="width:100%;box-sizing:border-box;"/>
         </div>
 
         <div>
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Video Type *</label>
-          <select id="new-video-cat" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;background:white;color:#0f172a;">
+          <select id="new-video-cat" style="width:100%;box-sizing:border-box;">
             <option value="revit">Revit Structure</option>
             <option value="coordination">BIM Coordination</option>
             <option value="autocad">AutoCAD Drafting</option>
@@ -782,15 +787,11 @@ sort($allAvailableTeams);
 
         <input type="hidden" id="new-video-station" value="trainee" />
         <input type="hidden" id="new-video-assigned-employees" value="" />
+        <input type="hidden" id="new-video-duration" value="Select a video file" />
 
         <div>
-          <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Duration <span style="font-weight:600;color:#64748b;">(automatic)</span></label>
-          <input id="new-video-duration" type="text" value="Select a video file" readonly aria-label="Automatically detected video duration" style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;color:#475569;cursor:default;"/>
-        </div>
-
-        <div style="grid-column:1/-1;">
           <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Description</label>
-          <textarea id="new-video-desc" rows="3" placeholder="Learning outcomes..." style="width:100%;padding:11px 14px;border:1px solid #cbd5e1;border-radius:8px;font-size:13.5px;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="new-video-desc" rows="3" placeholder="Learning outcomes..." style="width:100%;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
 
         <div id="new-video-chapter-list" style="display:none;"></div>
@@ -802,7 +803,7 @@ sort($allAvailableTeams);
       <input type="hidden" id="inline-curriculum-desc" value="" />
 
       <div style="display:flex;justify-content:flex-end;margin-bottom:24px;">
-        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:#2563eb;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">
+        <button id="admin-publish-video-btn" onclick="adminPublishVideo()" style="background:linear-gradient(135deg, #1d4ed8, #2563eb);color:white;border:none;padding:12px 32px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);transition:all 0.2s ease;">
           Publish Video
         </button>
       </div>
@@ -828,12 +829,12 @@ sort($allAvailableTeams);
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
           <div style="grid-column:1/-1;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Track Title *</label>
-            <input id="new-course-title" type="text" placeholder="e.g. Navisworks Clash Management & BCF Coordination" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+            <input id="new-course-title" type="text" placeholder="e.g. Navisworks Clash Management & BCF Coordination" style="width:100%;box-sizing:border-box;"/>
           </div>
 
           <div>
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Category / Software *</label>
-            <select id="new-course-cat" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <select id="new-course-cat" style="width:100%;box-sizing:border-box;">
               <option value="coordination">BIM Coordination</option>
               <option value="revit">Revit Structure & Arch</option>
               <option value="autocad">AutoCAD Drafting</option>
@@ -845,7 +846,7 @@ sort($allAvailableTeams);
 
           <div style="display:none;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Difficulty Level</label>
-            <select id="new-course-level" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <select id="new-course-level" style="width:100%;box-sizing:border-box;">
               <option value="Beginner">Beginner</option>
               <option value="Intermediate" selected>Intermediate</option>
               <option value="Advanced">Advanced</option>
@@ -854,7 +855,7 @@ sort($allAvailableTeams);
 
           <div>
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Icon Badge</label>
-            <select id="new-course-icon" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;background:white;">
+            <select id="new-course-icon" style="width:100%;box-sizing:border-box;">
               <option value="" selected>None (Clean Title)</option>
               <option value="">Structure & Modeling</option>
               <option value="">Reinforcement & Rebar</option>
@@ -867,17 +868,17 @@ sort($allAvailableTeams);
 
           <div style="grid-column:1/-1;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Course Track</label>
-            <input id="new-course-duration" type="text" placeholder="e.g. Standard (or self-paced)" style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;"/>
+            <input id="new-course-duration" type="text" placeholder="e.g. Standard (or self-paced)" style="width:100%;box-sizing:border-box;"/>
           </div>
 
           <div style="grid-column:1/-1;">
             <label style="font-size:13px;font-weight:700;color:#334155;display:block;margin-bottom:6px;">Curriculum Description & Objectives</label>
-            <textarea id="new-course-desc" rows="2" placeholder="Course syllabus overview and core learning outcomes..." style="width:100%;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+            <textarea id="new-course-desc" rows="2" placeholder="Course syllabus overview and core learning outcomes..." style="width:100%;box-sizing:border-box;resize:vertical;"></textarea>
           </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;">
-          <button id="admin-create-course-btn" onclick="adminPublishCourse()" style="background:#2563eb;color:white;border:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
+          <button id="admin-create-course-btn" onclick="adminPublishCourse()" style="background:linear-gradient(135deg, #1d4ed8, #2563eb);color:white;border:none;padding:12px 32px;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);transition:all 0.2s ease;">
             Create Curriculum Track
           </button>
         </div>
