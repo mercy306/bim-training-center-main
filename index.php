@@ -403,41 +403,15 @@ sort($allAvailableTeams);
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
 ══════════════════════════════════════════ -->
-<nav style="background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%);position:relative;z-index:10;box-shadow:0 8px 30px rgba(14,116,144,0.22);overflow:hidden;">
-  
-  <!-- Subtle Ambient Circles -->
-  <div style="position:absolute;left:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
-  <div style="position:absolute;right:80px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;"></div>
-
-  <div style="width:100%;box-sizing:border-box;padding:16px 44px 18px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;position:relative;z-index:2;">
+<nav style="background:radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%) !important;position:relative;z-index:10;box-shadow:0 4px 14px rgba(15,23,42,0.12);overflow:hidden;">
+  <div style="width:100%;box-sizing:border-box;padding:0 32px;min-height:68px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:2;">
     
-    <!-- Top Row: Brand Logo (HIGH UP) + Global Search + User Profile + Switch View -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;">
-      
-      <!-- Brand Logo - Positioned high up with enhanced size -->
-      <div style="display:flex;align-items:center;cursor:pointer;margin-top:0;" onclick="showSection(getRoleLandingSection())">
-        <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:56px;width:auto;display:block;object-fit:contain;" />
+    <!-- Left: Brand Logo + Navigation Tabs in One Single Sleek Row -->
+    <div style="display:flex;align-items:center;gap:24px;">
+      <div style="display:flex;align-items:center;cursor:pointer;" onclick="showSection(getRoleLandingSection())">
+        <img src="bsd-logo-white.png" alt="BSD Design & Management" style="height:40px;width:auto;display:block;object-fit:contain;" />
       </div>
-
-      <!-- Right Controls: Switch View (Admin & Trainee) -->
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-
-        <!-- Demo Switcher in-line with the top controls (Single Layer) -->
-        <?php if (!empty($user['is_demo'])): ?>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Admin</a>
-          <a href="?demo_role=employee_trainee" style="background:<?= !$isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;">Trainee</a>
-        </div>
-        <?php endif; ?>
-
-      </div>
-    </div>
-
-    <!-- Bottom Row: Navigation Tabs (Seamless, Single Layer) -->
-    <div style="padding-top:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
-      
-      <!-- Navigation Tabs -->
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div style="display:flex;gap:6px;align-items:center;">
         <?php if ($isStaffAdmin): ?>
           <button onclick="showSection('analytics')" class="nav-btn active" id="nav-analytics">Analytics</button>
           <button onclick="showSection('upload')" class="nav-btn" id="nav-upload">Upload Material</button>
@@ -446,7 +420,16 @@ sort($allAvailableTeams);
           <button onclick="showSection('files')"   class="nav-btn" id="nav-files">Practice Files</button>
         <?php endif; ?>
       </div>
+    </div>
 
+    <!-- Right: Demo Switcher -->
+    <div style="display:flex;align-items:center;gap:12px;">
+      <?php if (!empty($user['is_demo'])) : ?>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <a href="?demo_role=admin" style="background:<?= $isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11.5px;">Admin</a>
+        <a href="?demo_role=employee_trainee" style="background:<?= !$isStaffAdmin ? 'rgba(255,255,255,0.28)' : 'rgba(15,23,42,0.3)' ?>;color:#fff;border:1px solid rgba(255,255,255,0.28);padding:5px 12px;border-radius:6px;text-decoration:none;font-weight:700;font-size:11.5px;">Trainee</a>
+      </div>
+      <?php endif; ?>
     </div>
 
   </div>
@@ -470,7 +453,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-files" style="display:none;background:#ffffff;padding:24px 24px 40px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <!-- Practice File Type Filter Dropdown -->
@@ -497,7 +480,7 @@ sort($allAvailableTeams);
      6. TEAM LEADER SCOPED VIEW (TEAM ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isTeamLeader): ?>
-<section id="section-team-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-team-progress" style="display:none;background:#ffffff;padding:24px 24px 40px;">
   <div style="max-width:1200px;margin:0 auto;">
     
     <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 1px 3px rgba(15,23,42,0.06);border:1px solid #e2e8f0;">
@@ -608,7 +591,7 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#ffffff;padding:36px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#ffffff;padding:24px 24px 40px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
@@ -701,7 +684,7 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:#ffffff;padding:40px 24px 80px;">
+<section id="section-upload" style="display:none;background:#ffffff;padding:24px 24px 40px;">
   <div style="max-width:960px;margin:0 auto;">
     
 
@@ -921,7 +904,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#ffffff;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#ffffff;padding:18px 24px 36px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation (Removed as requested) -->
