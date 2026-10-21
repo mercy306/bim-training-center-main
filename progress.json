@@ -8,8 +8,8 @@
             "vid_1792419059_fed3": {
                 "percent": 100,
                 "completed": true,
-                "position": 432,
-                "updated_at": "2026-10-21 08:40:08"
+                "position": 578.31755,
+                "updated_at": "2026-10-21 08:51:02"
             },
             "vid_1792419059_0fb5": {
                 "percent": 100,
@@ -54,7 +54,7 @@
                 "updated_at": "2026-10-20 17:13:12"
             }
         },
-        "last_active": "2026-10-21 08:40:08"
+        "last_active": "2026-10-21 08:51:02"
     },
     "1": {
         "name": "BSD Executive Admin",

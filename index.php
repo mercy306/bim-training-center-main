@@ -1118,21 +1118,9 @@ sort($allAvailableTeams);
       
       <!-- LEFT COLUMN: Main Video Player & Metadata -->
       <div>
-        <!-- 16:9 Aspect Ratio Video Viewport with Live Chapter Overlay -->
+        <!-- 16:9 Aspect Ratio Video Viewport -->
         <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.1);border:1px solid #e2e8f0;">
           <div id="classroom-player" style="width:100%;height:100%;"></div>
-          <!-- Live Chapter Overlay -->
-          <div id="classroom-active-chapter-pill" style="position:absolute;top:16px;left:16px;z-index:5;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);color:#ffffff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;pointer-events:none;transition:all 0.25s;box-shadow:0 4px 14px rgba(0,0,0,0.35);">
-            <span style="color:#60a5fa;">📍 Chapter:</span> <span id="classroom-active-chapter-name">Introduction</span>
-          </div>
-        </div>
-
-        <!-- Video Chapters Timeline Chips (Directly Below Player) -->
-        <div id="classroom-chapters-bar" style="margin-top:14px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;overflow-x:auto;">
-          <span style="font-size:12px;font-weight:800;color:#0f172a;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;">
-            <span style="color:#2563eb;">⚡</span> Chapters:
-          </span>
-          <div id="classroom-chapters-chips" style="display:flex;align-items:center;gap:8px;overflow-x:auto;padding-bottom:2px;flex:1;"></div>
         </div>
 
         <!-- Video Metadata, Tags, Title & Instructor Actions -->
@@ -2208,18 +2196,7 @@ function getVideoChapters(lesson) {
 function renderClassroomChapters(chapters) {
   currentClassroomChapters = chapters || [];
   
-  // 1. Horizontal Timeline Chips (Directly below player)
-  const chipsContainer = document.getElementById('classroom-chapters-chips');
-  if (chipsContainer) {
-    chipsContainer.innerHTML = currentClassroomChapters.map((c, i) => `
-      <button type="button" onclick="seekToChapter(${c.time})" class="chapter-chip" data-idx="${i}" style="background:${i === 0 ? '#2563eb' : '#f8fafc'};color:${i === 0 ? '#ffffff' : '#334155'};border:1px solid ${i === 0 ? '#2563eb' : '#e2e8f0'};padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:all 0.18s;">
-        <span style="opacity:0.75;font-size:11px;">${c.timestamp}</span>
-        <span>${c.title}</span>
-      </button>
-    `).join('');
-  }
-
-  // 2. Sidebar Chapters List Card
+  // Single Unified Location: Sidebar Chapters List Card
   const listContainer = document.getElementById('classroom-chapters-list');
   const countEl = document.getElementById('classroom-chapters-count');
   if (countEl) countEl.textContent = `${currentClassroomChapters.length} Chapters`;
@@ -2233,12 +2210,6 @@ function renderClassroomChapters(chapters) {
         <span class="chapter-now-badge" style="display:${i === 0 ? 'inline-block' : 'none'};font-size:10.5px;font-weight:800;color:#2563eb;">Playing</span>
       </div>
     `).join('');
-  }
-
-  // Update active chapter overlay name
-  const nameEl = document.getElementById('classroom-active-chapter-name');
-  if (nameEl && currentClassroomChapters[0]) {
-    nameEl.textContent = currentClassroomChapters[0].title;
   }
 }
 
@@ -2270,24 +2241,6 @@ function updateActiveChapterHighlight(currentTime) {
       activeIdx = i;
     }
   }
-
-  const activeChap = currentClassroomChapters[activeIdx];
-  const nameEl = document.getElementById('classroom-active-chapter-name');
-  if (nameEl && activeChap) {
-    nameEl.textContent = activeChap.title;
-  }
-
-  document.querySelectorAll('.chapter-chip').forEach((chip, i) => {
-    if (i === activeIdx) {
-      chip.style.background = '#2563eb';
-      chip.style.color = '#ffffff';
-      chip.style.borderColor = '#2563eb';
-    } else {
-      chip.style.background = '#f8fafc';
-      chip.style.color = '#334155';
-      chip.style.borderColor = '#e2e8f0';
-    }
-  });
 
   document.querySelectorAll('.chapter-sidebar-item').forEach((item, i) => {
     if (i === activeIdx) {
