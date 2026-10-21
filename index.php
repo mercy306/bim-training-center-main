@@ -924,15 +924,10 @@ sort($allAvailableTeams);
 <section id="section-classroom" style="display:none;background:#ffffff;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
-    <!-- Breadcrumbs Navigation -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
-      <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#64748b;font-weight:600;flex-wrap:wrap;">
-        <span style="color:#0f172a;font-weight:800;">Curriculum</span>
-        <span style="color:#cbd5e1;">/</span>
-        <span id="classroom-course-cat" style="color:#2563eb;font-weight:700;text-transform:uppercase;">REVIT</span>
-        <span style="color:#cbd5e1;">/</span>
-        <span id="classroom-course-title" style="color:#0f172a;font-weight:700;">Course Title</span>
-      </div>
+    <!-- Breadcrumbs Navigation (Removed as requested) -->
+    <div style="display:none !important;">
+      <span id="classroom-course-cat"></span>
+      <span id="classroom-course-title"></span>
     </div>
 
     <!-- Main Two-Column Player & Playlist Layout Grid -->
