@@ -271,38 +271,30 @@ sort($allAvailableTeams);
     .dashboard-card:hover, .course-card:hover { transform: translateY(-3px); }
     .video-thumb .play-icon { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
 
-    /* ── RETRO MAC IMAC THEME & SKY-OCEAN BLUE BACKGROUND ── */
+    /* ── SHARP, COMPACT, MODERN CARD THEME ON SILVER BACKGROUND ── */
     :root {
-      --retro-blue-bg: radial-gradient(circle at 50% 30%, #54c5fa 0%, #0284c7 55%, #0369a1 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --card-radius: 12px;
+      --silver-bg: #e5e7eb;
+      --card-bg: #ffffff;
+      --card-radius: 10px;
       --card-radius-sm: 8px;
-      --card-border: 1px solid rgba(255, 255, 255, 0.85);
-      --card-shadow: 0 12px 30px -4px rgba(2, 6, 23, 0.22), 0 4px 10px -2px rgba(2, 6, 23, 0.1);
+      --card-border: 1px solid #e2e8f0;
+      --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     body {
-      background: #0284c7;
-      background: radial-gradient(circle at 50% 30%, #54c5fa 0%, #0284c7 55%, #0369a1 100%) fixed !important;
-      min-height: 100vh;
-      color: #0f172a;
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 0;
+      background: var(--silver-bg) !important;
     }
 
     section[id^="section-"] {
-      background: transparent !important;
+      background: var(--silver-bg) !important;
     }
 
-    /* Top Royal Blue Bar - Glass Nav that matches the retro blue aesthetic */
+    /* Top Royal Blue Bar - PRESERVED INTACT WITHOUT REMOVAL */
     body > nav {
       position: relative !important;
-      background: rgba(15, 23, 42, 0.40) !important;
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.14) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(56,189,248,0.2) 0%, transparent 45%), linear-gradient(90deg, #1d4ed8 0%, #2563eb 40%, #0284c7 75%, #38bdf8 100%) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.24);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22) !important;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
     }
 
     .hero-bg, .page-header-bg {
@@ -311,11 +303,9 @@ sort($allAvailableTeams);
       box-shadow: inset 0 1px rgba(255, 255, 255, 0.22);
     }
 
-    /* Modern Cards on Retro Canvas */
+    /* Sharp, Compact, Modern Cards */
     .dashboard-card, .course-card, .modal-box, .clay-card {
       background: var(--card-bg) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-radius: var(--card-radius) !important;
       border: var(--card-border) !important;
       box-shadow: var(--card-shadow) !important;
@@ -324,29 +314,22 @@ sort($allAvailableTeams);
     .dashboard-card:hover, .course-card:hover {
       transform: translateY(-2px);
       border-color: #cbd5e1 !important;
-      box-shadow: 0 16px 36px -4px rgba(2, 6, 23, 0.28) !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
     }
 
-    #classroom-player-viewport {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: #000000;
-      border-radius: 14px !important;
-      overflow: hidden !important;
-      box-shadow: 0 16px 36px -4px rgba(2, 6, 23, 0.35) !important;
-      border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    }
-
+    /* Classroom Specific Sharp & Modern Styles */
     #classroom-details-card,
     #classroom-chapters-card,
     #classroom-layout-grid > div > div:first-child {
-      background: rgba(255, 255, 255, 0.95) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: #ffffff !important;
       border-radius: var(--card-radius) !important;
       border: var(--card-border) !important;
       box-shadow: var(--card-shadow) !important;
+    }
+    #classroom-player-viewport {
+      border-radius: 12px !important;
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.2) !important;
+      border: 1px solid #cbd5e1 !important;
     }
 
     input, textarea, select {
@@ -356,34 +339,32 @@ sort($allAvailableTeams);
       padding: 9px 14px !important;
       font-size: 13.5px !important;
       color: #0f172a !important;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+      box-shadow: none !important;
       transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
     }
     input:focus, textarea:focus, select:focus {
       background: #ffffff !important;
       border-color: #2563eb !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
       outline: none !important;
     }
     select option { background: #ffffff; color: #0f172a; }
-    .modal-overlay { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); }
+    .modal-overlay { background: rgba(15, 23, 42, 0.5); }
 
-    /* ── SINGLE-LAYER WORKSPACE ON RETRO BLUE ── */
+    /* ── SINGLE-LAYER WORKSPACE & SHARP CARDS ── */
     #section-analytics, #section-upload, #section-team-progress, #section-files, #section-classroom {
-      background: transparent !important;
+      background: var(--silver-bg) !important;
     }
     #section-upload [id^="admin-panel-"] {
-      background: rgba(255, 255, 255, 0.95) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: #ffffff !important;
       border: var(--card-border) !important;
       border-radius: var(--card-radius) !important;
       padding: 24px 28px !important;
       box-shadow: var(--card-shadow) !important;
     }
-    #admin-roster-table thead tr { background: rgba(241, 245, 249, 0.8); }
+    #admin-roster-table thead tr { background: #f8fafc; }
     #admin-roster-table tbody tr { transition: background-color 160ms ease; }
-    #admin-roster-table tbody tr:hover { background: rgba(239, 246, 255, 0.85); }
+    #admin-roster-table tbody tr:hover { background: #f1f5f9; }
 
     @media (max-width: 720px) {
       body > nav > div { min-height: auto !important; padding: 12px 16px 14px !important; gap: 12px !important; }
@@ -413,7 +394,7 @@ sort($allAvailableTeams);
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
   </script>
 </head>
-<body style="background:#0284c7;background:radial-gradient(circle at 50% 30%, #54c5fa 0%, #0284c7 55%, #0369a1 100%) fixed;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;min-height:100vh;">
+<body style="background:#dbe4ee;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
@@ -485,7 +466,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:transparent;padding:40px 24px 80px;">
+<section id="section-files" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <!-- Practice File Type Filter Dropdown -->
@@ -512,7 +493,7 @@ sort($allAvailableTeams);
      6. TEAM LEADER SCOPED VIEW (TEAM ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isTeamLeader): ?>
-<section id="section-team-progress" style="display:none;background:transparent;padding:40px 24px 80px;">
+<section id="section-team-progress" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
     
     <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:22px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
@@ -623,7 +604,7 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:transparent;padding:36px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#e5e7eb;padding:36px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
@@ -716,7 +697,7 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:transparent;padding:40px 24px 80px;">
+<section id="section-upload" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
 
@@ -936,17 +917,17 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:transparent;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#e5e7eb;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
-      <div style="display:inline-flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;flex-wrap:wrap;background:rgba(15,23,42,0.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:6px 16px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);">
-        <span style="color:#ffffff;font-weight:800;">Curriculum</span>
-        <span style="color:rgba(255,255,255,0.45);">/</span>
-        <span id="classroom-course-cat" style="color:#7dd3fc;font-weight:700;text-transform:uppercase;">REVIT</span>
-        <span style="color:rgba(255,255,255,0.45);">/</span>
-        <span id="classroom-course-title" style="color:#ffffff;font-weight:700;">Course Title</span>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:#64748b;font-weight:600;flex-wrap:wrap;">
+        <span style="color:#0f172a;font-weight:800;">Curriculum</span>
+        <span style="color:#cbd5e1;">/</span>
+        <span id="classroom-course-cat" style="color:#2563eb;font-weight:700;text-transform:uppercase;">REVIT</span>
+        <span style="color:#cbd5e1;">/</span>
+        <span id="classroom-course-title" style="color:#0f172a;font-weight:700;">Course Title</span>
       </div>
     </div>
 
@@ -956,7 +937,7 @@ sort($allAvailableTeams);
       <!-- LEFT COLUMN: Main Video Player & Metadata -->
       <div>
         <!-- 16:9 Aspect Ratio Video Viewport -->
-        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:12px;overflow:hidden;box-shadow:0 12px 30px -4px rgba(2,6,23,0.3);border:1px solid rgba(255,255,255,0.4);">
+        <div id="classroom-player-viewport" style="position:relative;width:100%;aspect-ratio:16/9;background:#000000;border-radius:12px;overflow:hidden;box-shadow:0 10px 25px -4px rgba(15,23,42,0.2);border:1px solid #cbd5e1;">
           <div id="classroom-player" style="width:100%;height:100%;"></div>
         </div>
 
