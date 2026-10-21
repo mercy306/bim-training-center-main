@@ -1123,39 +1123,22 @@ sort($allAvailableTeams);
           <div id="classroom-player" style="width:100%;height:100%;"></div>
         </div>
 
-        <!-- Video Metadata, Tags, Title & Instructor Actions Layer Card -->
-        <div id="classroom-details-card" style="margin-top:20px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px 24px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);">
-          <!-- Category / Tags Row -->
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <span id="classroom-badge-software" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;">Revit Structure</span>
-            <span id="classroom-lesson-resume-badge" style="display:none;background:#eff6ff;color:#2563eb;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">⏱️ Resumed</span>
-          </div>
-
+        <!-- Video Details & Actions Bar -->
+        <div id="classroom-details-card" style="margin-top:16px;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:16px 20px;box-shadow:0 10px 25px -4px rgba(15,23,42,0.08), 0 4px 8px -2px rgba(15,23,42,0.04);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
           <!-- Video Lesson Title -->
-          <h1 id="classroom-lesson-title" style="font-size:22px;font-weight:800;color:#0f172a;margin:0 0 16px;line-height:1.35;">Lesson Overview</h1>
+          <h1 id="classroom-lesson-title" style="font-size:18px;font-weight:800;color:#0f172a;margin:0;line-height:1.35;flex:1;min-width:240px;">Lesson Overview</h1>
 
-          <!-- Author & Controls Bar -->
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding-top:14px;border-top:1px solid #f1f5f9;">
-            <!-- Author Info -->
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div style="width:38px;height:38px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;box-shadow:0 2px 6px rgba(37,99,235,0.15);">
-                BSD
-              </div>
-              <div style="font-size:13.5px;font-weight:700;color:#0f172a;">BSD BIM Department</div>
-            </div>
-
-            <!-- Action Controls -->
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,23,42,0.05);transition:all 0.18s;">
-                <span id="classroom-complete-icon">○</span> Mark Completed
-              </button>
-              <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,0.04);">
-                ← Prev
-              </button>
-              <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(37,99,235,0.35);">
-                <span>Next</span> →
-              </button>
-            </div>
+          <!-- Action Controls -->
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <button id="classroom-complete-btn" onclick="toggleCurrentLessonCompletion()" style="background:#ffffff;color:#0f172a;border:1.5px solid #cbd5e1;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,23,42,0.05);transition:all 0.18s;">
+              <span id="classroom-complete-icon">○</span> Mark Completed
+            </button>
+            <button id="classroom-prev-btn" onclick="goToPrevClassroomLesson()" style="background:#f8fafc;border:1px solid #cbd5e1;color:#334155;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,0.04);">
+              ← Prev
+            </button>
+            <button id="classroom-next-btn" onclick="goToNextClassroomLesson()" style="background:#2563eb;color:#ffffff;border:none;padding:8px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(37,99,235,0.35);">
+              <span>Next</span> →
+            </button>
           </div>
         </div>
       </div>
@@ -1443,9 +1426,9 @@ function attachVideoTracking(videoEl, videoId, courseContext = null) {
       const badge = document.getElementById('classroom-lesson-resume-badge');
       if (badge) {
         badge.style.display = 'inline-block';
-        badge.textContent = `⏱️ Resumed from ${mins}:${secs} (via cookie)`;
+        badge.textContent = `⏱️ Resumed from ${mins}:${secs}`;
       }
-      showToast(`⏱️ Resumed from where you stopped (${mins}:${secs}) via cookie`, '#2563eb');
+      showToast(`⏱️ Resumed from ${mins}:${secs}`, '#2563eb');
     }
   };
 
