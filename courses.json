@@ -15,6 +15,7 @@
                 "duration": "15:20",
                 "type": "local",
                 "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4",
+                "thumbnail": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.jpg",
                 "chapters": [
                     { "time": 0, "timestamp": "00:00", "title": "Introduction & Cloud Project Setup" },
                     { "time": 165, "timestamp": "02:45", "title": "Desktop Connector & Hub Navigation" },
@@ -29,6 +30,7 @@
                 "duration": "28:45",
                 "type": "local",
                 "ytId": "videos/X_rebar_modeling.mp4",
+                "thumbnail": "videos/X_rebar_modeling.jpg",
                 "chapters": [
                     { "time": 0, "timestamp": "00:00", "title": "Rebar Fundamentals & Standards" },
                     { "time": 320, "timestamp": "05:20", "title": "Column Ties & Main Bars Setup" },
@@ -43,6 +45,7 @@
                 "duration": "20:00",
                 "type": "yt",
                 "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0",
+                "thumbnail": "https://img.youtube.com/vi/uOP4s8fOEm0/mqdefault.jpg",
                 "chapters": [
                     { "time": 0, "timestamp": "00:00", "title": "Overview of BIM Coordination" },
                     { "time": 220, "timestamp": "03:40", "title": "Clash Detection & Interference Check" },
@@ -68,6 +71,7 @@
                 "duration": "28:45",
                 "type": "local",
                 "ytId": "videos/X_rebar_modeling.mp4",
+                "thumbnail": "videos/X_rebar_modeling.jpg",
                 "chapters": [
                     { "time": 0, "timestamp": "00:00", "title": "Rebar Rules & Cover Settings" },
                     { "time": 320, "timestamp": "05:20", "title": "Modeling Primary Reinforcement" },
@@ -81,6 +85,7 @@
                 "duration": "15:20",
                 "type": "local",
                 "ytId": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.mp4",
+                "thumbnail": "videos/EP-02_HOW__TO_LINK_REVIT_FROM_CLOUD_AR_MODELING.jpg",
                 "chapters": [
                     { "time": 0, "timestamp": "00:00", "title": "Cloud Hub Connection" },
                     { "time": 240, "timestamp": "04:00", "title": "Linking Multi-Disciplinary Models" },

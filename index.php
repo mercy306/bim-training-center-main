@@ -1698,6 +1698,31 @@ function jumpToVideoChapter(seconds) {
   }
 }
 
+function getVideoThumbnailUrl(item) {
+  if (!item) return '';
+  if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.trim()) {
+    return item.thumbnail.trim();
+  }
+  const url = (item.ytId || item.url || '').trim();
+  if (!url) return '';
+  const cleanUrl = url.replace(/^\.?\/?/, '');
+  
+  // YouTube Video
+  const isYt = (item.type === 'yt') || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
+  if (isYt) {
+    const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
+    const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
+    return `https://img.youtube.com/vi/${ytCode}/mqdefault.jpg`;
+  }
+  
+  // Local Video File
+  if (cleanUrl.match(/\.(mp4|webm|mov|avi|mkv)$/i)) {
+    return cleanUrl.replace(/\.[^/.]+$/, '.jpg');
+  }
+  
+  return '';
+}
+
 /* ── VIDEO RENDERER ── */
 async function renderVideosCategory(category) {
   const container = document.getElementById('video-cards-grid');
@@ -1728,7 +1753,10 @@ async function renderVideosCategory(category) {
     const isLocal = v.type === 'local' || v.ytId.includes('videos/');
     const isDone = watchedMap[v.id]?.completed;
     const pct = watchedMap[v.id]?.percent || 0;
-    const thumbHtml = `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:40px;"></span><span style="font-size:10px;font-weight:900;margin-top:4px;">HD VIDEO</span></div>`;
+    const thumbUrl = getVideoThumbnailUrl(v);
+    const thumbHtml = thumbUrl 
+      ? `<img src="${thumbUrl}" alt="${encodeURIComponent(v.title)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML=\x27<div style=\x22width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;align-items:center;justify-content:center;color:white;\x22><span style=\x22font-size:10px;font-weight:900;\x22>HD VIDEO</span></div>\x27;" />`
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1d4ed8,#0284c7);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;"><span style="font-size:10px;font-weight:900;margin-top:4px;">HD VIDEO</span></div>`;
 
     return `
       <div class="dashboard-card" onclick="launchVideoPlayer('${v.ytId}','${encodeURIComponent(v.title)}','${encodeURIComponent(v.desc)}','${v.type || 'local'}','${v.id}','${v.station || 'all'}')" style="padding:20px;display:flex;flex-direction:column;justify-content:space-between;min-height:300px;">
@@ -1983,16 +2011,10 @@ function renderClassroomPlaylist() {
       badgeColor = '#2563eb';
     }
 
-    let cleanUrl = (l.ytId || '').replace(/^\.?\/?/, '');
-    const isYt = l.type === 'yt' || cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be');
-    let thumbHtml = '';
-    if (isYt) {
-      const ytMatch = cleanUrl.match(/(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#&?]*)/);
-      const ytCode = ytMatch ? ytMatch[1] : cleanUrl;
-      thumbHtml = `<img src="https://img.youtube.com/vi/${ytCode}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#93c5fd;font-size:14px;\'>▶</div>'" />`;
-    } else {
-      thumbHtml = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#ffffff;font-size:13px;font-weight:700;"><span style="color:#2563eb;">▶</span></div>`;
-    }
+    const thumbUrl = getVideoThumbnailUrl(l);
+    let thumbHtml = thumbUrl
+      ? `<img src="${thumbUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.onerror=null;this.parentElement.innerHTML=\x27<div style=\\\x27width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#93c5fd;font-size:14px;\\\x27>▶</div>\x27;" />`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#ffffff;font-size:13px;font-weight:700;"><span style="color:#2563eb;">▶</span></div>`;
 
     return `
       <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:8px;background:${bg};border:1px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 2px 8px rgba(37,99,235,0.18)' : '0 1px 3px rgba(15,23,42,0.04)'};">

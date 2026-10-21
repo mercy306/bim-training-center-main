@@ -6,6 +6,7 @@
         "title": "YouTube video",
         "desc": "asdfghjkl;",
         "ytId": "https://www.youtube.com/watch?v=uOP4s8fOEm0&list=RDUSsso5DCNts&index=27",
+        "thumbnail": "https://img.youtube.com/vi/uOP4s8fOEm0/mqdefault.jpg",
         "duration": "20:00",
         "type": "yt",
         "assigned_employees": [],
