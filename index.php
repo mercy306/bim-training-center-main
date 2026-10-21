@@ -282,11 +282,11 @@ sort($allAvailableTeams);
     }
 
     body {
-      background: var(--silver-bg) !important;
+      background: #ffffff !important;
     }
 
     section[id^="section-"] {
-      background: var(--silver-bg) !important;
+      background: #ffffff !important;
     }
 
     /* Top Royal Blue Bar - PRESERVED INTACT WITHOUT REMOVAL */
@@ -357,7 +357,7 @@ sort($allAvailableTeams);
 
     /* ── SINGLE-LAYER WORKSPACE & SHARP CARDS ── */
     #section-analytics, #section-upload, #section-team-progress, #section-files, #section-classroom {
-      background: var(--silver-bg) !important;
+      background: #ffffff !important;
     }
     #section-upload [id^="admin-panel-"] {
       background: #ffffff !important;
@@ -398,7 +398,7 @@ sort($allAvailableTeams);
     window.INITIAL_PROGRESS = <?= json_encode($myProgress) ?>;
   </script>
 </head>
-<body style="background:#dbe4ee;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
+<body style="background:#ffffff;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;">
 
 <!-- ══════════════════════════════════════════
      TOP NAVIGATION BAR (UNIFIED ONE-COLOR BLUE HEADER)
@@ -470,7 +470,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      4. PRACTICE FILES DOWNLOAD CENTER
 ───────────────────────────────────────── -->
-<section id="section-files" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
+<section id="section-files" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <!-- Practice File Type Filter Dropdown -->
@@ -497,10 +497,10 @@ sort($allAvailableTeams);
      6. TEAM LEADER SCOPED VIEW (TEAM ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isTeamLeader): ?>
-<section id="section-team-progress" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
+<section id="section-team-progress" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:1200px;margin:0 auto;">
     
-    <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:22px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;box-shadow:0 1px 3px rgba(15,23,42,0.06);border:1px solid #e2e8f0;">
       <div style="display:flex;align-items:center;gap:14px;">
         <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg, #1d4ed8, #2563eb);color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;box-shadow:0 4px 12px rgba(37,99,235,0.3);">
           TL
@@ -608,7 +608,7 @@ sort($allAvailableTeams);
      7. ADMIN GLOBAL ANALYTICS & ROSTER BOARD
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-analytics" style="display:none;background:#e5e7eb;padding:36px 24px 80px;">
+<section id="section-analytics" style="display:none;background:#ffffff;padding:36px 24px 80px;">
   <div style="max-width:1300px;margin:0 auto;">
     
 
@@ -701,7 +701,7 @@ sort($allAvailableTeams);
      8. ADMIN UPLOAD MATERIAL (ADMIN ONLY)
 ───────────────────────────────────────── -->
 <?php if ($isStaffAdmin): ?>
-<section id="section-upload" style="display:none;background:#dbe4ee;padding:40px 24px 80px;">
+<section id="section-upload" style="display:none;background:#ffffff;padding:40px 24px 80px;">
   <div style="max-width:960px;margin:0 auto;">
     
 
@@ -711,16 +711,16 @@ sort($allAvailableTeams);
       <button id="atab-video" onclick="switchAdminUploadTab('video')" style="background:#2563eb;color:#ffffff;border:none;padding:10px 20px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.3);">
         Video Lessons
       </button>
-      <button id="atab-course" onclick="switchAdminUploadTab('course')" style="background:#ffffff;color:#475569;border:1px solid rgba(255,255,255,0.95);padding:10px 20px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(148,163,184,0.14);">
+      <button id="atab-course" onclick="switchAdminUploadTab('course')" style="background:#ffffff;color:#475569;border:1px solid #e2e8f0;padding:10px 20px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(148,163,184,0.14);">
         Curricula Management
       </button>
-      <button id="atab-files" onclick="switchAdminUploadTab('files')" style="background:#ffffff;color:#475569;border:1px solid rgba(255,255,255,0.95);padding:10px 20px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(148,163,184,0.14);">
+      <button id="atab-files" onclick="switchAdminUploadTab('files')" style="background:#ffffff;color:#475569;border:1px solid #e2e8f0;padding:10px 20px;border-radius:14px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(148,163,184,0.14);">
         Practice Datasets
       </button>
     </div>
 
     <!-- TAB 1: VIDEO UPLOAD (Single Layer, Flat Clean UI) -->
-    <div id="admin-panel-video" style="background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:32px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div id="admin-panel-video" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.06);border:1px solid #e2e8f0;">
 
       <!-- Mode Selector -->
       <div style="display:flex;gap:8px;margin-bottom:20px;max-width:540px;">
@@ -821,7 +821,7 @@ sort($allAvailableTeams);
     </div>
 
     <!-- TAB 2: CURRICULA MANAGEMENT & CREATOR -->
-    <div id="admin-panel-course" style="display:none;background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:32px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div id="admin-panel-course" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.06);border:1px solid #e2e8f0;">
 
 
       <div style="margin-bottom:28px;">
@@ -891,7 +891,7 @@ sort($allAvailableTeams);
     </div>
 
     <!-- TAB 3: PRACTICE FILES -->
-    <div id="admin-panel-files" style="display:none;background:#ffffff;border:1px solid rgba(255,255,255,0.95);border-radius:24px;padding:32px;box-shadow:0 18px 40px -8px rgba(100,116,139,0.20), 0 6px 14px -3px rgba(100,116,139,0.08);">
+    <div id="admin-panel-files" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:32px;box-shadow:0 1px 3px rgba(15,23,42,0.06);border:1px solid #e2e8f0;">
       <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin:0 0 12px;">Upload Practice Datasets</h3>
       <div class="drop-zone" onclick="document.getElementById('admin-file-picker').click()" 
            ondragover="event.preventDefault();this.style.borderColor='#2563eb';this.style.background='#eff6ff';" 
@@ -921,7 +921,7 @@ sort($allAvailableTeams);
 <!-- ─────────────────────────────────────────
      9. CLASSROOM & PLAYER (Modern Ronasit-Style Course Player)
 ───────────────────────────────────────── -->
-<section id="section-classroom" style="display:none;background:#e5e7eb;padding:24px 24px 80px;">
+<section id="section-classroom" style="display:none;background:#ffffff;padding:24px 24px 80px;">
   <div style="max-width:1400px;margin:0 auto;">
     
     <!-- Breadcrumbs Navigation -->
