@@ -1174,10 +1174,22 @@ sort($allAvailableTeams);
               <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin:0;">Course Lessons</h3>
               <div style="font-size:12px;color:#64748b;margin-top:2px;">Step-by-step curriculum</div>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <!-- Short Curricula Switcher Dropdown (Right at the arrow) -->
-              <select id="classroom-curricula-dropdown" onchange="if(this.value)openClassroom(this.value)" style="display:none;font-size:11.5px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:3px 6px;cursor:pointer;outline:none;">
-              </select>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <!-- Beautiful Custom Curricula Dropdown -->
+              <div id="classroom-curricula-dropdown-wrap" style="display:none;position:relative;">
+                <button type="button" id="classroom-curricula-btn" onclick="toggleCurriculaMenu(event)" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:4px 9px;cursor:pointer;transition:all 0.18s;box-shadow:0 1px 3px rgba(37,99,235,0.08);" onmouseover="this.style.background='#dbeafe';this.style.borderColor='#93c5fd';" onmouseout="this.style.background='#eff6ff';this.style.borderColor='#bfdbfe';">
+                  <span style="font-size:12px;">📚</span>
+                  <span id="classroom-curricula-btn-label">Other Tracks</span>
+                  <span style="font-size:10px;margin-left:2px;">▼</span>
+                </button>
+                
+                <!-- Floating Popup Card Menu -->
+                <div id="classroom-curricula-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:260px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 12px 28px -4px rgba(15,23,42,0.18), 0 4px 8px -2px rgba(15,23,42,0.06);padding:6px;z-index:100;">
+                  <div style="font-size:10.5px;font-weight:800;color:#64748b;padding:5px 8px 3px;text-transform:uppercase;letter-spacing:0.04em;">Switch Curriculum</div>
+                  <div id="classroom-curricula-items" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;"></div>
+                </div>
+              </div>
+
               <span id="classroom-playlist-count" style="font-size:12px;color:#2563eb;font-weight:800;background:#eff6ff;padding:4px 9px;border-radius:6px;box-shadow:0 1px 3px rgba(37,99,235,0.1);">0 / 0</span>
             </div>
           </div>
@@ -2082,21 +2094,58 @@ function openClassroom(courseId, lessonIdx = null) {
   loadClassroomLesson(targetIdx);
 }
 
+function toggleCurriculaMenu(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const menu = document.getElementById('classroom-curricula-menu');
+  if (!menu) return;
+  const isShown = (menu.style.display === 'block');
+  menu.style.display = isShown ? 'none' : 'block';
+}
+
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('classroom-curricula-dropdown-wrap');
+  const menu = document.getElementById('classroom-curricula-menu');
+  if (wrap && menu && !wrap.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
 function renderClassroomSuggestedCourses() {
   const all = getAllCourses();
   const others = all.filter(c => !currentClassroomCourse || c.id !== currentClassroomCourse.id);
 
-  // 1. Compact Dropdown Switcher in Course Lessons Header
-  const dropdown = document.getElementById('classroom-curricula-dropdown');
-  if (dropdown) {
+  // 1. Attractive Custom Floating Dropdown Menu
+  const wrap = document.getElementById('classroom-curricula-dropdown-wrap');
+  const btnLabel = document.getElementById('classroom-curricula-btn-label');
+  const itemsContainer = document.getElementById('classroom-curricula-items');
+  const menu = document.getElementById('classroom-curricula-menu');
+
+  if (menu) menu.style.display = 'none'; // Close on rerender
+
+  if (wrap && btnLabel && itemsContainer) {
     if (others.length === 0) {
-      dropdown.style.display = 'none';
+      wrap.style.display = 'none';
     } else {
-      dropdown.style.display = 'inline-block';
-      dropdown.innerHTML = `
-        <option value="" disabled selected>Other Tracks (${others.length}) ▾</option>
-        ${others.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
-      `;
+      wrap.style.display = 'block';
+      btnLabel.textContent = `Other Tracks (${others.length})`;
+      itemsContainer.innerHTML = others.map(c => {
+        const count = (c.syllabus || []).length;
+        return `
+          <div onclick="openClassroom('${c.id}'); if(document.getElementById('classroom-curricula-menu')) document.getElementById('classroom-curricula-menu').style.display='none';" 
+               style="padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;" 
+               onmouseover="this.style.background='#eff6ff';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#2563eb';" 
+               onmouseout="this.style.background='transparent';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#0f172a';">
+            <div style="min-width:0;flex:1;">
+              <div class="track-opt-title" style="font-size:12.5px;font-weight:700;color:#0f172a;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px;">${count} lesson${count === 1 ? '' : 's'} • <span style="font-weight:700;color:#2563eb;">${(c.cat || 'BIM').toUpperCase()}</span></div>
+            </div>
+            <span style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;padding:2px 7px;border-radius:4px;border:1px solid #bfdbfe;flex-shrink:0;">Start →</span>
+          </div>
+        `;
+      }).join('');
     }
   }
 
@@ -2108,7 +2157,7 @@ function renderClassroomSuggestedCourses() {
     } else {
       container.style.display = 'block';
       container.innerHTML = others.map(c => `
-        <div onclick="openClassroom('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+        <div onclick="openClassroom('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;box-shadow:0 1px 3px rgba(15,23,42,0.03);" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
           <div style="font-size:11.5px;color:#334155;display:flex;align-items:center;gap:6px;min-width:0;">
             <span style="font-size:12px;">📚</span>
             <span style="font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
