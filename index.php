@@ -326,6 +326,10 @@ sort($allAvailableTeams);
       border: var(--card-border) !important;
       box-shadow: var(--card-shadow) !important;
     }
+    #classroom-lesson-title,
+    #classroom-complete-btn {
+      display: none !important;
+    }
     #classroom-player-viewport {
       border-radius: 12px !important;
       box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.2) !important;
