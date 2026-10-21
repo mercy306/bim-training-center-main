@@ -1799,25 +1799,6 @@ function showSection(name) {
     }
   });
 
-  // Update floating dock states
-  document.querySelectorAll('.pill-dock-btn').forEach(b => {
-    b.style.opacity = '0.75';
-    b.style.transform = 'scale(1)';
-  });
-  if (name === 'classroom') {
-    const b = document.getElementById('dock-btn-watch');
-    if (b) { b.style.opacity = '1'; b.style.transform = 'scale(1.05)'; }
-  } else if (name === 'upload') {
-    const b = document.getElementById('dock-btn-upload');
-    if (b) { b.style.opacity = '1'; b.style.transform = 'scale(1.05)'; }
-  } else if (name === 'analytics') {
-    const b = document.getElementById('dock-btn-staffpicks');
-    if (b) { b.style.opacity = '1'; b.style.transform = 'scale(1.05)'; }
-  } else if (name === 'files') {
-    const b = document.getElementById('dock-btn-menu');
-    if (b) { b.style.opacity = '1'; b.style.transform = 'scale(1.05)'; }
-  }
-
   if (name === 'videos') renderVideosCategory('all_sims');
   if (name === 'files') renderPracticeFiles('all');
   if (name === 'my-progress') renderEmployeeProgressChecklist();
@@ -2217,19 +2198,20 @@ function renderClassroomPlaylist() {
     }
 
     return `
-      <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:12px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:14px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 4px 12px rgba(37,99,235,0.14)' : '0 1px 3px rgba(15,23,42,0.03)'};" onmouseover="if(${isUnlocked} && !${isCurrent}) { this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'; }" onmouseout="if(${isUnlocked} && !${isCurrent}) { this.style.borderColor='${border}'; this.style.background='${bg}'; }">
-        <!-- Widescreen 16:9 Thumbnail (matching user reference mockup) -->
-        <div style="width:110px;aspect-ratio:16/9;border-radius:9px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.12);">
+      <div onclick="loadClassroomLesson(${idx})" style="padding:10px 12px;border-radius:12px;background:${bg};border:1.5px solid ${border};cursor:${isUnlocked ? 'pointer' : 'not-allowed'};display:flex;align-items:center;gap:12px;transition:all 0.15s;opacity:${isUnlocked ? '1' : '0.65'};box-shadow:${isCurrent ? '0 4px 12px rgba(37,99,235,0.18)' : '0 2px 6px rgba(15,23,42,0.04)'};">
+        <!-- Thumbnail -->
+        <div style="width:68px;height:46px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#0f172a;position:relative;">
           ${thumbHtml}
         </div>
 
-        <!-- Info matching user reference mockup -->
+        <!-- Info -->
         <div style="flex:1;min-width:0;">
-          <div style="font-size:13.5px;font-weight:800;color:${isCurrent ? '#2563eb' : '#0f172a'};line-height:1.35;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-            ${l.title}
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;">
+            <span style="font-size:11.5px;font-weight:700;color:${isCurrent ? '#2563eb' : '#64748b'};">${l.duration || '20:00'}</span>
+            <span style="font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:${badgeBg};color:${badgeColor};">${badgeText}</span>
           </div>
-          <div style="font-size:11.5px;color:#64748b;font-weight:500;">
-            ${l.duration || '20:00'} • <span style="font-weight:700;color:${badgeColor};">${badgeText}</span>
+          <div style="font-size:13px;font-weight:${isCurrent ? '800' : '700'};color:${isCurrent ? '#2563eb' : '#0f172a'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${l.title}
           </div>
         </div>
       </div>
@@ -3749,39 +3731,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
-
-<!-- ══════════════════════════════════════════
-     FLOATING DOCK NAVIGATION (IMAGE 1 DESIGN)
-══════════════════════════════════════════ -->
-<nav id="floating-pill-dock" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;background:#475569;border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:8px 24px;display:flex;align-items:center;gap:26px;box-shadow:0 16px 36px rgba(15,23,42,0.35), 0 4px 12px rgba(15,23,42,0.2);backdrop-filter:blur(14px);user-select:none;">
-  
-  <!-- 1. Menu -->
-  <button type="button" onclick="showSection('files')" class="pill-dock-btn" id="dock-btn-menu" style="background:none;border:none;color:#ffffff;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 6px;opacity:0.85;transition:all 0.18s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity=(document.getElementById('section-files')?.style.display!=='none')?'1':'0.85'">
-    <svg width="22" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
-    <span style="font-size:11px;font-weight:700;letter-spacing:0.02em;">Menu</span>
-  </button>
-
-  <!-- 2. Upload -->
-  <?php if ($isStaffAdmin): ?>
-  <button type="button" onclick="showSection('upload')" class="pill-dock-btn" id="dock-btn-upload" style="background:none;border:none;color:#ffffff;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 6px;opacity:0.85;transition:all 0.18s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity=(document.getElementById('section-upload')?.style.display!=='none')?'1':'0.85'">
-    <svg width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
-    <span style="font-size:11px;font-weight:700;letter-spacing:0.02em;">Upload</span>
-  </button>
-  <?php endif; ?>
-
-  <!-- 3. Staff Picks / Analytics -->
-  <button type="button" onclick="showSection('<?= $isStaffAdmin ? 'analytics' : 'files' ?>')" class="pill-dock-btn" id="dock-btn-staffpicks" style="background:none;border:none;color:#ffffff;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 6px;opacity:0.85;transition:all 0.18s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
-    <svg width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M4 18c0-5 2-8 5-11M20 18c0-5-2-8-5-11"/><text x="12" y="15" text-anchor="middle" font-size="7.5" font-weight="900" fill="#ffffff" stroke="none">SP</text></svg>
-    <span style="font-size:11px;font-weight:700;letter-spacing:0.02em;"><?= $isStaffAdmin ? 'Analytics' : 'Staff Picks' ?></span>
-  </button>
-
-  <!-- 4. Watch -->
-  <button type="button" onclick="showSection('classroom')" class="pill-dock-btn active" id="dock-btn-watch" style="background:none;border:none;color:#ffffff;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 6px;opacity:1;transition:all 0.18s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity=(document.getElementById('section-classroom')?.style.display!=='none')?'1':'0.85'">
-    <svg width="24" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="3"/><path d="m10 7 5 3-5 3V7Z" fill="#ffffff" stroke="none"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-    <span style="font-size:11px;font-weight:700;letter-spacing:0.02em;">Watch</span>
-  </button>
-
-</nav>
 
 </body>
 </html>
