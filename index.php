@@ -2105,6 +2105,16 @@ function toggleCurriculaMenu(e) {
   menu.style.display = isShown ? 'none' : 'block';
 }
 
+function switchCurriculumTrack(courseId, e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const menu = document.getElementById('classroom-curricula-menu');
+  if (menu) menu.style.display = 'none';
+  openClassroom(courseId);
+}
+
 document.addEventListener('click', function(e) {
   const wrap = document.getElementById('classroom-curricula-dropdown-wrap');
   const menu = document.getElementById('classroom-curricula-menu');
@@ -2134,7 +2144,7 @@ function renderClassroomSuggestedCourses() {
       itemsContainer.innerHTML = others.map(c => {
         const count = (c.syllabus || []).length;
         return `
-          <div onclick="openClassroom('${c.id}'); if(document.getElementById('classroom-curricula-menu')) document.getElementById('classroom-curricula-menu').style.display='none';" 
+          <div onclick="switchCurriculumTrack('${c.id}', event)" 
                style="padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:all 0.15s;" 
                onmouseover="this.style.background='#eff6ff';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#2563eb';" 
                onmouseout="this.style.background='transparent';const t=this.querySelector('.track-opt-title');if(t)t.style.color='#0f172a';">
@@ -2157,7 +2167,7 @@ function renderClassroomSuggestedCourses() {
     } else {
       container.style.display = 'block';
       container.innerHTML = others.map(c => `
-        <div onclick="openClassroom('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;box-shadow:0 1px 3px rgba(15,23,42,0.03);" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+        <div onclick="switchCurriculumTrack('${c.id}', event)" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;box-shadow:0 1px 3px rgba(15,23,42,0.03);" onmouseover="this.style.background='#eff6ff';this.style.borderColor='#2563eb'" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
           <div style="font-size:11.5px;color:#334155;display:flex;align-items:center;gap:6px;min-width:0;">
             <span style="font-size:12px;">📚</span>
             <span style="font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.title}</span>
